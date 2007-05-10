@@ -1,4 +1,5 @@
 #summary Progress of implementation of prefetching during Google Summer Of Code 2007
+#labels Featured
 
 = Introduction =
 
