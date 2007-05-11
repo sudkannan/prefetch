@@ -1,0 +1,3 @@
+#summary Bibliography with interesting topics on prefetching
+  * [http://www.cs.toronto.edu/~behdad/preload.pdf Behdad Esfahbod MSc thesis about Preload project]
+  * [http://en.wikipedia.org/wiki/Prefetcher Wikipedia article about Windows prefetcher]
