@@ -8,3 +8,5 @@ The example of prefetching solution is [http://en.wikipedia.org/wiki/Prefetcher 
 = Articles to read =
 These articles provide much information about prefetching and are worth reading:
   * [http://www.cs.toronto.edu/~behdad/preload.pdf Behdad Esfahbod MSc thesis about Preload project]
+
+More articles to read is available on [Bibliography] page.
