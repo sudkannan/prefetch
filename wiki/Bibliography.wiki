@@ -1,3 +1,10 @@
 #summary Bibliography with interesting topics on prefetching
+#labels links
+General articles:
   * [http://www.cs.toronto.edu/~behdad/preload.pdf Behdad Esfahbod MSc thesis about Preload project]
   * [http://en.wikipedia.org/wiki/Prefetcher Wikipedia article about Windows prefetcher]
+
+Google Summer of Code applications and projects:
+  * [http://sourceforge.net/projects/preload GSoC 2005: "Preload: adaptive readahead daemon" by Behdad Esfahbod] and [http://www.cs.toronto.edu/~behdad/blog/preload.txt his proposal]
+  * [http://code.google.com/soc/2006/kde/appinfo.html?csaid=1F587222C2BBB5F4 GSoC 2006: "Rapid linux desktop startup through pre-caching" by Fengguang Wu, mentored by Lubos Lunak]
+  * [http://code.google.com/soc/ubuntu/appinfo.html?csaid=8EDA2B217C83972 GSoC 2007: "Automatic boot and application start file prefetching" by Krzysztof Lichota, mentored by Tollef Fog Heen] and  [http://www.mimuw.edu.pl/~lichota/soc2007-prefetch/application.html full text of application]
