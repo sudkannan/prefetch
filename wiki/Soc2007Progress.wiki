@@ -4,3 +4,17 @@
 = Introduction =
 
 This page will contain information about progress of implementation.
+
+= Timeline and progress =
+  * April - May 2007
+    * setting up project (*done*)
+    * establishing contact with Ubuntu developers (*done*)
+    * establishing contact with preload developers (*done*)
+    * establishing contact with bootcache developers (_in progress_)
+    * establishing contact with ext3 developers 
+    * submitting disk layout tool for review by ext3 developers
+  * 1st half of June: implementation of tracing facility and integration with Ubuntu boot scripts, analysis of impact on boot time.
+  * 2nd half of June - 1st half of July: implementation of hooking into application start, analysis of impact and performance of prefetching during application start.
+  * 2nd half of July - improving disk layout tool, intensive testing and analysis of impact.
+  * August - in case of slips, time to fix problems, otherwise implementing metadata prefetching and partial prefetching during boot. 
+  * September and later - writing a paper describing results of analysis for later submission to Linux conferences, improving things which were identified as problems during analysis of implemented solution.
