@@ -6,6 +6,7 @@ Tracing subsystem is responsible for tracing what files (and parts of files) are
 Design goals:
   * Tracing must be possible to do and work correctly along with prefetching
   * Tracing must be lightweight, so that it can be run all the time
+  * It must be possible to trace all applications in the system efficiently (including dumping state)
 
 = Idea =
 Tracing should hook into Linux page cache subsystem and notice when pages are faulted in.
