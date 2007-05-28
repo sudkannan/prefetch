@@ -1,0 +1,1125 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<!-- Dimension -->
+<svg width="800px" height="877px" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<style type="text/css"><![CDATA[
+			/* Style sheet */
+			
+		]]></style>
+	</defs>
+	
+	<rect x="0" y="0" width="100%" height="100%" style="fill: white;"/>
+	
+	<!-- Header text -->
+	<text style="font-family: sans-serif; font-size: 14pt; font-weight: bold;" x="10" y="22">Boot chart for ghost.suse.cz (Thu Apr 26 17:18:47 CEST 2007)</text>
+	<g style="font-family: sans-serif; font-size: 9pt; fill: #000000;" transform="translate(10, 24)">
+		<!-- System information -->
+		<text dy="1.2em">uname: Linux 2.6.21-default #3 SMP Thu Apr 26 15:18:11 CEST 2007 x86_64</text>
+		<!-- OS information -->
+		<text dy="2.4em">release: openSUSE 10.3 (X86-64) Alpha2plus</text>
+		<!-- CPU information  -->
+		<text dy="3.6em">CPU: AMD Athlon(tm) 64 Processor 2800+ (1)</text>
+		<!-- Kernel cmdline -->
+		<text dy="4.8em">application: startkde</text>
+		<!-- Boot time -->
+		<text dy="6.0em">time: 0:15</text>
+	</g>
+	
+	<!-- CPU load chart -->
+	<g transform="translate(0, 130)" style="fill: none;">
+		<g transform="translate(0, -5)">
+			<rect x="2px" y="-17px" width="10px" height="10px" style="fill-opacity: 0.75; fill: #668cb2; stroke: #668cb2;"/><text style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="15px" dy="-7px">CPU (user+sys)</text>
+			<rect x="120px" y="-17px" width="10px" height="10px" style="fill-opacity: 0.5; fill: #c27a7a; stroke: #c27a7a;"/><text style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="135px" dy="-7px">I/O (wait)</text>
+		</g>
+		
+		<rect style="fill: #ffffff; stroke: #e0e0e0;" x="0" y="0" width="100%" height="50px"/>
+		<g style="stroke: #e6e6e6; stroke-width: 1px;" transform="translate(0.5, 0.5)">
+			<!-- CPU/IO load time ticks -->
+			<line style="stroke: #d0d0d0;" x1="0" y1="0" x2="0" y2="50"/>
+			<line x1="25" y1="0" x2="25" y2="50"/>
+			<line x1="50" y1="0" x2="50" y2="50"/>
+			<line x1="75" y1="0" x2="75" y2="50"/>
+			<line x1="100" y1="0" x2="100" y2="50"/>
+			<line style="stroke: #d0d0d0;" x1="125" y1="0" x2="125" y2="50"/>
+			<line x1="150" y1="0" x2="150" y2="50"/>
+			<line x1="175" y1="0" x2="175" y2="50"/>
+			<line x1="200" y1="0" x2="200" y2="50"/>
+			<line x1="225" y1="0" x2="225" y2="50"/>
+			<line style="stroke: #d0d0d0;" x1="250" y1="0" x2="250" y2="50"/>
+			<line x1="275" y1="0" x2="275" y2="50"/>
+			<line x1="300" y1="0" x2="300" y2="50"/>
+			<line x1="325" y1="0" x2="325" y2="50"/>
+			<line x1="350" y1="0" x2="350" y2="50"/>
+			<line style="stroke: #d0d0d0;" x1="375" y1="0" x2="375" y2="50"/>
+		</g>
+		<!-- IO chart -->
+		<polyline style="fill-opacity: 0.5; fill: #c27a7a; stroke: #c27a7a;" points="4,50 4,0 11,0 16,0 21,0 26,0 32,0 37,0 42,0 47,0 52,0 57,0 63,0 68,0 73,0 78,0 83,0 88,0 94,0 99,0 104,0 109,0 115,0 120,7 126,24 131,0 136,0 141,0 148,0 153,0 159,0 164,0 169,0 175,0 180,1 185,0 190,0 196,0 201,0 206,0 212,0 217,0 223,0 228,0 233,0 239,0 244,0 249,0 254,40 259,48 265,46 270,48 275,44 280,40 285,35 291,46 296,48 301,46 306,46 311,50 316,46 322,46 327,48 332,43 337,43 342,43 347,44 353,48 358,44 363,50 369,46 374,46 379,39 379,50"/>
+		<!-- CPU load chart -->
+		<polyline style="fill-opacity: 0.75; fill: #668cb2; stroke: #668cb2;" points="4,50 4,39 11,10 16,19 21,43 26,28 32,43 37,20 42,27 47,12 52,14 57,24 63,22 68,17 73,12 78,8 83,0 88,0 94,0 99,0 104,0 109,0 115,0 120,35 126,27 131,8 136,22 141,23 148,30 153,28 159,5 164,0 169,17 175,27 180,5 185,5 190,0 196,3 201,0 206,26 212,22 217,39 223,36 228,34 233,12 239,17 244,3 249,3 254,42 259,48 265,46 270,48 275,44 280,40 285,35 291,46 296,48 301,46 306,46 311,50 316,46 322,46 327,48 332,46 337,46 342,43 347,44 353,48 358,44 363,50 369,46 374,46 379,46 379,50"/>
+		
+	</g>
+	
+	<!-- Disk utilization chart -->
+	<g transform="translate(0, 210)" style="fill: none;">
+		<g transform="translate(0, -5)">
+			<line x1="1px" y1="-12px" x2="13px" y2="-12px" style="stroke: #32b432; fill-opacity: 0;"/><circle style="stroke: #32b432; fill-opacity: 0;" cx="7" cy="-12" r="2"/><text style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="15px" dy="-7px">Disk throughput</text>
+			<rect x="120px" y="-17px" width="10px" height="10px" style="fill-opacity: 0.5; fill: #c86464; stroke: #c86464;"/><text style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="135px" dy="-7px">Disk utilization</text>
+			<!--<line x1="120px" y1="-12px" x2="132px" y2="-12px" style="stroke: #32b432; fill-opacity: 0;"/><circle style="stroke: #32b432; fill-opacity: 0;" cx="127" cy="-12" r="2"/><text style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="135px" dy="-7px">Files opened</text>-->
+		</g>
+		
+		<rect style="fill: #ffffff; stroke: #e0e0e0;" x="0" y="0" width="100%" height="50px"/>
+		<g style="stroke: #e6e6e6; stroke-width: 1px;" transform="translate(0.5, 0.5)">
+			<!-- Disk utilization time ticks -->
+			<line style="stroke: #d0d0d0;" x1="0" y1="0" x2="0" y2="50"/>
+			<line x1="25" y1="0" x2="25" y2="50"/>
+			<line x1="50" y1="0" x2="50" y2="50"/>
+			<line x1="75" y1="0" x2="75" y2="50"/>
+			<line x1="100" y1="0" x2="100" y2="50"/>
+			<line style="stroke: #d0d0d0;" x1="125" y1="0" x2="125" y2="50"/>
+			<line x1="150" y1="0" x2="150" y2="50"/>
+			<line x1="175" y1="0" x2="175" y2="50"/>
+			<line x1="200" y1="0" x2="200" y2="50"/>
+			<line x1="225" y1="0" x2="225" y2="50"/>
+			<line style="stroke: #d0d0d0;" x1="250" y1="0" x2="250" y2="50"/>
+			<line x1="275" y1="0" x2="275" y2="50"/>
+			<line x1="300" y1="0" x2="300" y2="50"/>
+			<line x1="325" y1="0" x2="325" y2="50"/>
+			<line x1="350" y1="0" x2="350" y2="50"/>
+			<line style="stroke: #d0d0d0;" x1="375" y1="0" x2="375" y2="50"/>
+		</g>
+		<!-- Disk utilization chart -->
+		<polyline style="fill-opacity: 0.5; fill: #c86464; stroke: #c86464;" points="5,50 5,8 11,36 16,27 21,4 27,27 32,9 37,29 42,24 47,38 52,35 58,25 63,30 68,28 73,20 78,32 83,43 89,41 94,44 99,42 104,45 109,50 115,47 120,20 128,46 133,24 138,22 143,0 150,10 155,7 160,19 165,40 170,0 176,2 181,0 186,1 192,21 197,27 203,30 208,0 213,5 218,0 224,1 229,3 235,14 240,20 245,50 251,45 257,50 262,50 267,50 272,50 278,50 283,50 288,50 293,50 298,50 303,50 308,50 314,50 319,50 324,50 329,50 334,47 339,46 345,50 350,50 355,50 360,50 366,50 371,50 371,50"/>
+		
+		<g style="stroke: #32b432; fill-opacity: 0;">
+			<!-- Disk throughput chart -->
+			<line x1="5" y1="42" x2="11" y2="39"/>
+			<line x1="11" y1="39" x2="16" y2="32"/>
+			<line x1="16" y1="32" x2="21" y2="0"/>
+			<line x1="21" y1="0" x2="27" y2="47"/>
+			<line x1="27" y1="47" x2="32" y2="6"/>
+			<line x1="32" y1="6" x2="37" y2="43"/>
+			<line x1="37" y1="43" x2="42" y2="31"/>
+			<line x1="42" y1="31" x2="47" y2="47"/>
+			<line x1="47" y1="47" x2="52" y2="43"/>
+			<line x1="52" y1="43" x2="58" y2="36"/>
+			<line x1="58" y1="36" x2="63" y2="42"/>
+			<line x1="63" y1="42" x2="68" y2="45"/>
+			<line x1="68" y1="45" x2="73" y2="37"/>
+			<line x1="73" y1="37" x2="78" y2="45"/>
+			<line x1="78" y1="45" x2="83" y2="49"/>
+			<line x1="83" y1="49" x2="89" y2="47"/>
+			<line x1="89" y1="47" x2="94" y2="48"/>
+			<line x1="94" y1="48" x2="99" y2="46"/>
+			<line x1="99" y1="46" x2="104" y2="49"/>
+			<line x1="104" y1="49" x2="109" y2="50"/>
+			<line x1="109" y1="50" x2="115" y2="44"/>
+			<line x1="115" y1="44" x2="120" y2="50"/>
+			<line x1="120" y1="50" x2="128" y2="50"/>
+			<line x1="128" y1="50" x2="133" y2="36"/>
+			<line x1="133" y1="36" x2="138" y2="30"/>
+			<line x1="138" y1="30" x2="143" y2="43"/>
+			<line x1="143" y1="43" x2="150" y2="45"/>
+			<line x1="150" y1="45" x2="155" y2="35"/>
+			<line x1="155" y1="35" x2="160" y2="47"/>
+			<line x1="160" y1="47" x2="165" y2="50"/>
+			<line x1="165" y1="50" x2="170" y2="17"/>
+			<line x1="170" y1="17" x2="176" y2="36"/>
+			<line x1="176" y1="36" x2="181" y2="46"/>
+			<line x1="181" y1="46" x2="186" y2="49"/>
+			<line x1="186" y1="49" x2="192" y2="50"/>
+			<line x1="192" y1="50" x2="197" y2="47"/>
+			<line x1="197" y1="47" x2="203" y2="49"/>
+			<line x1="203" y1="49" x2="208" y2="45"/>
+			<line x1="208" y1="45" x2="213" y2="39"/>
+			<line x1="213" y1="39" x2="218" y2="12"/>
+			<line x1="218" y1="12" x2="224" y2="18"/>
+			<line x1="224" y1="18" x2="229" y2="13"/>
+			<line x1="229" y1="13" x2="235" y2="42"/>
+			<line x1="235" y1="42" x2="240" y2="45"/>
+			<line x1="240" y1="45" x2="245" y2="50"/>
+			<line x1="245" y1="50" x2="251" y2="49"/>
+			<line x1="251" y1="49" x2="257" y2="50"/>
+			<line x1="257" y1="50" x2="262" y2="50"/>
+			<line x1="262" y1="50" x2="267" y2="50"/>
+			<line x1="267" y1="50" x2="272" y2="50"/>
+			<line x1="272" y1="50" x2="278" y2="50"/>
+			<line x1="278" y1="50" x2="283" y2="50"/>
+			<line x1="283" y1="50" x2="288" y2="50"/>
+			<line x1="288" y1="50" x2="293" y2="50"/>
+			<line x1="293" y1="50" x2="298" y2="50"/>
+			<line x1="298" y1="50" x2="303" y2="50"/>
+			<line x1="303" y1="50" x2="308" y2="50"/>
+			<line x1="308" y1="50" x2="314" y2="50"/>
+			<line x1="314" y1="50" x2="319" y2="50"/>
+			<line x1="319" y1="50" x2="324" y2="50"/>
+			<line x1="324" y1="50" x2="329" y2="50"/>
+			<line x1="329" y1="50" x2="334" y2="50"/>
+			<line x1="334" y1="50" x2="339" y2="44"/>
+			<line x1="339" y1="44" x2="345" y2="50"/>
+			<line x1="345" y1="50" x2="350" y2="50"/>
+			<line x1="350" y1="50" x2="355" y2="50"/>
+			<line x1="355" y1="50" x2="360" y2="50"/>
+			<line x1="360" y1="50" x2="366" y2="50"/>
+			<line x1="366" y1="50" x2="371" y2="50"/>
+			<text style="font-family: sans-serif; font-size: 9pt; opacity: 0.5;" x="21" y="0" dx="-2em" dy="-2px">44 MB/s</text>
+		</g>
+		
+		<g style="stroke: #32b432; fill-opacity: 0;">
+			<!-- Files opened chart -->
+			0,0
+		</g>
+	</g>
+	
+	<!-- Process dependency chart -->
+	<g transform="translate(0, 300)" style="fill: none;">
+		<g transform="translate(0, -30)">
+		    <!--<rect style="stroke: #e0e0e0; fill: #f5f5f5;" x="0px" y="0px" width="480px" height="16px"/>-->
+			<rect x="2" y="3" width="10px" height="10px" style="fill: #668cb2;"/><text style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="15px" dy="1em">Running (%cpu)</text>
+			<rect x="120" y="3" width="10px" height="10px" style="fill: #c27a7a; fill-opacity: 0.25;"/><text style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="135px" dy="1em">Unint.sleep (I/O)</text>
+			<rect x="240" y="3" width="10px" height="10px" style="fill: #f0f0f0;"/><text style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="255px" dy="1em">Sleeping</text>
+			<rect x="360" y="3" width="10px" height="10px" style="fill: #787878;"/><text style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="375px" dy="1em">Zombie</text>
+		</g>
+		
+		<!-- Process axis labels -->
+		<text style="font-family: sans-serif; font-size: 9pt; fill: #000000; opacity: 0.7;" x="125" y="0" dx="-0.5em" dy="-3">5s</text>
+			<text style="font-family: sans-serif; font-size: 9pt; fill: #000000; opacity: 0.7;" x="250" y="0" dx="-0.75em" dy="-3">10s</text>
+			<text style="font-family: sans-serif; font-size: 9pt; fill: #000000; opacity: 0.7;" x="375" y="0" dx="-0.75em" dy="-3">15s</text>
+		<rect style="fill: #ffffff; stroke: #e0e0e0; padding: 10px;" x="0" y="0" width="100%" height="100%"/>
+		<g style="stroke: #e6e6e6; stroke-width: 1px;" transform="translate(0.5, 0.5)">
+			<!-- Process time ticks and delimiter lines -->
+			<line style="stroke: #d0d0d0;" x1="0" y1="0" x2="0" y2="576"/>
+			<line x1="25" y1="0" x2="25" y2="576"/>
+			<line x1="50" y1="0" x2="50" y2="576"/>
+			<line x1="75" y1="0" x2="75" y2="576"/>
+			<line x1="100" y1="0" x2="100" y2="576"/>
+			<line style="stroke: #d0d0d0;" x1="125" y1="0" x2="125" y2="576"/>
+			<line x1="150" y1="0" x2="150" y2="576"/>
+			<line x1="175" y1="0" x2="175" y2="576"/>
+			<line x1="200" y1="0" x2="200" y2="576"/>
+			<line x1="225" y1="0" x2="225" y2="576"/>
+			<line style="stroke: #d0d0d0;" x1="250" y1="0" x2="250" y2="576"/>
+			<line x1="275" y1="0" x2="275" y2="576"/>
+			<line x1="300" y1="0" x2="300" y2="576"/>
+			<line x1="325" y1="0" x2="325" y2="576"/>
+			<line x1="350" y1="0" x2="350" y2="576"/>
+			<line style="stroke: #d0d0d0;" x1="375" y1="0" x2="375" y2="576"/>
+		</g>
+		
+		<!-- Process chart -->
+		<!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(0,0)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="375" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="22" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="27" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="32" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="75" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="80" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="96" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="102" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="136" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="165" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="192" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="202" y="0" width="6" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="375" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					
+				</g>
+				<title>1 init
+			Start time: 00:00.000
+			Duration: 00:15.090</title>
+			</g>
+			<text transform="translate(0,0)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">init</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(0,16)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="380" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="6" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="11" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="17" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="22" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="27" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="32" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="38" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="43" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="48" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="53" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="59" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="64" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="70" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="75" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.045454545454545456" x="80" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="96" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="102" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="107" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.038461538461538464" x="112" y="0" width="7" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="119" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="124" y="0" width="7" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="131" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="136" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="142" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.041666666666666664" x="147" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="153" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="159" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="165" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.045454545454545456" x="170" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="175" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="181" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="186" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="192" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="197" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.047619047619047616" x="202" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.045454545454545456" x="208" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="213" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="218" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="224" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.047619047619047616" x="229" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="240" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="245" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="251" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="261" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="267" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.047619047619047616" x="272" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="283" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="288" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="294" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="304" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="310" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="315" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="320" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="326" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="331" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="337" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="347" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="353" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="358" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="363" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="369" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="375" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="380" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-3" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-3" y1="8" x2="-3" y2="-4"/>
+			<line style="stroke-dasharray: 3,3;" x1="-3" y1="-4" x2="0" y2="-4"/>
+			
+				</g>
+				<title>17218 bootchartd
+			Start time: 00:00.000
+			Duration: 00:15.308</title>
+			</g>
+			<text transform="translate(0,16)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">bootchartd</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(2,32)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="377" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.09523809523809523" x="24" y="0" width="6" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="377" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-2" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-2" y1="8" x2="-2" y2="-16"/>
+			
+				</g>
+				<title>17225 startkde
+			Start time: 00:00.110
+			Duration: 00:15.198</title>
+			</g>
+			<text transform="translate(2,32)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">startkde</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(5,48)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="125" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="125" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-3" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-3" y1="8" x2="-3" y2="0"/>
+			
+				</g>
+				<title>17240 ksplashx
+			Start time: 00:00.210
+			Duration: 00:05.068</title>
+			</g>
+			<text transform="translate(5,48)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="125" y="0">ksplashx</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(12,64)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="14" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="14" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-10" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-10" y1="8" x2="-10" y2="-16"/>
+			
+				</g>
+				<title>17252 startkde
+			Start time: 00:00.510
+			Duration: 00:00.598</title>
+			</g>
+			<text transform="translate(12,64)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="14" y="0">startkde</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(12,80)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="14" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="9" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="14" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-3" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-3" y1="8" x2="-3" y2="-4"/>
+			<line style="stroke-dasharray: 3,3;" x1="-3" y1="-4" x2="0" y2="-4"/>
+			
+				</g>
+				<title>17253 kde-config
+			Start time: 00:00.510
+			Duration: 00:00.598</title>
+			</g>
+			<text transform="translate(12,80)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="14" y="0">kde-config</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(12,96)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="14" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="14" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-3" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-3" y1="8" x2="-3" y2="-20"/>
+			<line style="stroke-dasharray: 3,3;" x1="-3" y1="-20" x2="0" y2="-20"/>
+			
+				</g>
+				<title>17254 tr
+			Start time: 00:00.510
+			Duration: 00:00.598</title>
+			</g>
+			<text transform="translate(12,96)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="14" y="0">tr</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(27,112)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="21" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.045454545454545456" x="5" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="21" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-25" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-25" y1="8" x2="-25" y2="-64"/>
+			
+				</g>
+				<title>17287 kdeinit
+			Start time: 00:01.100
+			Duration: 00:00.858</title>
+			</g>
+			<text transform="translate(27,112)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="21" y="0">kdeinit</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(27,128)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="352" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="109" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="137" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="352" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-3" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-3" y1="8" x2="-3" y2="-4"/>
+			<line style="stroke-dasharray: 3,3;" x1="-3" y1="-4" x2="0" y2="-4"/>
+			
+				</g>
+				<title>17289 start_kdeinit
+			Start time: 00:01.110
+			Duration: 00:14.198</title>
+			</g>
+			<text transform="translate(27,128)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">start_kdeinit</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(34,144)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="346" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="147" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="158" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="346" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-7" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-7" y1="8" x2="-7" y2="-16"/>
+			
+				</g>
+				<title>17297 kdeinit
+			Start time: 00:01.370
+			Duration: 00:13.938</title>
+			</g>
+			<text transform="translate(34,144)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">kdeinit</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(36,160)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="344" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="344" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-2" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-2" y1="8" x2="-2" y2="0"/>
+			
+				</g>
+				<title>17302 klauncher
+			Start time: 00:01.460
+			Duration: 00:13.848</title>
+			</g>
+			<text transform="translate(36,160)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">klauncher</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(37,176)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="342" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.13636363636363635" x="104" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.041666666666666664" x="110" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.09523809523809523" x="116" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="342" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-3" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-3" y1="8" x2="-3" y2="-16"/>
+			
+				</g>
+				<title>17307 kded
+			Start time: 00:01.510
+			Duration: 00:13.798</title>
+			</g>
+			<text transform="translate(37,176)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">kded</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(48,192)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="331" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="331" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-14" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-14" y1="8" x2="-14" y2="-32"/>
+			
+				</g>
+				<title>17327 ksmserver
+			Start time: 00:01.950
+			Duration: 00:13.358</title>
+			</g>
+			<text transform="translate(48,192)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">ksmserver</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(49,208)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="330" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.42857142857142855" x="9" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.045454545454545456" x="14" y="0" width="6" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="330" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-15" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-15" y1="8" x2="-15" y2="-48"/>
+			
+				</g>
+				<title>17330 kwin
+			Start time: 00:02.000
+			Duration: 00:13.308</title>
+			</g>
+			<text transform="translate(49,208)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">kwin</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(62,224)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="317" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.38095238095238093" x="7" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.045454545454545456" x="12" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.09090909090909091" x="17" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.7142857142857143" x="28" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.36363636363636365" x="33" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.45454545454545453" x="39" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.9047619047619048" x="44" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.6153846153846154" x="49" y="0" width="7" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.047619047619047616" x="56" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.1111111111111111" x="61" y="0" width="7" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="68" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="74" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="118" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="317" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-28" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-28" y1="8" x2="-28" y2="-64"/>
+			
+				</g>
+				<title>17344 kdesktop
+			Start time: 00:02.530
+			Duration: 00:12.778</title>
+			</g>
+			<text transform="translate(62,224)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">kdesktop</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(67,240)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="313" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.3181818181818182" x="13" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.21428571428571427" x="24" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.40909090909090906" x="29" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.40909090909090906" x="34" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="40" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="45" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="51" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.045454545454545456" x="75" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="91" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.047619047619047616" x="135" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="313" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-33" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-33" y1="8" x2="-33" y2="-80"/>
+			
+				</g>
+				<title>17351 kicker
+			Start time: 00:02.710
+			Duration: 00:12.598</title>
+			</g>
+			<text transform="translate(67,240)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">kicker</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(77,256)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="302" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="302" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-43" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-43" y1="8" x2="-43" y2="-96"/>
+			
+				</g>
+				<title>17365 kio_file
+			Start time: 00:03.130
+			Duration: 00:12.178</title>
+			</g>
+			<text transform="translate(77,256)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">kio_file</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(139,272)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="19" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="19" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-105" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-105" y1="8" x2="-105" y2="-112"/>
+			
+				</g>
+				<title>17440 runupdater
+			Start time: 00:05.610
+			Duration: 00:00.788</title>
+			</g>
+			<text transform="translate(139,272)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="19" y="0">runupdater</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(145,288)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="235" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.08333333333333333" x="13" y="0" width="6" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="235" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-111" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-111" y1="8" x2="-111" y2="-128"/>
+			
+				</g>
+				<title>17448 xterm
+			Start time: 00:05.850
+			Duration: 00:09.458</title>
+			</g>
+			<text transform="translate(145,288)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">xterm</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(156,304)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="224" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="46" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="51" y="0" width="6" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="224" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-11" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-11" y1="8" x2="-11" y2="0"/>
+			
+				</g>
+				<title>17467 bash
+			Start time: 00:06.280
+			Duration: 00:09.028</title>
+			</g>
+			<text transform="translate(156,304)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">bash</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(158,320)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="28" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="28" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-2" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-2" y1="8" x2="-2" y2="0"/>
+			
+				</g>
+				<title>17468 bash
+			Start time: 00:06.380
+			Duration: 00:01.128</title>
+			</g>
+			<text transform="translate(158,320)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">bash</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(158,336)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="17" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="6" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="11" y="0" width="6" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="17" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-3" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-3" y1="8" x2="-3" y2="-4"/>
+			<line style="stroke-dasharray: 3,3;" x1="-3" y1="-4" x2="0" y2="-4"/>
+			
+				</g>
+				<title>17469 ls
+			Start time: 00:06.380
+			Duration: 00:00.688</title>
+			</g>
+			<text transform="translate(158,336)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">ls</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(172,352)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="13" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="8" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="13" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-14" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-14" y1="8" x2="-14" y2="-16"/>
+			
+				</g>
+				<title>17493 tty
+			Start time: 00:06.950
+			Duration: 00:00.558</title>
+			</g>
+			<text transform="translate(172,352)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">tty</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(190,368)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="12" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="7" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="12" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-34" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-34" y1="8" x2="-34" y2="-48"/>
+			
+				</g>
+				<title>17517 tset
+			Start time: 00:07.650
+			Duration: 00:00.508</title>
+			</g>
+			<text transform="translate(190,368)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">tset</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(147,384)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="233" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.125" x="11" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.09523809523809523" x="17" y="0" width="6" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="23" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.09090909090909091" x="28" y="0" width="6" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="34" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="233" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-113" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-113" y1="8" x2="-113" y2="-224"/>
+			
+				</g>
+				<title>17449 konqueror
+			Start time: 00:05.920
+			Duration: 00:09.388</title>
+			</g>
+			<text transform="translate(147,384)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">konqueror</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(153,400)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="227" height="16"/>
+					<rect style="fill: #787878;" x="17" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="12" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="17" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="22" y="0" width="6" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="28" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="33" y="0" width="6" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="39" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="44" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="49" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="54" y="0" width="6" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="60" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="65" y="0" width="6" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="71" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="76" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="81" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="87" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="227" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-119" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-119" y1="8" x2="-119" y2="-240"/>
+			
+				</g>
+				<title>17456 knotify
+			Start time: 00:06.160
+			Duration: 00:09.148</title>
+			</g>
+			<text transform="translate(153,400)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">knotify</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(154,416)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="225" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="10" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="16" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="21" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="26" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.045454545454545456" x="32" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="37" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.2727272727272727" x="42" y="0" width="6" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="48" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="53" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="225" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-120" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-120" y1="8" x2="-120" y2="-256"/>
+			
+				</g>
+				<title>17461 ktip
+			Start time: 00:06.220
+			Duration: 00:09.088</title>
+			</g>
+			<text transform="translate(154,416)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">ktip</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(155,432)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="224" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="9" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="14" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="20" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="25" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="36" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.09090909090909091" x="41" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="47" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="52" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="57" y="0" width="6" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="63" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="68" y="0" width="6" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="74" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="79" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="224" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-121" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-121" y1="8" x2="-121" y2="-272"/>
+			
+				</g>
+				<title>17465 opensuseupdater
+			Start time: 00:06.260
+			Duration: 00:09.048</title>
+			</g>
+			<text transform="translate(155,432)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">opensuseupdater</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(203,448)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="47" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="10" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="15" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="20" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="25" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.09090909090909091" x="31" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.19047619047619047" x="42" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="47" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-48" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-48" y1="8" x2="-48" y2="0"/>
+			
+				</g>
+				<title>17541 zypp-checkpatch
+			Start time: 00:08.200
+			Duration: 00:01.898</title>
+			</g>
+			<text transform="translate(203,448)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">zypp-checkpatch</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(161,464)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="35" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="9" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.18181818181818182" x="14" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="19" y="0" width="6" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="25" y="0" width="5" height="16"/>
+					<rect style="fill: #787878;" x="30" y="0" width="6" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="35" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-127" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-127" y1="8" x2="-127" y2="-304"/>
+			
+				</g>
+				<title>17477 suseplugger
+			Start time: 00:06.490
+			Duration: 00:01.448</title>
+			</g>
+			<text transform="translate(161,464)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">suseplugger</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(167,480)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="45" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="13" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="18" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.09523809523809523" x="24" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.13636363636363635" x="29" y="0" width="6" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.2857142857142857" x="35" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="40" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="45" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-133" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-133" y1="8" x2="-133" y2="-320"/>
+			
+				</g>
+				<title>17484 kmix
+			Start time: 00:06.750
+			Duration: 00:01.838</title>
+			</g>
+			<text transform="translate(167,480)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">kmix</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(172,496)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="207" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="14" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.19047619047619047" x="19" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="207" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-138" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-138" y1="8" x2="-138" y2="-336"/>
+			
+				</g>
+				<title>17494 kpowersave
+			Start time: 00:06.950
+			Duration: 00:08.358</title>
+			</g>
+			<text transform="translate(172,496)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">kpowersave</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(181,512)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="198" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="10" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="21" y="0" width="5" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.13636363636363635" x="26" y="0" width="5" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="31" y="0" width="6" height="16"/>
+					<rect style="fill: #c27a7a; fill-opacity: 0.25;" x="37" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="198" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-147" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-147" y1="8" x2="-147" y2="-352"/>
+			
+				</g>
+				<title>17508 klipper
+			Start time: 00:07.310
+			Duration: 00:07.998</title>
+			</g>
+			<text transform="translate(181,512)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">klipper</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(47,528)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="332" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="76" y="0" width="7" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="256" y="0" width="6" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="332" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-45" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-45" y1="8" x2="-45" y2="-480"/>
+			
+				</g>
+				<title>17325 kwrapper
+			Start time: 00:01.930
+			Duration: 00:13.378</title>
+			</g>
+			<text transform="translate(47,528)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">kwrapper</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(34,544)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="345" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="89" y="0" width="7" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="345" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-34" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-34" y1="8" x2="-34" y2="-528"/>
+			
+				</g>
+				<title>17300 dcopserver
+			Start time: 00:01.390
+			Duration: 00:13.918</title>
+			</g>
+			<text transform="translate(34,544)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="0" y="0">dcopserver</text><!-- Process position -->
+			<g style="stroke: #c8c8c8; fill: none;" transform="translate(44,560)">
+				<g style="stroke: none;">
+					<!-- Process timeline -->
+					<rect style="fill: #f0f0f0;" x="0" y="0" width="103" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="68" y="0" width="7" height="16"/>
+					<rect style="fill: #668cb2;" fill-opacity="0.0" x="98" y="0" width="5" height="16"/>
+				</g>
+				<!-- Process border -->
+				<rect x="0" y="0" width="103" height="16" transform="translate(0.5, 0.5)"/>
+				<!-- Process name -->
+				
+				<g style="stroke: #c0c0c0; stroke-width: 1px; stroke-offset: 0; stroke-dasharray: 3,3;" transform="translate(0.5, 0.5)">
+					<!-- Parent process connector lines -->
+					<line style="stroke-dasharray: 3,3;" x1="0" y1="8" x2="-44" y2="8"/>
+			<line style="stroke-dasharray: 3,3;" x1="-44" y1="8" x2="-44" y2="-544"/>
+			
+				</g>
+				<title>17320 kcminit_startup
+			Start time: 00:01.780
+			Duration: 00:04.168</title>
+			</g>
+			<text transform="translate(44,560)" style="font-family: sans-serif; font-size: 9pt; fill: #000000;" dx="2" dy="15" x="103" y="0">kcminit_startup</text>
+	</g>
+	
+	<!--<text x="0" y="100%" dx="5" dy="-5" style="font-family: sans-serif; font-size: 11pt; fill: #000000; opacity: 0.4;">www.bootchart.org</text>-->
+</svg>
