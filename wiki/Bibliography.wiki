@@ -3,6 +3,10 @@
 General articles:
   * [http://www.cs.toronto.edu/~behdad/preload.pdf Behdad Esfahbod MSc thesis about Preload project]
   * [http://en.wikipedia.org/wiki/Prefetcher Wikipedia article about Windows prefetcher]
+  * [https://secure.engr.oregonstate.edu/wiki/CS411/index.php/Blktrace_Guide Brief guide to tracing block IO]
+  * [http://brick.kernel.dk/snaps/blktrace-git-latest.tar.gz Sources of blktrace tools]
+  * [http://gentoo-wiki.com/HOWTO_FCache Wiki page about fcache - a tool to cache all disk accesses on a separate partition]
+  * [http://brick.kernel.dk/snaps/fcache-git-latest.tar.gz Snapshot of fcache git tree]
 
 Google Summer of Code applications and projects:
   * [http://sourceforge.net/projects/preload GSoC 2005: "Preload: adaptive readahead daemon" by Behdad Esfahbod] and [http://www.cs.toronto.edu/~behdad/blog/preload.txt his proposal]
@@ -11,3 +15,4 @@ Google Summer of Code applications and projects:
 
 Links:
   * [http://code.google.com/p/pagecache-tools/ Tools for the linux page cache tracing and prefetching project created for "Rapid linux desktop startup through pre-caching" GSoC project]
+
