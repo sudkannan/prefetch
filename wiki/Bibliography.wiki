@@ -9,7 +9,7 @@ General articles:
   * [http://brick.kernel.dk/snaps/fcache-git-latest.tar.gz Snapshot of fcache git tree]
 
 Disk access characteristics:
-  * [http://www.cs.ucsb.edu/research/tech_reports/reports/2004-18.pdf Article: "Diskbench: User-level Disk Feature Extraction Tool" by Zoran Dimitrijevic, Raju Rangaswami , David Watson , and Anurag Acharya] - contains diagrams of disk seek time relative to cylinder distance and other useful disk characteristics
+  * [http://www.cs.ucsb.edu/research/tech_reports/reports/2004-18.pdf Paper: "Diskbench: User-level Disk Feature Extraction Tool" by Zoran Dimitrijevic, Raju Rangaswami , David Watson , and Anurag Acharya] - contains diagrams of disk seek time relative to cylinder distance and other useful disk characteristics
 
 
 Google Summer of Code applications and projects:
