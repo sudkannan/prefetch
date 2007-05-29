@@ -1,5 +1,5 @@
 #summary Bibliography with interesting topics on prefetching
-#labels links
+#labels links,bibliography
 General articles:
   * [http://www.cs.toronto.edu/~behdad/preload.pdf Behdad Esfahbod MSc thesis about Preload project]
   * [http://en.wikipedia.org/wiki/Prefetcher Wikipedia article about Windows prefetcher]
@@ -8,6 +8,10 @@ General articles:
   * [http://gentoo-wiki.com/HOWTO_FCache Wiki page about fcache - a tool to cache all disk accesses on a separate partition]
   * [http://brick.kernel.dk/snaps/fcache-git-latest.tar.gz Snapshot of fcache git tree]
 
+Disk access characteristics:
+  * [http://www.cs.ucsb.edu/research/tech_reports/reports/2004-18.pdf Article: "Diskbench: User-level Disk Feature Extraction Tool" by Zoran Dimitrijevic, Raju Rangaswami , David Watson , and Anurag Acharya] - contains diagrams of disk seek time relative to cylinder distance and other useful disk characteristics
+
+
 Google Summer of Code applications and projects:
   * [http://sourceforge.net/projects/preload GSoC 2005: "Preload: adaptive readahead daemon" by Behdad Esfahbod] and [http://www.cs.toronto.edu/~behdad/blog/preload.txt his proposal]
   * [http://code.google.com/soc/2006/kde/appinfo.html?csaid=1F587222C2BBB5F4 GSoC 2006: "Rapid linux desktop startup through pre-caching" by Fengguang Wu, mentored by Lubos Lunak]
@@ -15,4 +19,3 @@ Google Summer of Code applications and projects:
 
 Links:
   * [http://code.google.com/p/pagecache-tools/ Tools for the linux page cache tracing and prefetching project created for "Rapid linux desktop startup through pre-caching" GSoC project]
-
