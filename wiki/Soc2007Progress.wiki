@@ -10,10 +10,18 @@ This page will contain information about progress of implementation.
     * setting up project (*done*)
     * establishing contact with Ubuntu developers (*done*)
     * establishing contact with preload developers (*done*)
-    * establishing contact with bootcache developers (_in progress_)
-    * establishing contact with ext3 developers 
-    * submitting disk layout tool for review by ext3 developers
+    * establishing contact with bootcache developers (*done*)
+    * establishing contact with ext3 developers (*done*)
+    * submitting disk layout tool for review by ext3 developers (*done*)
   * 1st half of June: implementation of tracing facility and integration with Ubuntu boot scripts, analysis of impact on boot time.
+    * creating measurement metrics (_in progress_)
+      * OpenOffice document to measure startup time
+      * Firefox script to measure startup time
+      * Scripts to measure startup time
+      * Kernel I/O wait time metric
+    * evaluation of pagecache as tracing tool
+    * integration of tracing into boot scripts
+    * integration of prefetching into boot scripts
   * 2nd half of June - 1st half of July: implementation of hooking into application start, analysis of impact and performance of prefetching during application start.
   * 2nd half of July - improving disk layout tool, intensive testing and analysis of impact.
   * August - in case of slips, time to fix problems, otherwise implementing metadata prefetching and partial prefetching during boot. 
