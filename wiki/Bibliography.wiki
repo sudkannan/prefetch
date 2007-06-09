@@ -7,6 +7,7 @@ General articles:
   * [http://brick.kernel.dk/snaps/blktrace-git-latest.tar.gz Sources of blktrace tools]
   * [http://gentoo-wiki.com/HOWTO_FCache Wiki page about fcache - a tool to cache all disk accesses on a separate partition]
   * [http://brick.kernel.dk/snaps/fcache-git-latest.tar.gz Snapshot of fcache git tree]
+  * [http://www.complang.tuwien.ac.at/Diplomarbeiten/strauss-haslinglehner05.ps.gz Stefan Strauss-Haslinglehner master's thesis about prefetching solution for Linux (in German)] [http://babelfish.altavista.com/babelfish/tr?lp=de_en&url=http%3A//209.85.135.104/search%3Fq%3Dcache%3AG2iEs6nVzE8J%3Awww.complang.tuwien.ac.at/Diplomarbeiten/strauss-haslinglehner05.ps.gz%2Bstefan%2Bhaslinglehner%26hl%3Dpl%26ct%3Dclnk%26cd%3D12 Automatic translation from German to English]
 
 Disk access characteristics:
   * [http://www.cs.ucsb.edu/research/tech_reports/reports/2004-18.pdf Paper: "Diskbench: User-level Disk Feature Extraction Tool" by Zoran Dimitrijevic, Raju Rangaswami , David Watson , and Anurag Acharya] - contains diagrams of disk seek time relative to cylinder distance and other useful disk characteristics
