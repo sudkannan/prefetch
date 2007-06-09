@@ -1,0 +1,12 @@
+#labels openoffice
+# Ways of measuring OpenOffice startup time
+
+= Ways of measuring OpenOffice startup time =
+== Start with document which calls macro to quit OpenOffice ==
+
+The idea is to prepare a document which upon loading calls macro which quits OpenOffice.
+
+This approach does not work due to bug in OpenOffice - when quit command is executed, OpenOffice crashes.
+
+== Start with document which runs program when it is loaded ==
+The idea is to prepare a document which upon loading calls a program which will record the time and/or other metrics.
