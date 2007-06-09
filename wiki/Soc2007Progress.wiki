@@ -14,6 +14,7 @@ This page will contain information about progress of implementation.
     * establishing contact with ext3 developers (*done*)
     * submitting disk layout tool for review by ext3 developers (*done*)
   * 1st half of June: implementation of tracing facility and integration with Ubuntu boot scripts, analysis of impact on boot time.
+    * creating development environment (_in progress_)
     * creating measurement metrics (_in progress_)
       * OpenOffice document to measure startup time
       * Firefox script to measure startup time
