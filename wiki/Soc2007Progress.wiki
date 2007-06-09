@@ -16,7 +16,7 @@ This page will contain information about progress of implementation.
   * 1st half of June: implementation of tracing facility and integration with Ubuntu boot scripts, analysis of impact on boot time.
     * creating development environment (_in progress_)
     * creating measurement metrics (_in progress_)
-      * OpenOffice document to measure startup time
+      * Open Office document to measure startup time (see MeasuringOpenOfficeStartupTime)
       * Firefox script to measure startup time
       * Scripts to measure startup time
       * Kernel I/O wait time metric
