@@ -1,6 +1,4 @@
 #labels openoffice
-# Ways of measuring OpenOffice startup time
-
 = Ways of measuring OpenOffice startup time =
 == Start with document which calls macro to quit OpenOffice ==
 
