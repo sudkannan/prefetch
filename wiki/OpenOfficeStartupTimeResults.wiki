@@ -11,12 +11,15 @@ Measurement method uses -norestore option. To see what is the effect of using th
 
 == Test 1 ==
 === Test description ===
-Test machine: [TestMachineKL1 kl1]
+Test machine: [TestMachineKL1 KL1]
+
 Test environment: 
-  * Kubuntu Gutsy with updates as of 2006-06-10.
+  * KubuntuGutsyKL1 with updates as of 2006-06-10.
   * Standard desktop environment.
+
 Test preparation: 
   * one warmup run of measure_times.sh (i.e. warm startup)
+
 Measurements repeatability:
   * each startup time measurement was repeated 10 times
   * each measurement immediately starting after previous one
