@@ -1,0 +1,34 @@
+#summary Results of OpenOffice startup time measurements.
+#labels tests,results
+
+= Introduction =
+This page contains summary of results of startup tests for OpenOffice.
+
+= Effect of -norestore option =
+Measurement method uses -norestore option. To see what is the effect of using this option, 2 series of tests were performed: 
+  * One series with -norestore option and automatic killing of OpenOffice (KILL_OPENOFFICE=yes in measure_openoffice_start_time.sh script).
+  * One series without -norestore option and closing OpenOffice manually (KILL_OPENOFFICE=no in measure_openoffice_start_time.sh script).
+
+== Test 1 ==
+=== Test description ===
+Test machine: [TestMachineKL1 kl1]
+Test environment: 
+  * Kubuntu Gutsy with updates as of 2006-06-10.
+  * Standard desktop environment.
+Test preparation: 
+  * one warmup run of measure_times.sh (i.e. warm startup)
+Measurements repeatability:
+  * each startup time measurement was repeated 10 times
+  * each measurement immediately starting after previous one
+
+=== Test results ===
+||  || With -norestore || Without -norestore ||
+|| Average time (s)  || 4.1165 || 4.0696 ||
+|| Standard deviation|| 0.0389 || 0.0909 ||
+
+Raw results are at: http://prefetch.googlecode.com/svn/trunk/results/openoffice/norestore-effect/testmachine-kl1/
+
+=== Conclusion ===
+Difference in startup time is in average about 0.05s so is not significant.
+
+However, the test results show decreasing startup time with subsequent iteration, so the  difference might be related to the fact that test without -norestore option was performed later. Repeating test with more warmup is recommended.
