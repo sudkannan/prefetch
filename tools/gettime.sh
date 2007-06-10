@@ -1,2 +1,3 @@
 #!/bin/sh
-date --utc +'%s.%N'
+. `dirname "$0"`/toolslib.sh
+gettime
