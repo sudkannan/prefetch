@@ -7,6 +7,11 @@ failure() {
 	exit 1
 }
 
+#prints parameters to stderr
+echoerr() {
+	echo "$@" 1>&2
+}
+
 #Returns time in format suitable for subtraction
 #Resolution is nanoseconds.
 get_time() {
