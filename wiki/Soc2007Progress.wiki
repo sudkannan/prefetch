@@ -22,6 +22,9 @@ This page will contain information about progress of implementation.
       * Firefox script to measure startup time
       * Scripts to measure startup time
       * Kernel I/O wait time metric
+    * measuring cold and warm startup time
+      * OpenOffice startup time (see OpenOfficeStartupTimeResults) (_in progress_)
+      * Firefox startup time
     * evaluation of pagecache as tracing tool
     * integration of tracing into boot scripts
     * integration of prefetching into boot scripts
