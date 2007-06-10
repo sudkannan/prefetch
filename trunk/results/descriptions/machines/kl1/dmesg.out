@@ -1,0 +1,263 @@
+[    0.000000] Linux version 2.6.22-6-generic (buildd@rothera) (gcc version 4.1.3 20070528 (prerelease) (Ubuntu 4.1.2-9ubuntu2)) #1 SMP Fri Jun 1 19:24:12 GMT 2007
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000]  BIOS-e820: 0000000000000000 - 000000000009fc00 (usable)
+[    0.000000]  BIOS-e820: 000000000009fc00 - 00000000000a0000 (reserved)
+[    0.000000]  BIOS-e820: 00000000000f0000 - 0000000000100000 (reserved)
+[    0.000000]  BIOS-e820: 0000000000100000 - 000000000fff0000 (usable)
+[    0.000000]  BIOS-e820: 000000000fff0000 - 000000000fff3000 (ACPI NVS)
+[    0.000000]  BIOS-e820: 000000000fff3000 - 0000000010000000 (ACPI data)
+[    0.000000]  BIOS-e820: 00000000ffff0000 - 0000000100000000 (reserved)
+[    0.000000] 0MB HIGHMEM available.
+[    0.000000] 255MB LOWMEM available.
+[    0.000000] Entering add_active_range(0, 0, 65520) 0 entries of 256 used
+[    0.000000] Zone PFN ranges:
+[    0.000000]   DMA             0 ->     4096
+[    0.000000]   Normal       4096 ->    65520
+[    0.000000]   HighMem     65520 ->    65520
+[    0.000000] early_node_map[1] active PFN ranges
+[    0.000000]     0:        0 ->    65520
+[    0.000000] On node 0 totalpages: 65520
+[    0.000000]   DMA zone: 32 pages used for memmap
+[    0.000000]   DMA zone: 0 pages reserved
+[    0.000000]   DMA zone: 4064 pages, LIFO batch:0
+[    0.000000]   Normal zone: 479 pages used for memmap
+[    0.000000]   Normal zone: 60945 pages, LIFO batch:15
+[    0.000000]   HighMem zone: 0 pages used for memmap
+[    0.000000] DMI 2.2 present.
+[    0.000000] ACPI: RSDP 000F80C0, 0014 (r0 VIA694)
+[    0.000000] ACPI: RSDT 0FFF3000, 0028 (r1 VIA694 MSI ACPI 42302E31 AWRD        0)
+[    0.000000] ACPI: FACP 0FFF3040, 0074 (r1 VIA694 MSI ACPI 42302E31 AWRD        0)
+[    0.000000] ACPI: DSDT 0FFF30C0, 27A3 (r1 VIA694 AWRDACPI     1000 MSFT  100000C)
+[    0.000000] ACPI: FACS 0FFF0000, 0040
+[    0.000000] ACPI: PM-Timer IO Port: 0x4008
+[    0.000000] Allocating PCI resources starting at 20000000 (gap: 10000000:efff0000)
+[    0.000000] Built 1 zonelists.  Total pages: 65009
+[    0.000000] Kernel command line: root=UUID=aa75d265-e35a-4df7-9814-8cf8ebd63d88 ro quiet splash
+[    0.000000] Local APIC disabled by BIOS -- you can enable it with "lapic"
+[    0.000000] mapped APIC to ffffd000 (0120c000)
+[    0.000000] Enabling fast FPU save and restore... done.
+[    0.000000] Initializing CPU#0
+[    0.000000] PID hash table entries: 1024 (order: 10, 4096 bytes)
+[    0.000000] Detected 1199.510 MHz processor.
+[   26.194280] Console: colour VGA+ 80x25
+[   26.194731] Dentry cache hash table entries: 32768 (order: 5, 131072 bytes)
+[   26.195012] Inode-cache hash table entries: 16384 (order: 4, 65536 bytes)
+[   26.211482] Memory: 248608k/262080k available (2002k kernel code, 12916k reserved, 913k data, 360k init, 0k highmem)
+[   26.211503] virtual kernel memory layout:
+[   26.211505]     fixmap  : 0xfff4d000 - 0xfffff000   ( 712 kB)
+[   26.211508]     pkmap   : 0xff800000 - 0xffc00000   (4096 kB)
+[   26.211510]     vmalloc : 0xd0800000 - 0xff7fe000   ( 751 MB)
+[   26.211512]     lowmem  : 0xc0000000 - 0xcfff0000   ( 255 MB)
+[   26.211515]       .init : 0xc03df000 - 0xc0439000   ( 360 kB)
+[   26.211517]       .data : 0xc02f4a8a - 0xc03d90d4   ( 913 kB)
+[   26.211519]       .text : 0xc0100000 - 0xc02f4a8a   (2002 kB)
+[   26.211526] Checking if this processor honours the WP bit even in supervisor mode... Ok.
+[   26.211612] SLUB: Genslabs=23, HWalign=32, Order=0-1, MinObjects=4, Processors=1, Nodes=1
+[   26.291580] Calibrating delay using timer specific routine.. 2401.52 BogoMIPS (lpj=4803058)
+[   26.291636] Security Framework v1.0.0 initialized
+[   26.291650] SELinux:  Disabled at boot.
+[   26.291685] Mount-cache hash table entries: 512
+[   26.291940] CPU: After generic identify, caps: 0183f9ff c1c7f9ff 00000000 00000000 00000000 00000000 00000000
+[   26.291958] CPU: L1 I Cache: 64K (64 bytes/line), D cache 64K (64 bytes/line)
+[   26.291963] CPU: L2 Cache: 256K (64 bytes/line)
+[   26.291968] CPU: After all inits, caps: 0183f9ff c1c7f9ff 00000000 00000420 00000000 00000000 00000000
+[   26.291988] Compat vDSO mapped to ffffe000.
+[   26.292013] Checking 'hlt' instruction... OK.
+[   26.307629] SMP alternatives: switching to UP code
+[   26.308069] Freeing SMP alternatives: 11k freed
+[   26.308506] ACPI: Core revision 20070126
+[   26.310157] ACPI: setting ELCR to 0008 (from 0c08)
+[   26.311986] CPU0: AMD Athlon(tm) processor stepping 02
+[   26.311998] SMP motherboard not detected.
+[   26.312004] Local APIC not detected. Using dummy APIC emulation.
+[   26.312094] Brought up 1 CPUs
+[   26.312418] Booting paravirtualized kernel on bare hardware
+[   26.312551] Time: 18:12:55  Date: 05/10/107
+[   26.312610] NET: Registered protocol family 16
+[   26.312838] EISA bus registered
+[   26.312860] ACPI: bus type pci registered
+[   26.345835] PCI: PCI BIOS revision 2.10 entry at 0xfb590, last bus=1
+[   26.345839] PCI: Using configuration type 1
+[   26.345842] Setting up standard PCI resources
+[   26.353849] ACPI: Interpreter enabled
+[   26.353857] ACPI: (supports S0 S1 S4 S5)
+[   26.353884] ACPI: Using PIC for interrupt routing
+[   26.358731] ACPI: PCI Root Bridge [PCI0] (0000:00)
+[   26.358757] PCI: Probing PCI hardware (bus 00)
+[   26.358904] Disabling VIA memory write queue (PCI ID 0305, rev 03): [55] 89 & 1f -> 09
+[   26.359162] PCI quirk: region 6000-607f claimed by vt82c686 HW-mon
+[   26.359168] PCI quirk: region 5000-500f claimed by vt82c686 SMB
+[   26.359426] ACPI: PCI Interrupt Routing Table [\_SB_.PCI0._PRT]
+[   26.372084] ACPI: PCI Interrupt Link [LNKA] (IRQs 1 3 4 5 6 7 *10 11 12 14 15)
+[   26.372254] ACPI: PCI Interrupt Link [LNKB] (IRQs 1 3 4 5 6 7 10 11 12 14 15) *0, disabled.
+[   26.372423] ACPI: PCI Interrupt Link [LNKC] (IRQs 1 3 4 5 6 7 10 11 12 14 15) *0, disabled.
+[   26.372616] ACPI: PCI Interrupt Link [LNKD] (IRQs 1 3 4 5 6 7 10 *11 12 14 15)
+[   26.372742] Linux Plug and Play Support v0.97 (c) Adam Belay
+[   26.372765] pnp: PnP ACPI init
+[   26.372782] ACPI: bus type pnp registered
+[   26.375644] pnp: PnP ACPI: found 11 devices
+[   26.375649] ACPI: ACPI bus type pnp unregistered
+[   26.375657] PnPBIOS: Disabled by ACPI PNP
+[   26.375768] PCI: Using ACPI for IRQ routing
+[   26.375774] PCI: If a device doesn't work, try "pci=routeirq".  If it helps, post a report
+[   26.397409] NET: Registered protocol family 8
+[   26.397413] NET: Registered protocol family 20
+[   26.397541] pnp: 00:00: iomem range 0xd0000-0xd3fff has been reserved
+[   26.397547] pnp: 00:00: iomem range 0xf0000-0xf7fff could not be reserved
+[   26.397553] pnp: 00:00: iomem range 0xf8000-0xfbfff could not be reserved
+[   26.397558] pnp: 00:00: iomem range 0xfc000-0xfffff could not be reserved
+[   26.399493] Time: tsc clocksource has been installed.
+[   26.428111] PCI: Bridge: 0000:00:01.0
+[   26.428114]   IO window: disabled.
+[   26.428121]   MEM window: dc000000-ddffffff
+[   26.428127]   PREFETCH window: d0000000-d7ffffff
+[   26.428150] PCI: Setting latency timer of device 0000:00:01.0 to 64
+[   26.428171] NET: Registered protocol family 2
+[   26.467541] IP route cache hash table entries: 2048 (order: 1, 8192 bytes)
+[   26.467639] TCP established hash table entries: 8192 (order: 4, 98304 bytes)
+[   26.467975] TCP bind hash table entries: 8192 (order: 4, 65536 bytes)
+[   26.468255] TCP: Hash tables configured (established 8192 bind 8192)
+[   26.468260] TCP reno registered
+[   26.479681] checking if image is initramfs... it is
+[   26.931131] Switched to high resolution mode on CPU 0
+[   27.478689] Freeing initrd memory: 6805k freed
+[   27.479459] audit: initializing netlink socket (disabled)
+[   27.479490] audit(1181499176.192:1): initialized
+[   27.482869] VFS: Disk quotas dquot_6.5.1
+[   27.482966] Dquot-cache hash table entries: 1024 (order 0, 4096 bytes)
+[   27.483157] io scheduler noop registered
+[   27.483162] io scheduler anticipatory registered
+[   27.483166] io scheduler deadline registered
+[   27.483190] io scheduler cfq registered (default)
+[   27.483217] Applying VIA southbridge workaround.
+[   27.483225] PCI: Disabling Via external APIC routing
+[   27.483265] Boot video device is 0000:01:00.0
+[   27.483652] isapnp: Scanning for PnP cards...
+[   27.837903] isapnp: No Plug & Play device found
+[   27.882228] Real Time Clock Driver v1.12ac
+[   27.882526] Serial: 8250/16550 driver $Revision: 1.90 $ 4 ports, IRQ sharing enabled
+[   27.883722] 00:08: ttyS0 at I/O 0x3f8 (irq = 4) is a 16550A
+[   27.885048] RAMDISK driver initialized: 16 RAM disks of 65536K size 1024 blocksize
+[   27.885529] input: Macintosh mouse button emulation as /class/input/input0
+[   27.885668] PNP: PS/2 Controller [PNP0303:PS2K] at 0x60,0x64 irq 1
+[   27.885674] PNP: PS/2 controller doesn't have AUX irq; using default 12
+[   27.886131] serio: i8042 KBD port at 0x60,0x64 irq 1
+[   27.886142] serio: i8042 AUX port at 0x60,0x64 irq 12
+[   27.886544] mice: PS/2 mouse device common for all mice
+[   27.886748] EISA: Probing bus 0 at eisa.0
+[   27.886782] Cannot allocate resource for EISA slot 4
+[   27.886787] Cannot allocate resource for EISA slot 5
+[   27.886791] Cannot allocate resource for EISA slot 6
+[   27.886805] EISA: Detected 0 cards.
+[   27.887188] TCP cubic registered
+[   27.887206] NET: Registered protocol family 1
+[   27.887244] Using IPI No-Shortcut mode
+[   27.887521]   Magic number: 11:826:240
+[   27.887636]   hash matches device ttysd
+[   27.888756] Freeing unused kernel memory: 360k freed
+[   27.934349] input: AT Translated Set 2 keyboard as /class/input/input1
+[   29.255238] Capability LSM initialized
+[   30.243343] usbcore: registered new interface driver usbfs
+[   30.243395] usbcore: registered new interface driver hub
+[   30.243441] usbcore: registered new device driver usb
+[   30.245166] USB Universal Host Controller Interface driver v3.0
+[   30.245932] ACPI: PCI Interrupt Link [LNKA] enabled at IRQ 10
+[   30.245939] PCI: setting IRQ 10 as level-triggered
+[   30.245946] ACPI: PCI Interrupt 0000:00:07.2[D] -> Link [LNKA] -> GSI 10 (level, low) -> IRQ 10
+[   30.245968] uhci_hcd 0000:00:07.2: UHCI Host Controller
+[   30.246323] uhci_hcd 0000:00:07.2: new USB bus registered, assigned bus number 1
+[   30.246362] uhci_hcd 0000:00:07.2: irq 10, io base 0x0000d400
+[   30.246634] usb usb1: configuration #1 chosen from 1 choice
+[   30.246680] hub 1-0:1.0: USB hub found
+[   30.246700] hub 1-0:1.0: 2 ports detected
+[   30.290157] Uniform Multi-Platform E-IDE driver Revision: 7.00alpha2
+[   30.290172] ide: Assuming 33MHz system bus speed for PIO modes; override with idebus=xx
+[   30.348499] ACPI: PCI Interrupt 0000:00:07.3[D] -> Link [LNKA] -> GSI 10 (level, low) -> IRQ 10
+[   30.348526] uhci_hcd 0000:00:07.3: UHCI Host Controller
+[   30.348574] uhci_hcd 0000:00:07.3: new USB bus registered, assigned bus number 2
+[   30.348608] uhci_hcd 0000:00:07.3: irq 10, io base 0x0000d800
+[   30.348816] usb usb2: configuration #1 chosen from 1 choice
+[   30.348861] hub 2-0:1.0: USB hub found
+[   30.348880] hub 2-0:1.0: 2 ports detected
+[   30.362581] 8139too Fast Ethernet driver 0.9.28
+[   30.508446] VP_IDE: IDE controller at PCI slot 0000:00:07.1
+[   30.508486] VP_IDE: chipset revision 6
+[   30.508490] VP_IDE: not 100% native mode: will probe irqs later
+[   30.508507] VP_IDE: VIA vt82c686b (rev 40) IDE UDMA100 controller on pci0000:00:07.1
+[   30.508522]     ide0: BM-DMA at 0xd000-0xd007, BIOS settings: hda:DMA, hdb:pio
+[   30.508544]     ide1: BM-DMA at 0xd008-0xd00f, BIOS settings: hdc:DMA, hdd:pio
+[   30.508558] Probing IDE interface ide0...
+[   30.545484] FDC 0 is a post-1991 82077
+[   30.588013] usb 1-1: new low speed USB device using uhci_hcd and address 2
+[   30.761093] usb 1-1: configuration #1 chosen from 1 choice
+[   30.923866] hda: HDT722516DLAT80, ATA DISK drive
+[   31.163534] usbcore: registered new interface driver hiddev
+[   31.177183] input: 4D Mouse USB Mouse as /class/input/input2
+[   31.177398] input: USB HID v1.00 Mouse [4D Mouse USB Mouse] on usb-0000:00:07.2-1
+[   31.177429] usbcore: registered new interface driver usbhid
+[   31.177437] /build/buildd/linux-source-2.6.22-2.6.22/drivers/hid/usbhid/hid-core.c: v2.6:USB HID core driver
+[   31.595420] ide0 at 0x1f0-0x1f7,0x3f6 on irq 14
+[   31.595539] Probing IDE interface ide1...
+[   32.458558] hdc: LG DVD-ROM DRD-8120B, ATAPI CD/DVD-ROM drive
+[   32.794604] ide1 at 0x170-0x177,0x376 on irq 15
+[   32.808329] SCSI subsystem initialized
+[   32.818580] libata version 2.21 loaded.
+[   32.823303] ACPI: PCI Interrupt Link [LNKD] enabled at IRQ 11
+[   32.823314] PCI: setting IRQ 11 as level-triggered
+[   32.823322] ACPI: PCI Interrupt 0000:00:0e.0[A] -> Link [LNKD] -> GSI 11 (level, low) -> IRQ 11
+[   32.824176] eth0: RealTek RTL8139 at 0xd0812000, 00:30:f1:3c:de:f8, IRQ 11
+[   32.824182] eth0:  Identified 8139 chip type 'RTL-8139C'
+[   32.840517] hda: max request size: 512KiB
+[   32.857410] hda: 321672960 sectors (164696 MB) w/7674KiB Cache, CHS=20023/255/63, UDMA(100)
+[   32.858807] hda: cache flushes supported
+[   32.858909]  hda: hda1 hda3 < hda5 hda6 hda7 hda8 hda9 hda10 hda11 hda12 hda13 hda14 >
+[   32.989004] hdc: ATAPI 40X DVD-ROM drive, 512kB Cache, UDMA(33)
+[   32.989021] Uniform CD-ROM driver Revision: 3.20
+[   33.388527] Attempting manual resume
+[   33.388535] swsusp: Resume From Partition 3:9
+[   33.388538] PM: Checking swsusp image.
+[   33.400957] PM: Resume from disk failed.
+[   33.449377] kjournald starting.  Commit interval 5 seconds
+[   33.449404] EXT3-fs: mounted filesystem with ordered data mode.
+[   41.019810] eth0: link up, 100Mbps, full-duplex, lpa 0x41E1
+[   42.579786] NET: Registered protocol family 17
+[   44.224780] Linux agpgart interface v0.102 (c) Dave Jones
+[   44.246480] parport_pc: VIA 686A/8231 detected
+[   44.246489] parport_pc: probing current configuration
+[   44.246511] parport_pc: Current parallel port base: 0x378
+[   44.246568] parport0: PC-style at 0x378, irq 7 [PCSPP,TRISTATE,EPP]
+[   44.251068] pci_hotplug: PCI Hot Plug PCI Core version: 0.5
+[   44.264029] shpchp: Standard Hot Plug PCI Controller Driver version: 0.4
+[   44.340198] parport_pc: VIA parallel port: io=0x378, irq=7
+[   44.704009] agpgart: Detected VIA Twister-K/KT133x/KM133 chipset
+[   44.710393] agpgart: AGP aperture is 64M @ 0xd8000000
+[   45.502233] input: PC Speaker as /class/input/input3
+[   46.300152] ACPI: PCI Interrupt 0000:00:07.5[C] -> Link [LNKD] -> GSI 11 (level, low) -> IRQ 11
+[   46.300308] PCI: Setting latency timer of device 0000:00:07.5 to 64
+[   47.921301] fuse init (API version 7.8)
+[   47.961560] lp0: using parport0 (interrupt-driven).
+[   48.038938] Adding 265032k swap on /dev/disk/by-uuid/7641ca9c-fbac-41d9-bb53-c0bfad15cdfc.  Priority:-1 extents:1 across:265032k
+[   48.134804] EXT3 FS on hda1, internal journal
+[   48.424960] NET: Registered protocol family 10
+[   48.425143] lo: Disabled Privacy Extensions
+[   54.475949] No dock devices found.
+[   54.565799] input: Power Button (FF) as /class/input/input4
+[   54.566327] ACPI: Power Button (FF) [PWRF]
+[   54.593785] input: Power Button (CM) as /class/input/input5
+[   54.594293] ACPI: Power Button (CM) [PWRB]
+[   54.609787] input: Sleep Button (CM) as /class/input/input6
+[   54.610366] ACPI: Sleep Button (CM) [SLPB]
+[   54.717878] toshiba_acpi: Unknown parameter `hotkeys_over_acpi'
+[   55.239733] powernow: No powernow capabilities detected
+[   58.217900] apm: BIOS version 1.2 Flags 0x07 (Driver version 1.16ac)
+[   58.217911] apm: overridden by ACPI.
+[   58.978421] Bluetooth: Core ver 2.11
+[   58.978667] NET: Registered protocol family 31
+[   58.978672] Bluetooth: HCI device and connection manager initialized
+[   58.978679] Bluetooth: HCI socket layer initialized
+[   59.008502] Bluetooth: L2CAP ver 2.8
+[   59.008512] Bluetooth: L2CAP socket layer initialized
+[   59.056243] Bluetooth: RFCOMM socket layer initialized
+[   59.056431] Bluetooth: RFCOMM TTY layer initialized
+[   59.056436] Bluetooth: RFCOMM ver 1.8
+[   74.826542] eth0: no IPv6 routers present
