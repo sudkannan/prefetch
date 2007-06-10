@@ -26,7 +26,7 @@ Measurements repeatability:
 || Average time (s)  || 4.1165 || 4.0696 ||
 || Standard deviation|| 0.0389 || 0.0909 ||
 
-Raw results are at: http://prefetch.googlecode.com/svn/trunk/results/openoffice/norestore-effect/testmachine-kl1/
+Raw results are at: http://prefetch.googlecode.com/svn/trunk/results/openoffice/norestore-effect/testmachine-kl1/test-1/
 
 === Conclusion ===
 Difference in startup time is in average about 0.05s so is not significant.
