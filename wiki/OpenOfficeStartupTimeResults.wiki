@@ -1,5 +1,5 @@
 #summary Results of OpenOffice startup time measurements.
-#labels tests,results
+#labels tests,results,openoffice
 
 = Introduction =
 This page contains summary of results of startup tests for OpenOffice.
@@ -61,3 +61,43 @@ Raw results are at: http://prefetch.googlecode.com/svn/trunk/results/openoffice/
 === Conclusion ===
 Difference in startup time with long warmup is in average about 0.20s so is not significant. 
 -norestore option can be used for measuring startup time.
+
+= Simulating cold startup of OpenOffice =
+To reliably measure cold startup time, caches must be cold.
+These test aim at checking how can it be simulated.
+
+== Test 1 ==
+=== Test description ===
+Check poweroff-poweron versus simple restart of machine (using K->Logout->Restart)
+
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+
+Test preparation: 
+  * None (tests run right after system start)
+
+Measurements repeatability:
+  * cold start with poweroff repeated 6 times
+  * cold start with restart repeated 3 times (poweron, restart, restart)
+
+=== Test results ===
+||  || Poweoff || Restart ||
+|| Run 1  || 14.1362938881 || 14.1362938881 ||
+|| Run 2  || 14.2078208923 || 13.3177342415 ||
+|| Run 3  || 14.8470196724 || 12.8328957558 ||
+|| Run 4  || 13.217066288 ||  ||
+|| Run 5  || 13.5858802795 ||  ||
+|| Run 6  || 14.2573206425 ||  ||
+|| Average time (s)  || 14.0419 || 13.4290 ||
+|| Standard deviation|| 0.5691 || 0.6588 ||
+
+Note: first result for restart and poweroff is the same.
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/openoffice/coldstart/testmachine-kl1/test-1/
+
+=== Conclusion ===
+Restart seems to not clean caches thoroughly (probably disk caches are not flushed) as time is decreasing in subsequent restarts. The test sample is too small to draw firm conclusions, so the test should be repeated.
