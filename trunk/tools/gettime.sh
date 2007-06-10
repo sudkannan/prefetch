@@ -1,3 +1,3 @@
 #!/bin/sh
 . `dirname "$0"`/toolslib.sh
-gettime
+get_time
