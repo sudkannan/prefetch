@@ -33,6 +33,8 @@ oowriter $OPENOFFICE_OPTIONS ./recordStart.odt &
 
 while true; do
 	if [ -e "$RESULT_FILE" ]; then
+		#sleep a while as a workaround for race condition writing to output file
+		sleep 2
 		break
 	fi
 	sleep 1
