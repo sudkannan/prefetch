@@ -10,13 +10,21 @@ if [ -e "$RESULT_FILE" ]; then
 	rm -f "$RESULT_FILE" || failure "Cannot remove $RESULT_FILE, error=$?"
 fi
 
+KILL_OPENOFFICE=yes
+
 export OPENOFFICE_STARTUP_HOOK="$THIS_SCRIPT_DIR/openoffice_started.sh"
 export OPENOFFICE_STARTUP_HOOK_PARAMS="$RESULT_FILE"
 
-START_TIME=`get_time`
-echo "Start time: $START_TIME"
+OPENOFFICE_OPTIONS=""
 
-oowriter ./recordStart.odt &
+if [ "$KILL_OPENOFFICE" = "yes" ]; then
+	OPENOFFICE_OPTIONS="$OPENOFFICE_OPTIONS -norestore"
+fi
+
+START_TIME=`get_time`
+echoerr "Start time: $START_TIME"
+
+oowriter $OPENOFFICE_OPTIONS ./recordStart.odt &
 
 while true; do
 	if [ -e "$RESULT_FILE" ]; then
@@ -26,9 +34,19 @@ while true; do
 done
 END_TIME=`cat "$RESULT_FILE"`
 
-echo "End time: " `cat "$RESULT_FILE"`
-echo "Difference:" `subtract_time $END_TIME $START_TIME`
+DIFFERENCE=`subtract_time $END_TIME $START_TIME`
+
+
+echoerr "End time: " `cat "$RESULT_FILE"`
+echoerr "Difference: $DIFFERENCE"
+echo "$DIFFERENCE"
+
 
 rm -f "$RESULT_FILE" || failure "Cannot remove $RESULT_FILE, error=$?"
 
-#killall soffice-bin
+if [ "$KILL_OPENOFFICE" = "yes" ]; then
+	# Wait a bit and kill openoffice.
+	sleep 2
+	killall soffice.bin
+fi
+
