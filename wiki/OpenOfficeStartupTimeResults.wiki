@@ -14,7 +14,7 @@ Measurement method uses -norestore option. To see what is the effect of using th
 Test machine: [TestMachineKL1 KL1]
 
 Test environment: 
-  * KubuntuGutsyKL1 with updates as of 2006-06-10.
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
   * Standard desktop environment.
 
 Test preparation: 
