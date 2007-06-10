@@ -12,7 +12,12 @@ fi
 
 KILL_OPENOFFICE=yes
 
-export OPENOFFICE_STARTUP_HOOK="$THIS_SCRIPT_DIR/openoffice_started.sh"
+export OPENOFFICE_STARTUP_HOOK="$PWD/openoffice_started.sh"
+
+if [ ! -e "$OPENOFFICE_STARTUP_HOOK" ]; then
+	failure "This script must be called from its directory."
+fi
+
 export OPENOFFICE_STARTUP_HOOK_PARAMS="$RESULT_FILE"
 
 OPENOFFICE_OPTIONS=""
