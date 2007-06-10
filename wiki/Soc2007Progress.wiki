@@ -15,7 +15,7 @@ This page will contain information about progress of implementation.
     * submitting disk layout tool for review by ext3 developers (*done*)
   * 1st half of June: implementation of tracing facility and integration with Ubuntu boot scripts, analysis of impact on boot time.
     * creating development environment (_in progress_)
-      * Installing Gutsy (_in progress_) 
+      * Installing Gutsy (*done*) 
       * Compiling custom gutsy kernel
     * creating measurement metrics (_in progress_)
       * Open Office document to measure startup time (see MeasuringOpenOfficeStartupTime)
