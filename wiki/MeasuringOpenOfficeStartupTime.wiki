@@ -1,5 +1,8 @@
 #labels openoffice
 = Ways of measuring OpenOffice startup time =
+
+Note: this page is about means to measure time. To see test results, go to OpenOfficeStartupTimeResults page.
+
 == Start with document which runs program when it is loaded ==
 The idea is to prepare a document which upon loading calls a program which will record the time and/or other metrics.
 
