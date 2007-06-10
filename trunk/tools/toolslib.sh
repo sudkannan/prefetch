@@ -25,3 +25,13 @@ subtract_time() {
 	[ -z "$2" ] && failure "subtract_time requires 2 arguments"
 	python -c "print $1 - $2"
 }
+
+#Drops caches to simulate cold start
+drop_caches() {
+	for i in `seq 3`; do
+		sudo sync
+		sleep 1
+	done
+	sudo bash -c 'echo 3 >/proc/sys/vm/drop_caches'
+}
+
