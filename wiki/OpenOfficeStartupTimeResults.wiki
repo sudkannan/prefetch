@@ -35,3 +35,29 @@ Raw results are at: http://prefetch.googlecode.com/svn/trunk/results/openoffice/
 Difference in startup time is in average about 0.05s so is not significant.
 
 However, the test results show decreasing startup time with subsequent iteration, so the  difference might be related to the fact that test without -norestore option was performed later. Repeating test with more warmup is recommended.
+
+== Test 2 ==
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+
+Test preparation: 
+  * 5 warmup runs (=50 starts of OpenOffice) of measure_times.sh (i.e. warm startup)
+
+Measurements repeatability:
+  * each startup time measurement was repeated 10 times
+  * each measurement immediately starting after previous one
+
+=== Test results ===
+||  || With -norestore || Without -norestore ||
+|| Average time (s)  || 4.0550 || 4.2413 ||
+|| Standard deviation|| 0.0224 || 0.0232 ||
+
+Raw results are at: http://prefetch.googlecode.com/svn/trunk/results/openoffice/norestore-effect/testmachine-kl1/test-2/
+
+=== Conclusion ===
+Difference in startup time with long warmup is in average about 0.20s so is not significant. 
+-norestore option can be used for measuring startup time.
