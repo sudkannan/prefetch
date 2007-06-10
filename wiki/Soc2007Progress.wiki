@@ -30,6 +30,7 @@ This page will contain information about progress of implementation.
   * August - in case of slips, time to fix problems, otherwise implementing metadata prefetching and partial prefetching during boot. 
   * September and later - writing a paper describing results of analysis for later submission to Linux conferences, improving things which were identified as problems during analysis of implemented solution.
 
-== Reported bugs ==
-Bugs reported during project implementation:
+== Bugs ==
+Bugs reported and come across during project implementation:
+  * Cannot quit OpenOffice from Basic macro: [http://www.openoffice.org/issues/show_bug.cgi?id=57748 OpenOffice bug 57748]
   * Kubuntu Gutsy installation through upgrade from Feisty:  [https://bugs.launchpad.net/ubuntu/+source/kdepim/+bug/119664 119664]
