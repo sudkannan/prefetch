@@ -15,6 +15,8 @@ This page will contain information about progress of implementation.
     * submitting disk layout tool for review by ext3 developers (*done*)
   * 1st half of June: implementation of tracing facility and integration with Ubuntu boot scripts, analysis of impact on boot time.
     * creating development environment (_in progress_)
+      * Installing Gutsy (_in progress_) 
+      * Compiling custom gutsy kernel
     * creating measurement metrics (_in progress_)
       * Open Office document to measure startup time (see MeasuringOpenOfficeStartupTime)
       * Firefox script to measure startup time
@@ -27,3 +29,7 @@ This page will contain information about progress of implementation.
   * 2nd half of July - improving disk layout tool, intensive testing and analysis of impact.
   * August - in case of slips, time to fix problems, otherwise implementing metadata prefetching and partial prefetching during boot. 
   * September and later - writing a paper describing results of analysis for later submission to Linux conferences, improving things which were identified as problems during analysis of implemented solution.
+
+== Reported bugs ==
+Bugs reported during project implementation:
+  * Kubuntu Gutsy installation through upgrade from Feisty:  [https://bugs.launchpad.net/ubuntu/+source/kdepim/+bug/119664 119664]
