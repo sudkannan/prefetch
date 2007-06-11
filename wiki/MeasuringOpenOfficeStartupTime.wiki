@@ -1,4 +1,6 @@
+#summary Methods of measuring OpenOffice startup time.
 #labels openoffice
+
 = Ways of measuring OpenOffice startup time =
 
 Note: this page is about means to measure time. To see test results, go to OpenOfficeStartupTimeResults page.
