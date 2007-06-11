@@ -21,3 +21,6 @@ This approach does not work due to bug in OpenOffice - when quit command is exec
 Adding a 10 seconds delay before quitting OpenOffice does not help - apparently calling quit from Basic macro is not supported.
 
 See [http://www.openoffice.org/issues/show_bug.cgi?id=57748 bug 57748] in OpenOffice.
+
+= Useful links =
+  * [http://go-oo.org/~michael/howto-cold-start.c Cold start simulator]
