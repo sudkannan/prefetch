@@ -101,3 +101,36 @@ http://prefetch.googlecode.com/svn/trunk/results/openoffice/coldstart/testmachin
 
 === Conclusion ===
 Restart seems to not clean caches thoroughly (probably disk caches are not flushed) as time is decreasing in subsequent restarts. The test sample is too small to draw firm conclusions, so the test should be repeated.
+
+== Test 2 ==
+=== Test description ===
+Check various ways of simulating cold restart without rebooting the computer.
+
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+
+Test preparation: 
+  * warmup run of 10 starts of OpenOffice
+
+Measurements repeatability:
+  * each test repeated 10 times
+  * before each run cache cleared using one of the methods tested
+
+Measured cold start methods:
+  * drop_caches - performing "sync" then writing "3" to /proc/sys/vm/drop_caches
+  * drop_caches+hdparm-f - as above, then perform hdparm -f diskdevice to flush disk cache
+  * drop_caches+hdparm-f+cat-largefile - as the 2 methods above, additionally copies large file (twice the size of RAM) from disk to /dev/null to purge cache
+
+=== Test results ===
+||  || drop_caches || drop_caches+hdparm-f || drop_caches+hdparm-f+cat-largefile ||
+|| Average time (s)  || 11.3584 || 11.2051 || 11.2250 ||
+|| Standard deviation|| 0.1218  || 0.0801  || 0.1121 ||
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/openoffice/coldstart/testmachine-kl1/test-2/
+
+=== Conclusion ===
+All methods of simulating cold start have similar effectiveness and none of them provides results comparable to real cold start - the difference is about 3 seconds, which is significant.
