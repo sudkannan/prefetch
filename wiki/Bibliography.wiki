@@ -20,6 +20,7 @@ Blktrace:
   *  blktrace git tree: git://brick.kernel.dk/data/git/blktrace.git
   * [http://git.kernel.dk/ WWW git frontend for blktrace repository]
   * [http://www.gelato.org/pdf/apr2006/gelato_ICE06apr_blktrace_brunelle_hp.pdf Presentation about blktrace by Alan D. Brunelle]
+  * [http://www.nabble.com/linux-btrace-f12411.html blktrace mailing list archive]
 
 Disk access characteristics:
   * [http://www.cs.ucsb.edu/research/tech_reports/reports/2004-18.pdf Paper: "Diskbench: User-level Disk Feature Extraction Tool" by Zoran Dimitrijevic, Raju Rangaswami , David Watson , and Anurag Acharya] - contains diagrams of disk seek time relative to cylinder distance and other useful disk characteristics
