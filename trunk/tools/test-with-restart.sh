@@ -29,6 +29,10 @@ echo "Running autorun file"
  
 "$AUTORUN_FILE"
 
-echo "Restarting system in 5 seconds"
-sleep 5
-sudo /sbin/reboot
+if [ "$NUM_RESTARTS_LEFT" -le 0 ]; then
+	echo "All tests have been performed"
+else
+	echo "Restarting system in 5 seconds"
+	sleep 5
+	sudo /sbin/reboot
+fi
