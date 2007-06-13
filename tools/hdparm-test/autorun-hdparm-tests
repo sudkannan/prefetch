@@ -1,0 +1,9 @@
+#!/bin/bash
+echo Sleeping 60 seconds to quiesce after reboot
+sleep 60
+echo Running test
+echo "#restart" >>~/hdparm-T.txt
+echo "#restart" >>~/hdparm-t.txt
+
+for i in `seq 10`; do sudo hdparm -T /dev/hda 2>&1 | tee -a ~/hdparm-T.txt; done
+for i in `seq 10`; do sudo hdparm -t /dev/hda 2>&1 | tee -a ~/hdparm-t.txt; done
