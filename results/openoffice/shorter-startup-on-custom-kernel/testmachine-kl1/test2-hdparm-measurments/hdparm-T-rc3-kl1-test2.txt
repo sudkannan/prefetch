@@ -1,0 +1,95 @@
+
+/dev/hda:
+ Timing cached reads:   312 MB in  2.01 seconds = 155.45 MB/sec
+
+/dev/hda:
+ Timing cached reads:   316 MB in  2.01 seconds = 157.30 MB/sec
+
+/dev/hda:
+ Timing cached reads:   314 MB in  2.00 seconds = 156.93 MB/sec
+
+/dev/hda:
+ Timing cached reads:   304 MB in  2.00 seconds = 151.78 MB/sec
+
+/dev/hda:
+ Timing cached reads:   290 MB in  2.01 seconds = 144.19 MB/sec
+
+/dev/hda:
+ Timing cached reads:   300 MB in  2.00 seconds = 150.01 MB/sec
+
+/dev/hda:
+ Timing cached reads:   304 MB in  2.01 seconds = 151.56 MB/sec
+
+/dev/hda:
+ Timing cached reads:   308 MB in  2.01 seconds = 153.26 MB/sec
+
+/dev/hda:
+ Timing cached reads:   308 MB in  2.01 seconds = 153.45 MB/sec
+
+/dev/hda:
+ Timing cached reads:   312 MB in  2.01 seconds = 155.58 MB/sec
+
+#run 2
+
+/dev/hda:
+ Timing cached reads:   310 MB in  2.01 seconds = 154.06 MB/sec
+
+/dev/hda:
+ Timing cached reads:   312 MB in  2.01 seconds = 155.04 MB/sec
+
+/dev/hda:
+ Timing cached reads:   316 MB in  2.00 seconds = 157.73 MB/sec
+
+/dev/hda:
+ Timing cached reads:   316 MB in  2.01 seconds = 157.45 MB/sec
+
+/dev/hda:
+ Timing cached reads:   314 MB in  2.01 seconds = 156.03 MB/sec
+
+/dev/hda:
+ Timing cached reads:   310 MB in  2.00 seconds = 154.88 MB/sec
+
+/dev/hda:
+ Timing cached reads:   316 MB in  2.01 seconds = 157.17 MB/sec
+
+/dev/hda:
+ Timing cached reads:   312 MB in  2.00 seconds = 156.00 MB/sec
+
+/dev/hda:
+ Timing cached reads:   312 MB in  2.01 seconds = 155.60 MB/sec
+
+/dev/hda:
+ Timing cached reads:   314 MB in  2.00 seconds = 156.89 MB/sec
+
+
+#run 3
+
+/dev/hda:
+ Timing cached reads:   314 MB in  2.01 seconds = 156.52 MB/sec
+
+/dev/hda:
+ Timing cached reads:   314 MB in  2.00 seconds = 156.78 MB/sec
+
+/dev/hda:
+ Timing cached reads:   320 MB in  2.01 seconds = 159.23 MB/sec
+
+/dev/hda:
+ Timing cached reads:   324 MB in  2.01 seconds = 161.09 MB/sec
+
+/dev/hda:
+ Timing cached reads:   316 MB in  2.01 seconds = 157.60 MB/sec
+
+/dev/hda:
+ Timing cached reads:   318 MB in  2.01 seconds = 158.01 MB/sec
+
+/dev/hda:
+ Timing cached reads:   322 MB in  2.01 seconds = 160.49 MB/sec
+
+/dev/hda:
+ Timing cached reads:   316 MB in  2.00 seconds = 157.73 MB/sec
+
+/dev/hda:
+ Timing cached reads:   316 MB in  2.01 seconds = 157.42 MB/sec
+
+/dev/hda:
+ Timing cached reads:   316 MB in  2.01 seconds = 157.29 MB/sec
