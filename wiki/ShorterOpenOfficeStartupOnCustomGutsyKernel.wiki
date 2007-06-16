@@ -140,3 +140,42 @@ Raw results are at (the files with -test2 suffix): http://prefetch.googlecode.co
 === Conclusions ===
   * hdparm -T has higher results (~162 MB/s vs 156 MB/s) for generic Ubuntu kernel.
   * hdparm -t shows that generic Ubuntu kernel has much slower "start" - it takes 3-4 hdparm runs to make it run at full speed while for custom compiled kernel it is 1-2 rounds.
+
+== Test 3 ==
+This test was performed to get OpenOffice startup times automatically and repeatably.
+Test was performed using automatic test setup with rebooting.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Custom compiled Ubuntu kernel from Ubuntu kernel git tree (see [http://prefetch.googlecode.com/svn/trunk/results/descriptions/environments/kubuntu-gutsy-kl1/custom-kernel-rc3-kl1 git index files and configs] (compiled on Kubuntu Dapper machine)
+  * Standard Ubuntu Gutsy kernel (2.6.22-6.13)
+  * Standard desktop environment.
+
+Test preparation: 
+  * test done automatically after reboot using RestartTestsSetup procedure.
+  * before performing measurements, script waited 60 seconds to avoid any startup time activity
+
+Measurements repeatability:
+  * Each test for each kernel version was repeated 5 times in a row
+
+=== Test results ===
+||		||	2.6.22rc3-kl1	||	2.6.22-6.13-generic	||
+||		||	11,91	||	14,72	||
+||		||	11,02	||	15,59	||
+||		||	10,66	||	14,61	||
+||		||	12,05	||	15,63	||
+||		||	10,33	||	13,53	||
+||	Average	||	11.1916	||	14.8163	||
+||	Standard deviation	||	0.7601	||	0.8587	||
+
+
+Raw results are at (the files with -test2 suffix): 
+http://prefetch.googlecode.com/svn/trunk/results/openoffice/shorter-startup-on-custom-kernel/testmachine-kl1/test3-automatic-openoffice-startup-after-restart/
+The files with "20seconds" is the test repeated with 20 seconds wait time after start.
+
+=== Conclusions ===
+  * Automatic testing does not show as high drop in OpenOffice startup time as with manual testing, so it seems manual testing causes some intereference which makes OpenOffice start faster.
+  * Measured time for 2.6.22rc3-kl1 is of the same order as time measure after drop_caches.
