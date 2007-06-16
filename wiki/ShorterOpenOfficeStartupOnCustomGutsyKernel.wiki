@@ -4,5 +4,52 @@
 = Introduction =
 In the course of experiments with cold and warm startup time of OpenOffice, custom compiled kernel from Ubuntu Git repository was tried and cold startup time was measured in the range of ~9 seconds, which is much shorter than ~14 seconds measured for standard Gutsy kernel (see OpenOfficeStartupTimeResults) which comes precompiled and even shorter than ~11 seconds measured for startup after drop_caches.
 
-= First experiment =
+= Tests =
+== Test 1 ==
+Manually measured OpenOffice startup time in custom compiled kernel, which caused noticing the problem.
 
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Custom compiled Ubuntu kernel from Ubuntu kernel git tree (see [http://prefetch.googlecode.com/svn/trunk/results/descriptions/environments/kubuntu-gutsy-kl1/custom-kernel-rc3-kl1 git index files and configs] (compiled on Kubuntu Dapper machine)
+  * Standard desktop environment.
+
+Test preparation: 
+  * none
+
+Measurements repeatability:
+  * several runs with different config options
+
+=== Test results ===
+||  || Startup time (seconds) ||
+|| *minimal config*  || 9.82141757011  ||
+|| ||8.99107336998|| 
+|| || 9.81758165359|| 
+|| || 9.54120182991|| 
+|| || 9.51845836639|| 
+|| Average time for these tests (s)  || 9.5379 ||
+|| Standard deviation for these tests|| 0.3384 ||
+|| *blktrace through network* || 9.8496928215|| 
+|| || 9.95827960968|| 
+|| Average time for these tests (s)  || 9.9040 ||
+|| Standard deviation for these tests|| 0.0768 ||
+|| *config with SELinux and PIO for network card* || 10.3788096905 || 
+|| || 10.0523619652|| 
+|| || 9.87462496758|| 
+|| Average time for these tests (s)  || 10.1019 ||
+|| Standard deviation for these tests|| 0.2557 ||
+|| *Custom compiled kernel with all options* || 9.48628401756|| 
+|| || 11.1561238766|| 
+|| Average time for these tests (s)  || 10.3212 ||
+|| Standard deviation for these tests|| 1.1808 ||
+|| *Average time for all (s)*  || 9.8705 ||
+|| *Standard deviation for all* || 0.5318 ||
+
+Raw results are at: http://prefetch.googlecode.com/svn/trunk/results/openoffice/shorter-startup-on-custom-kernel/testmachine-kl1/manual-measurements/
+
+=== Conclusion ===
+  * Tests show much shorter times than measured for standard precompiled Gutsy kernel.
+  * Manual tests do not provide reliable repeatability. automatic tests are needed.
