@@ -172,7 +172,7 @@ Measurements repeatability:
 ||	Standard deviation	||	0.7601	||	0.8587	||
 
 
-Raw results are at (the files with -test2 suffix): 
+Raw results are at: 
 http://prefetch.googlecode.com/svn/trunk/results/openoffice/shorter-startup-on-custom-kernel/testmachine-kl1/test3-automatic-openoffice-startup-after-restart/
 The files with "20seconds" is the test repeated with 20 seconds wait time after start.
 
