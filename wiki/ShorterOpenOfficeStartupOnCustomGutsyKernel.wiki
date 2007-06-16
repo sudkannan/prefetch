@@ -8,7 +8,6 @@ In the course of experiments with cold and warm startup time of OpenOffice, cust
 == Test 1 ==
 Manually measured OpenOffice startup time in custom compiled kernel, which caused noticing the problem.
 
-
 === Test description ===
 Test machine: [TestMachineKL1 KL1]
 
@@ -24,6 +23,7 @@ Measurements repeatability:
   * several runs with different config options
 
 === Test results ===
+
 ||  || Startup time (seconds) ||
 || *minimal config*  || 9.82141757011  ||
 || ||8.99107336998|| 
@@ -53,3 +53,63 @@ Raw results are at: http://prefetch.googlecode.com/svn/trunk/results/openoffice/
 === Conclusion ===
   * Tests show much shorter times than measured for standard precompiled Gutsy kernel.
   * Manual tests do not provide reliable repeatability. automatic tests are needed.
+
+== Test 2 ==
+Jan Kara suggested to measure disk efficiency using hdparm -t and hdparm -T as this might provide a clue why OpenOffice startup is faster.
+
+Test was performed using automatic test setup with rebooting.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Custom compiled Ubuntu kernel from Ubuntu kernel git tree (see [http://prefetch.googlecode.com/svn/trunk/results/descriptions/environments/kubuntu-gutsy-kl1/custom-kernel-rc3-kl1 git index files and configs] (compiled on Kubuntu Dapper machine)
+  * Standard Ubuntu Gutsy kernel (2.6.22-6.13)
+  * Standard desktop environment.
+
+Test preparation: 
+  * none, test done automatically after reboot using RestartTestsSetup procedure.
+
+Measurements repeatability:
+  * Each test was repeated 3 times
+  * Each test run consisted of 10 runs of hdparm -T and subsequent 10 runs of hdparm -t.
+
+=== Test results ===
+||  hdparm -T (2.6.22rc3-kl1) || run 1 ||  run2  || run3  || 
+||		||	155,45	||	154,06	||	156,52	||
+||		||	157,3	||	155,04	||	156,78	||
+||		||	156,93	||	157,73	||	159,23	||
+||		||	151,78	||	157,45	||	161,09	||
+||		||	144,19	||	156,03	||	157,6	||
+||		||	150,01	||	154,88	||	158,01	||
+||		||	151,56	||	157,17	||	160,49	||
+||		||	153,26	||	156	||	157,73	||
+||		||	153,45	||	155,6	||	157,42	||
+||		||	155,58	||	156,89	||	157,29	||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||		||		||		||		||
+||	Average	||	152.9510	||	156.0850	||	158.2160	||
+||	Standard deviation	||	3.9010	||	1.2149	||	1.5473	||
+
+
+Raw results are at (the files with -test2 suffix): http://prefetch.googlecode.com/svn/trunk/results/openoffice/shorter-startup-on-custom-kernel/testmachine-kl1/test2-hdparm-measurements/
+
+
+=== Conclusion ===
