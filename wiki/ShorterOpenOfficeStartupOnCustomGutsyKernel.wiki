@@ -178,4 +178,4 @@ The files with "20seconds" is the test repeated with 20 seconds wait time after 
 
 === Conclusions ===
   * Automatic testing does not show as high drop in OpenOffice startup time as with manual testing, so it seems manual testing causes some intereference which makes OpenOffice start faster.
-  * Measured time for 2.6.22rc3-kl1 is of the same order as time measure after drop_caches.
+  * Measured time for 2.6.22rc3-kl1 is similar to time measured after drop_caches.
