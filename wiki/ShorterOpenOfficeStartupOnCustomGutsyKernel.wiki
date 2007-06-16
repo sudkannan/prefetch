@@ -1,0 +1,8 @@
+#summary Description of problem with shorter OpenOffice startup time on custom compiled Gutsy kernel and experiments done to locate the problem
+#labels openoffice,startup,customkernel,gutsy,hdparm
+
+= Introduction =
+In the course of experiments with cold and warm startup time of OpenOffice, custom compiled kernel from Ubuntu Git repository was tried and cold startup time was measured in the range of ~9 seconds, which is much shorter than ~14 seconds measured for standard Gutsy kernel (see OpenOfficeStartupTimeResults) which comes precompiled and even shorter than ~11 seconds measured for startup after drop_caches.
+
+= First experiment =
+
