@@ -5,6 +5,9 @@
 This page contains summary of results of startup tests for OpenOffice.
 For measuring method, see MeasuringOpenOfficeStartupTime page.
 
+Subpages:
+  * ShorterOpenOfficeStartupOnCustomGutsyKernel
+
 = Effect of -norestore option =
 Measurement method uses -norestore option. To see what is the effect of using this option, 2 series of tests were performed: 
   * One series with -norestore option and automatic killing of OpenOffice (KILL_OPENOFFICE=yes in measure_openoffice_start_time.sh script).
