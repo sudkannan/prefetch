@@ -37,7 +37,7 @@ if [ "$DROP_CACHES" = "yes" ]; then
 fi
 
 if [ "$TRACE_IO" = yes ]; then
-	sudo blktrace -d "$DISK_DEVICE" -h "$TRACING_HOST" &
+	sudo blktrace -d "$DISK_DEVICE" -h "$TRACING_HOST" 1>&2 &
 	sleep 3
 fi
 
