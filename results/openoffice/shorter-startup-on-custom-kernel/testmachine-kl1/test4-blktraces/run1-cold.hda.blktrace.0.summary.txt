@@ -1,0 +1,12 @@
+CPU0 (3,0):
+ Reads Queued:        2431,    90724KiB  Writes Queued:         520,     2080KiB
+ Read Dispatches:     1555,    90724KiB  Write Dispatches:       99,     2080KiB
+ Reads Requeued:         0               Writes Requeued:         0
+ Reads Completed:     1555,    90724KiB  Writes Completed:       99,     2080KiB
+ Read Merges:          876,     3608KiB  Write Merges:          421,     1684KiB
+ Read depth:             1               Write depth:             1
+ IO unplugs:          1240               Timer unplugs:           2
+
+Throughput (R/W): 7267KiB/s / 166KiB/s
+Events (3,0): 13175 entries
+Skips: 0 forward (0 -   0.0%)
