@@ -10,7 +10,13 @@ if [ -e "$RESULT_FILE" ]; then
 	rm -f "$RESULT_FILE" || failure "Cannot remove $RESULT_FILE, error=$?"
 fi
 
-KILL_OPENOFFICE=yes
+if [ -z "$KILL_OPENOFFICE" ]; then
+	KILL_OPENOFFICE=yes
+fi
+
+if [ -z "$TRACE_IO" ]; then
+	TRACE_IO=no
+fi
 
 export OPENOFFICE_STARTUP_HOOK="$PWD/openoffice_started.sh"
 
@@ -28,6 +34,11 @@ fi
 
 if [ "$DROP_CACHES" = "yes" ]; then
 	drop_caches
+fi
+
+if [ "$TRACE_IO" = yes ]; then
+	sudo blktrace -d "$DISK_DEVICE" -h "$TRACING_HOST" &
+	sleep 3
 fi
 
 
@@ -48,6 +59,9 @@ END_TIME=`cat "$RESULT_FILE"`
 
 DIFFERENCE=`subtract_time $END_TIME $START_TIME`
 
+if [ "$TRACE_IO" = yes ]; then
+	sudo killall blktrace
+fi
 
 echoerr "End time: " `cat "$RESULT_FILE"`
 echoerr "Difference: $DIFFERENCE"
