@@ -54,10 +54,14 @@ def string_has_substrings (string, substrings):
     return False
 
 # assumes "strace -ttt -f"
-mark_regex = re.compile (r'^\d+ +(\d+\.\d+) +access\("MARK: ([^:]*: )(.*)", F_OK.*')
-mark_timestamp_group = 1
-mark_program_group = 2
-mark_log_group = 3
+#assumes standard blkparse output:
+#  3,0    0       64     0.068526121  5031  Q  RM 2412967 + 8 [oowriter]
+#mark_regex = re.compile (r'^\s*(\d+,\d+)\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+(\d+)\s+(\w+)\s+(\w+)\s+(\d+)\s+\+(\d+)\s+\[(\w+)\].*')
+mark_regex = re.compile (r'^\s*(\d+,\d+)\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+(\d+)\s+(\w+)\s+(\w+)\s+(\d+)\s+\+\s+(\d+)\s+\[(\w+)\].*')
+mark_timestamp_group = 4
+mark_action_group = 6
+mark_rwdbs_group = 7
+mark_program_group = 10
 
 # 3273  1141862703.998196 execve("/usr/bin/dbus-launch", ["/usr/bin/dbus-launch", "--sh-syntax", "--exit-with-session", "/usr/X11R6/bin/gnome"], [/* 61 vars */]) = 0
 # 3275  1141862704.003623 execve("/home/devel/bin/dbus-daemon", ["dbus-daemon", "--fork", "--print-pid", "8", "--print-address", "6", "--session"], [/* 61 vars */]) = -1 ENOENT (No such file or directory)
@@ -153,9 +157,19 @@ class SyscallParser:
     def add_line (self, str):
         m = mark_regex.search (str)
         if m:
+            #print repr(m.groups())
             timestamp = float (m.group (mark_timestamp_group))
             program = m.group (mark_program_group)
-            text = program + m.group (mark_log_group)
+            rwdbs = m.group (mark_rwdbs_group)
+            action = m.group (mark_action_group)
+            if rwdbs != "R" and rwdbs != "RM":
+                #only interested in reads
+                return
+            if action != "C" and action != "Q":
+                #only queing and completion is interesting
+                return
+
+            text = program #+ m.group (mark_log_group)
             if text == 'last':
                 self.syscalls.append (LastMark (timestamp, text))
             elif text == 'first':
