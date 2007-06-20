@@ -33,5 +33,6 @@ drop_caches() {
 		sleep 1
 	done
 	sudo bash -c 'echo 3 >/proc/sys/vm/drop_caches'
+	sudo hdparm -f /dev/hda
 }
 

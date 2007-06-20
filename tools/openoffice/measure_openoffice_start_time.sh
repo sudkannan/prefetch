@@ -26,6 +26,11 @@ if [ "$KILL_OPENOFFICE" = "yes" ]; then
 	OPENOFFICE_OPTIONS="$OPENOFFICE_OPTIONS -norestore"
 fi
 
+if [ "$DROP_CACHES" = "yes" ]; then
+	drop_caches
+fi
+
+
 START_TIME=`get_time`
 echoerr "Start time: $START_TIME"
 
