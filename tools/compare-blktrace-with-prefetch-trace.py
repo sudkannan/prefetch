@@ -6,14 +6,17 @@ import re
 import sys
 
 class BlktraceParser:
-    def __init__(self):
+    def __init__(self, partitionStart, block2InodeMap):
+        self.block2InodeMap = block2InodeMap
+        self.partitionStart = partitionStart
         #assumes standard blkparse output:
         #  3,0    0       64     0.068526121  5031  Q  RM 2412967 + 8 [oowriter]
         self.mark_regex = re.compile (r'^\s*(\d+,\d+)\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+(\d+)\s+(\w+)\s+(\w+)\s+(\d+)\s+\+\s+(\d+)\s+\[(\w+)\].*')
         self.mark_timestamp_group = 4
         self.mark_action_group = 6
         self.mark_rwdbs_group = 7
-        self.mark_block_number_group = 8
+        self.mark_blockNumber_group = 8
+        self.mark_length_group = 9
         self.mark_program_group = 10
     
     def parse_line(self, str):
@@ -24,15 +27,30 @@ class BlktraceParser:
             program = m.group (self.mark_program_group)
             rwdbs = m.group (self.mark_rwdbs_group)
             action = m.group (self.mark_action_group)
-            block_number = m.group(self.mark_block_number_group)
+            length = int(m.group(self.mark_length_group))
+            blockNumber = int(m.group(self.mark_blockNumber_group))
+            
             if rwdbs != "R" and rwdbs != "RM":
                 #only interested in reads
                 return
             if action != "Q": #action != "C" and 
                 #only queing and completion is interesting
                 return
-            print block_number, program
+            print blockNumber, program
+            #FIXME: self.blktraceBlocksRatio needed if blktrace blocks size != 512
+            #length = length / self.blktraceBlocksRatio
+            #blockNumber = blockNumber / self.blktraceBlocksRatio
+            #now check what is the inode and offset
+            sector =  blockNumber - self.partitionStart
+            print "sector=%s" % sector
+            result = self.block2InodeMap.get(sector, None)
+            if result == None:
+                print "Cannot find inode for block %s" % blockNumber
+                return
+            #print "Found inode for block %s" % blockNumber
+            inode, offset = result
     def parse(self, filename):
+        print "Parsing blktrace file"
         for line in file(filename, "r").readlines():
             if line == "":
                 break
@@ -65,7 +83,7 @@ class PrefetchTraceParser:
         return 0
         
 class E2Block2FileParser:
-    def __init__(self):
+    def __init__(self, fsBlockSize):
         #assumes standard e2block2file output:
         #/usr/share/icons/crystalsvg/32x32/actions (ino 242251):
         #  537702+1 0
@@ -74,6 +92,7 @@ class E2Block2FileParser:
         # or
         #Inode 8:
         #  3880+5 3079
+        self.fsBlocksRatio = fsBlockSize / 512
         self.inode_regex_file = re.compile(r'^(.*) \(ino (\d+)\):.*')
         self.inode_file_group = 1
         self.inode_file_inode_group = 2
@@ -82,6 +101,8 @@ class E2Block2FileParser:
         self.inode_other_group = 1
         
         self.offset_regex = re.compile(r'^\s+(\d+)\+(\d+)\s+(-?\d+).*')
+        self.block_group = 1
+        self.length_group = 2
         self.offset_in_inode_group = 3 #last number, i.e offset in inode
     
     def parse_line(self, line):
@@ -91,40 +112,53 @@ class E2Block2FileParser:
             #inode line
             m = self.offset_regex.search(line)
             if m:
-                offset = m.group(self.offset_in_inode_group)
-                print "Offset=%s" % offset
+                offset = int(m.group(self.offset_in_inode_group))
+                #blocks and lengths are in filesystem blocks, scale to 512 blocks
+                block = int(m.group(self.block_group)) * self.fsBlocksRatio
+                length = int(m.group(self.length_group)) * self.fsBlocksRatio
+                print "Block=%s length=%s offset=%s " % (block, length, offset)
+                for i in range(length):
+                    self.block2InodeMap[block + i] = (self.inode, offset)
         else:
             #inode line
             m = self.inode_regex_file.search(line)
             if m:
                 filename = m.group(self.inode_file_group)
-                inode = m.group(self.inode_file_inode_group)
-                print "Inode=%s filename=%s" % (inode, filename)
+                self.inode = int(m.group(self.inode_file_inode_group))
+                print "Inode=%s filename=%s" % (self.inode, filename)
             m = self.inode_regex_other.search(line)
             if m:
-                inode = m.group(self.inode_other_group)
-                print "Other inode=%s" % inode
+                self.inode = int(m.group(self.inode_other_group))
+                print "Other inode=%s" % self.inode
                 
             
     def parse(self, filename):
         print "Parsing e2block2file map"
+        self.block2InodeMap = dict()
         for line in file(filename, "r").readlines():
             if line == "":
                 break
             self.parse_line(line)
-        return 0
+        print repr(self.block2InodeMap)
+        return self.block2InodeMap
 
 
 def main(argv):
-    if len(argv) < 4:
-        print "Usage: %s blktraceTxtFile e2mapFile prefetchTraceFile"
+    if len(argv) < 6:
+        print "Usage: %s blktraceTxtFile e2mapFile prefetchTraceFile partitionStart filesystemBlockSize"
+        print "Partition start can be obtained using fdisk  in sectors mode (press 'u' then 'p')"
+        print "Filesystem block size can be obtained using e2fs tools"
         sys.exit(1)
-    blktraceParser = BlktraceParser()
-    #blktraceParser.parse(argv[1])
-    e2mapParser = E2Block2FileParser()
-    #e2mapParser.parse(argv[2])
+    fsBlockSize = int(argv[5])
+    e2mapParser = E2Block2FileParser(fsBlockSize)
+    block2InodeMap = e2mapParser.parse(argv[2])
+
+    partitionStart = int(argv[4])
+    blktraceParser = BlktraceParser(partitionStart, block2InodeMap)
+    blktraceParser.parse(argv[1])
+    
     prefetchTraceParser = PrefetchTraceParser()
-    prefetchTraceParser.parse(argv[3])
+    #prefetchTraceParser.parse(argv[3])
 
 if __name__ == "__main__":
     main(sys.argv)
