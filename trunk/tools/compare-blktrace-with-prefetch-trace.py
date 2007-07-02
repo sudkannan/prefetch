@@ -6,9 +6,11 @@ import re
 import sys
 
 class BlktraceParser:
-    def __init__(self, partitionStart, block2InodeMap):
+    def __init__(self, partitionStart, block2InodeMap, prefetchTraceSectors, inode2FileMap):
         self.block2InodeMap = block2InodeMap
         self.partitionStart = partitionStart
+        self.prefetchTraceSectors = prefetchTraceSectors
+        self.inode2FileMap = inode2FileMap
         #assumes standard blkparse output:
         #  3,0    0       64     0.068526121  5031  Q  RM 2412967 + 8 [oowriter]
         self.mark_regex = re.compile (r'^\s*(\d+,\d+)\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+(\d+)\s+(\w+)\s+(\w+)\s+(\d+)\s+\+\s+(\d+)\s+\[(\w+)\].*')
@@ -36,19 +38,28 @@ class BlktraceParser:
             if action != "Q": #action != "C" and 
                 #only queing and completion is interesting
                 return
-            print blockNumber, program
+            #print blockNumber, program
             #FIXME: self.blktraceBlocksRatio needed if blktrace blocks size != 512
             #length = length / self.blktraceBlocksRatio
             #blockNumber = blockNumber / self.blktraceBlocksRatio
             #now check what is the inode and offset
             sector =  blockNumber - self.partitionStart
-            print "sector=%s" % sector
+            #print "sector=%s" % sector
             result = self.block2InodeMap.get(sector, None)
             if result == None:
-                print "Cannot find inode for block %s" % blockNumber
+                print "Cannot find inode, sector=%s block=%s program=%s" % (sector, blockNumber, program)
                 return
             #print "Found inode for block %s" % blockNumber
             inode, offset = result
+            #print "Inode=%s offset=%s" % (inode, offset)
+            #now try to find in prefetch trace
+            if result in self.prefetchTraceSectors:
+                found = "found_in_prefetch"
+            else:
+                found = "missing_in_prefetch"
+            filename = self.inode2FileMap.get(inode, "filename_not_found")
+            print "%s %s %s %s %s %s %s" % (sector, blockNumber, program, inode, offset, found, filename)
+            
     def parse(self, filename):
         print "Parsing blktrace file"
         for line in file(filename, "r").readlines():
@@ -66,21 +77,26 @@ class PrefetchTraceParser:
         self.inode_group = 2
         self.offset_group = 3
         self.length_group = 4
+        self.pageSizeRatio = 4096/512
     
     def parse_line(self, line):
         m = self.prefetch_line_regex.search (line)
         if m:
-            inode = m.group (self.inode_group)
-            offset = m.group (self.offset_group)
-            length = m.group (self.length_group)
+            inode = int(m.group (self.inode_group))
+            #prefetch trace is in page size units
+            offset = int(m.group (self.offset_group)) * self.pageSizeRatio
+            length = int(m.group (self.length_group)) * self.pageSizeRatio
+            for i in range(length):
+                self.prefetchTraceSectors.add((inode, offset + i))
             print "Inode=%s offset=%s length=%s" % (inode, offset, length)
     def parse(self, filename):
         print "Parsing prefetch trace"
+        self.prefetchTraceSectors = set()
         for line in file(filename, "r").readlines():
             if line == "":
                 break
             self.parse_line(line)
-        return 0
+        return self.prefetchTraceSectors
         
 class E2Block2FileParser:
     def __init__(self, fsBlockSize):
@@ -126,21 +142,23 @@ class E2Block2FileParser:
                 filename = m.group(self.inode_file_group)
                 self.inode = int(m.group(self.inode_file_inode_group))
                 print "Inode=%s filename=%s" % (self.inode, filename)
+                self.inode2FileMap[self.inode] = filename
             m = self.inode_regex_other.search(line)
             if m:
                 self.inode = int(m.group(self.inode_other_group))
                 print "Other inode=%s" % self.inode
-                
+                self.inode2FileMap[self.inode] = "Inode %d" % self.inode
             
     def parse(self, filename):
         print "Parsing e2block2file map"
         self.block2InodeMap = dict()
+        self.inode2FileMap = dict()
         for line in file(filename, "r").readlines():
             if line == "":
                 break
             self.parse_line(line)
         print repr(self.block2InodeMap)
-        return self.block2InodeMap
+        return self.block2InodeMap, self.inode2FileMap
 
 
 def main(argv):
@@ -151,14 +169,15 @@ def main(argv):
         sys.exit(1)
     fsBlockSize = int(argv[5])
     e2mapParser = E2Block2FileParser(fsBlockSize)
-    block2InodeMap = e2mapParser.parse(argv[2])
+    block2InodeMap, inode2FileMap = e2mapParser.parse(argv[2])
 
+    prefetchTraceParser = PrefetchTraceParser()
+    prefetchTraceSectors  = prefetchTraceParser.parse(argv[3])
+    
     partitionStart = int(argv[4])
-    blktraceParser = BlktraceParser(partitionStart, block2InodeMap)
+    blktraceParser = BlktraceParser(partitionStart, block2InodeMap, prefetchTraceSectors, inode2FileMap)
     blktraceParser.parse(argv[1])
     
-    prefetchTraceParser = PrefetchTraceParser()
-    #prefetchTraceParser.parse(argv[3])
 
 if __name__ == "__main__":
     main(sys.argv)
