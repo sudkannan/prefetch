@@ -88,7 +88,7 @@ class PrefetchTraceParser:
             length = int(m.group (self.length_group)) * self.pageSizeRatio
             for i in range(length):
                 self.prefetchTraceSectors.add((inode, offset + i))
-            print "Inode=%s offset=%s length=%s" % (inode, offset, length)
+            #print "Inode=%s offset=%s length=%s" % (inode, offset, length)
     def parse(self, filename):
         print "Parsing prefetch trace"
         self.prefetchTraceSectors = set()
@@ -132,7 +132,7 @@ class E2Block2FileParser:
                 #blocks and lengths are in filesystem blocks, scale to 512 blocks
                 block = int(m.group(self.block_group)) * self.fsBlocksRatio
                 length = int(m.group(self.length_group)) * self.fsBlocksRatio
-                print "Block=%s length=%s offset=%s " % (block, length, offset)
+                #print "Block=%s length=%s offset=%s " % (block, length, offset)
                 for i in range(length):
                     self.block2InodeMap[block + i] = (self.inode, offset)
         else:
@@ -141,12 +141,12 @@ class E2Block2FileParser:
             if m:
                 filename = m.group(self.inode_file_group)
                 self.inode = int(m.group(self.inode_file_inode_group))
-                print "Inode=%s filename=%s" % (self.inode, filename)
+                #print "Inode=%s filename=%s" % (self.inode, filename)
                 self.inode2FileMap[self.inode] = filename
             m = self.inode_regex_other.search(line)
             if m:
                 self.inode = int(m.group(self.inode_other_group))
-                print "Other inode=%s" % self.inode
+                #print "Other inode=%s" % self.inode
                 self.inode2FileMap[self.inode] = "Inode %d" % self.inode
             
     def parse(self, filename):
@@ -157,7 +157,7 @@ class E2Block2FileParser:
             if line == "":
                 break
             self.parse_line(line)
-        print repr(self.block2InodeMap)
+        #print repr(self.block2InodeMap)
         return self.block2InodeMap, self.inode2FileMap
 
 
