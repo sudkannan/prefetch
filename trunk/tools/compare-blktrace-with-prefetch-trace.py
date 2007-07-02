@@ -20,12 +20,14 @@ class BlktraceParser:
         self.mark_blockNumber_group = 8
         self.mark_length_group = 9
         self.mark_program_group = 10
+        self.firstTimestamp = None
     
     def parse_line(self, str):
         m = self.mark_regex.search (str)
         if m:
             #print repr(m.groups())
             timestamp = float (m.group (self.mark_timestamp_group))
+            timestampTxt = m.group (self.mark_timestamp_group)
             program = m.group (self.mark_program_group)
             rwdbs = m.group (self.mark_rwdbs_group)
             action = m.group (self.mark_action_group)
@@ -43,6 +45,12 @@ class BlktraceParser:
             #length = length / self.blktraceBlocksRatio
             #blockNumber = blockNumber / self.blktraceBlocksRatio
             #now check what is the inode and offset
+            if self.firstTimestamp == None:
+                self.firstTimestamp = timestamp
+                relativeTimestamp = 0.0
+            else:
+                relativeTimestamp = timestamp - self.firstTimestamp
+            
             sector =  blockNumber - self.partitionStart
             #print "sector=%s" % sector
             result = self.block2InodeMap.get(sector, None)
@@ -58,7 +66,7 @@ class BlktraceParser:
             else:
                 found = "missing_in_prefetch"
             filename = self.inode2FileMap.get(inode, "filename_not_found")
-            print "%s %s %s %s %s %s %s" % (sector, blockNumber, program, inode, offset, found, filename)
+            print "%s %s %s %s %s %s %s %s" % (relativeTimestamp, sector, blockNumber, program, inode, offset, found, filename)
             
     def parse(self, filename):
         print "Parsing blktrace file"
