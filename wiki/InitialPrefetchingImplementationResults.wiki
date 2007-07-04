@@ -1,0 +1,65 @@
+#summary Performance results of early prefetching implementation
+#labels tests,results,openoffice,prefetching,blktrace
+
+= Introduction =
+These are the results of early implementation of prefetching module. The aim of these tests is to identify strengths and weaknesses of this approach and draw conclusions on subsequent work.
+
+== Test 1 ==
+This test purpose is to check if prefetch tracing works well and why results with prefetching module enabled are the same as without prefetching module.
+
+The test was done using prefetching module running in parallel to blktrace, which records IOs.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * blktrace using network to send trace to other machine
+  * prefetch module with async prefetching
+
+Test preparation: 
+  * first run to get the trace in prefetching module
+
+Measurements repeatability:
+  * 5 runs of OpenOffice, second run analyzed as first run was to get trace for prefetching module
+  * each OpenOffice run with drop_caches=3 
+
+Tools:
+   * blktrace to get trace of IO activity
+   * e2block2file to transform IO trace (sectors accesses) into inode numbers + offsets
+   * dump of prefetch trace contents (using /proc/prefetch)
+   * [http://prefetch.googlecode.com/svn/trunk/tools/compare-blktrace-with-prefetch-trace.py script] to merge results of IO trace, e2block2file map and prefetch trace into one trace
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmachine-kl1/test-1-prefetching-with-blktrace/
+  * hda1.blktrace-**.0.bz2 files are blktrace traces 
+  * prefetch-trace-** files are results of cat /proc/prefetch after openoffice is run. 
+  * openoffice_times.txt.bz2 is timing of startup along with io ticks and  /proc/pid/stat line 
+  * blktrace-prefetch-comparison-20070702-11:52:15.txt.bz2 a result of merge of second run of OpenOffice startup using  compare-blktrace-with-prefetch-trace.py 
+
+Merged file shows for each read request noticed by blktrace the following values: 
+  * timestamp relative to first request 
+  * disk sector 
+  * block number (sector relative to partition start) 
+  * application binary name (first few letters) 
+  * inode number 
+  * offset in inode 
+  * whether sector was found in prefetch trace: 
+    * found_in_prefetch - found 
+    * missing_in_prefetch - not found 
+    * indirect_block - block is indirect block 
+  * filename (as found by e2block2file) 
+ 
+Examples: 
+{{{
+0.038841783 4036752 4036815 measure_openoff 242669 6 found_in_prefetch  /lib/tls/i686/cmov/librt-2.5.so 
+Cannot find inode, sector=1049272 block=1049335 program=measure_openoff 
+0.049870767 1902256 1902319 measure_openoff 67263 0 missing_in_prefetch /usr/share/zoneinfo 
+}}}
+ 
+=== Conclusions ===
+  # Prefetch tracing does not notice directory reads (which is not surprising, as they are not in pagecache) 
+  # Prefetch tracing misses some small files, apparently they are evicted from cache pretty quickly or inodes are discarded. 
+   # Prefetch tracing misses some accesses to libraries (but not other  accesses) and some accesses to big files (for example splash image) -  this is pretty surprising, but it might be the same problem as with small files, the pages might be used only once for initialization and  discarded afterwards. 
+  # OpenOffice is using its own manually crafted prefetch scheme using "pagein" application which pulls into memory libraries upon OpenOffice start.
