@@ -27,13 +27,14 @@ subtract_time() {
 }
 
 #Drops caches to simulate cold start
-drop_caches($MODE) {
+drop_caches() {
+	MODE="$1"
 	if [ "$MODE" = "1" -o "$MODE" = "2" -o "$MODE" = "3" ]; then
 		for i in `seq 3`; do
 			sudo sync
 			sleep 1
 		done
-		sudo bash -c 'echo 3 >/proc/sys/vm/drop_caches'
+		sudo bash -c "echo $MODE >/proc/sys/vm/drop_caches"
 		sudo hdparm -f /dev/hda >/dev/null 2>/dev/null
 		return 0
 	else
