@@ -20,6 +20,15 @@ if [ -z "$TRACE_IO" ]; then
 	TRACE_IO=no
 fi
 
+if [ -z "$DROP_CACHES" ]; then
+	DROP_CACHES=no
+fi
+
+if [ -z "$ASYNC_PREFETCH" ]; then
+	ASYNC_PREFETCH=no
+fi
+
+
 if [ "$ASYNC_PREFETCH" = "yes" ]; then
 	sudo bash -c "echo 'mode async'>/proc/prefetch"
 else
@@ -40,8 +49,13 @@ if [ "$KILL_OPENOFFICE" = "yes" ]; then
 	OPENOFFICE_OPTIONS="$OPENOFFICE_OPTIONS -norestore"
 fi
 
-if [ "$DROP_CACHES" = "yes" ]; then
-	drop_caches
+if [ "$DROP_CACHES" != "no" ]; then
+	if [ "$DROP_CACHES" = "yes" ]; then
+		DROP_CACHES_MODE=3 #by default drop everything
+	else
+		DROP_CACHES_MODE="$DROP_CACHES"
+	fi
+	drop_caches "$DROP_CACHES_MODE"
 fi
 
 if [ "$TRACE_IO" = yes ]; then
