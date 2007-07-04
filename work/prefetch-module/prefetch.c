@@ -918,13 +918,13 @@ void prefetch_exec_hook(char *filename)
 {
 	int ret;
 
-	if (!prefetch_enabled) {
-		printk("Prefetch disabled, not doing tracing nor prefetching\n");
-		return;
-	}
-	
 	if (strcmp(filename, "/usr/lib/openoffice/program/soffice.bin") == 0)
 	{
+		if (!prefetch_enabled) {
+			printk("Prefetch disabled, not doing tracing nor prefetching\n");
+			return;
+		}
+		
 		printk(KERN_INFO "ooffice exec noticed\n");
 		//NOTE: this is just proof-of-concept code, no locking is implemented
 
