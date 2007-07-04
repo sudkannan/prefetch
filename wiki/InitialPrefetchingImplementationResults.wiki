@@ -63,3 +63,37 @@ Cannot find inode, sector=1049272 block=1049335 program=measure_openoff
   # Prefetch tracing misses some small files, apparently they are evicted from cache pretty quickly or inodes are discarded. 
   # Prefetch tracing misses some accesses to libraries (but not other  accesses) and some accesses to big files (for example splash image) -  this is pretty surprising, but it might be the same problem as with small files, the pages might be used only once for initialization and  discarded afterwards. 
   # OpenOffice is using its own manually crafted prefetch scheme using "pagein" application which pulls into memory libraries upon OpenOffice start.
+
+== Test 2 ==
+This test purpose is to check if prefetch tracing works (by disabling OpenOffice own prefetching), whether async or sync mode is better and what is the impact of dropping directory metadata versus dropping page contents.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * prefetch module with async/sync prefetching
+  * drop_caches values: 1 2 3
+
+Test preparation: 
+  * None
+
+Measurements repeatability:
+  * 5 runs of OpenOffice with each set of options
+
+=== Test results ===
+Synchronous prefetching:
+|| drop_caches || 3 (drop all) || 2 (drop dentries/inodes) || 1 (drop pagecache) ||
+|| Average time (s)  || 10.7796	|| 7.4506	|| 9.2878|| 
+|| Standard deviation|| 0.1285	|| 0.0370	|| 0.0319|| 
+
+Asynchronous prefetching:
+|| drop_caches || 3 (drop all) || 2 (drop dentries/inodes) || 1 (drop pagecache) ||
+|| Average time (s)  || 11.6138	|| 7.6192 	|| 10.1604 || 
+|| Standard deviation|| 0.1530	|| 0.0478	|| 0.0361 || 
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmachine-kl1/test-2-prefetching-no-pagein/
+ 
+=== Conclusions ===
