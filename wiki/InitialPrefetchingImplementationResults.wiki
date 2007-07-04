@@ -133,7 +133,7 @@ http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmach
   # OpenOffice own prefetching has a gain of almost 2 seconds (11.2s vs 13.1s) 
 
 == Test 4 ==
-This test purpose is to check if performing pages scan with smaller intervals gives better resolution of trace and how it affects performance of prefetching.
+This test purpose is to check if performing pages scan with smaller intervals affects performance of prefetching.
 
 === Test description ===
 Test machine: [TestMachineKL1 KL1]
@@ -160,3 +160,30 @@ http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmach
  
 === Conclusions ===
   # Greater resolution gives slight decrease of startup time (10.62s vs 10.77s for sync, 11.28s vs 11.61s for async), but it is in in error margin.
+
+== Test 4a ==
+This test purpose is to check if performing pages scan with smaller intervals gives better resolution of trace.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * Custom kernel prefetch module with tracing at 2 second intervals for a total of 12 seconds of tracing.
+  * Run blktrace through network and saving prefetch trace to file.
+
+Test preparation: 
+  * Done after test 4.
+
+Measurements repeatability:
+  * 1 run of OpenOffice, before run drop_caches was set to 3
+
+=== Test results ===
+Comparison of blktrace and prefetch trace was done using script.
+File map, blktrace and prefetch trace are attached.
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmachine-kl1/test-4-tracing-intervals/
+ 
+=== Conclusions ===
