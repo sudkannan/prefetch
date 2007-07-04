@@ -7,6 +7,7 @@ For measuring method, see MeasuringOpenOfficeStartupTime page.
 
 Subpages:
   * ShorterOpenOfficeStartupOnCustomGutsyKernel
+  * InitialPrefetchingImplementationResults
 
 = Effect of -norestore option =
 Measurement method uses -norestore option. To see what is the effect of using this option, 2 series of tests were performed: 
