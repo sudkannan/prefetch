@@ -64,7 +64,10 @@ class BlktraceParser:
             if result in self.prefetchTraceSectors:
                 found = "found_in_prefetch"
             else:
-                found = "missing_in_prefetch"
+                if offset >= 0:
+                    found = "missing_in_prefetch"
+                else:
+                    found = "indirect_block"
             filename = self.inode2FileMap.get(inode, "filename_not_found")
             print "%s %s %s %s %s %s %s %s" % (relativeTimestamp, sector, blockNumber, program, inode, offset, found, filename)
             
