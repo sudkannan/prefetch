@@ -159,3 +159,4 @@ Raw results are at:
 http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmachine-kl1/test-4-tracing-intervals/
  
 === Conclusions ===
+  # Greater resolution gives slight decrease of startup time (10.62s vs 10.77s for sync, 11.28s vs 11.61s for async), but it is in in error margin.
