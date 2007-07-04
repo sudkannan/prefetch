@@ -102,3 +102,31 @@ http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmach
   # By prefetching dentries/inodes we can gain ~1.5 second (10.77s vs 9.28s).
   # Prefetching in this way seems not to be able to cut down startup time below ~9second, even with prefetching inodes/dentries. There seems to be other blocking part - either the layout on disk does not allow data to be read faster (or some IO limitations), there is some bottleneck in kernel, missed accesses in tracing affect the prefetching significantly or prefetching scheme is inefficient.
   
+== Test 3 ==
+This test purpose is to check the startup time of OpenOffice with pagein (OpenOffice own hand-crafted prefetching tool) disabled on generic and custom kernel, for comparisons with prefetching results.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * Custom kernel prefetch module with prefetching and tracing disabled or standard Ubuntu Gutsy kernel (2.6.22-6.13)
+
+Test preparation: 
+  * None
+
+Measurements repeatability:
+  * 4 runs of OpenOffice, before each run drop_caches was set to 3
+
+=== Test results ===
+|| || Custom kernel with prefetching || Standard kernel || 
+|| Average time (s)  || 12.9867 || 13.0978 || 
+|| Standard deviation|| 0.2164  || 0.0448 || 
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmachine-kl1/test-3-openoffice-no-pagein/
+ 
+=== Conclusions ===
+  # OpenOffice startup on custom kernel is comparable to generic kernel and is ~13 seconds.
+  # OpenOffice own prefetching has a gain of almost 2 seconds (11.2s vs 13.1s) 
