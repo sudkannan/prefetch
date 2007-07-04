@@ -131,3 +131,31 @@ http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmach
 === Conclusions ===
   # OpenOffice startup on custom kernel is comparable to generic kernel and is ~13 seconds.
   # OpenOffice own prefetching has a gain of almost 2 seconds (11.2s vs 13.1s) 
+
+== Test 4 ==
+This test purpose is to check if performing pages scan with smaller intervals gives better resolution of trace and how it affects performance of prefetching.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * Custom kernel prefetch module with tracing at 2 second intervals for a total of 12 seconds of tracing.
+  * Sync and async prefetching mode tested.
+
+Test preparation: 
+  * One run of OpenOffice to generate initial trace.
+
+Measurements repeatability:
+  * 5 runs of OpenOffice, before each run drop_caches was set to 3
+
+=== Test results ===
+|| || Sync || Async || 
+|| Average time (s)  || 10.6218 || 11.2800 || 
+|| Standard deviation|| 0.1075 || 0.4108 || 
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmachine-kl1/test-4-tracing-intervals/
+ 
+=== Conclusions ===
