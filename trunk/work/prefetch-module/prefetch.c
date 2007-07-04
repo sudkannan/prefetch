@@ -54,6 +54,9 @@ struct session {
 
 
 int prefetch_tracing_enabled = 0;
+///Whether prefetching should be synchronous or asynchronous
+///i.e. wait for prefetch to finish before going forward or not.
+int async_prefetching = 0;
 
 enum
 {
@@ -130,17 +133,19 @@ typedef struct {
 	int trace_size;
 } async_prefetch_params_t;
 
+int prefetch_do_prefetch(void *trace, int trace_size);
+
 static int async_prefetch_thread(void *p)
 {
 	int ret;
-	printk(KERN_INFO "Started async prefetch thread\n");
 	async_prefetch_params_t *params = (async_prefetch_params_t *)p;
+	printk(KERN_INFO "Started async prefetch thread\n");
 	ret = prefetch_do_prefetch(params->trace, params->trace_size);
 	kfree(params);
 	return ret;
 }
 
-int prefetch_start_prefetch(void *trace, int trace_size)
+static int prefetch_start_prefetch_async(void *trace, int trace_size)
 {
 	async_prefetch_params_t *params = kmalloc(sizeof(async_prefetch_params_t), GFP_KERNEL);
 	if (params == NULL)
@@ -153,6 +158,20 @@ int prefetch_start_prefetch(void *trace, int trace_size)
 		return -EINVAL;
 	}
 	return 0;
+}
+
+static int prefetch_start_prefetch_sync(void *trace, int trace_size)
+{
+    return prefetch_do_prefetch(trace, trace_size);
+}
+
+int prefetch_start_prefetch(void *trace, int trace_size, int async)
+{
+    if (async) {
+        return prefetch_start_prefetch_async(trace, trace_size);
+    } else {
+        return prefetch_start_prefetch_sync(trace, trace_size);
+    }
 }
 
 int prefetch_do_prefetch(void *trace, int trace_size)
@@ -913,8 +932,8 @@ void prefetch_exec_hook(char *filename)
 			ooffice_pid = current->pid;
 		}
 		if (ooffice_trace != NULL) {
-			printk("Simulating prefetch\n");
-			prefetch_start_prefetch(ooffice_trace, ooffice_trace_size);
+			printk("Starting prefetch\n");
+			prefetch_start_prefetch(ooffice_trace, ooffice_trace_size, async_prefetching);
 		}
 	}
 }
@@ -1006,6 +1025,15 @@ out_unlock:
 	spin_unlock(&prefetch_trace.prefetch_trace_lock);
 }
 
+static int param_match(char *line, char *param_name)
+{
+    if (strncmp(line, param_name, strlen(param_name)) == 0)
+    {
+        return 1;
+    }
+    return 0;
+}
+
 ssize_t prefetch_proc_write(struct file *proc_file, const char __user * buffer,
 	size_t count, loff_t *ppos)
 {
@@ -1031,18 +1059,28 @@ ssize_t prefetch_proc_write(struct file *proc_file, const char __user * buffer,
 	else
 		name[count] = '\0';
 
-	if (!strncmp(name, "clear trace", 11)) {
+	if (param_match(name, "clear trace")) {
 		clear_trace();
 		goto out;
 	}
+	
+	if (param_match(name, "mode async")) {
+		async_prefetching = 1;
+		goto out;
+	}
 
-	if (!strncmp(name, "start", 5)) {
+	if (param_match(name, "mode sync")) {
+		async_prefetching = 0;
+		goto out;
+	}
+	
+	if (param_match(name, "start")) {
 		prefetch_start_trace(&marker);
 		print_marker("Start marker: ", marker);
 		goto out;
 	}
 	
-	if (!strncmp(name, "stop", 4)) {
+	if (param_match(name, "stop")) {
 		prefetch_stop_trace(&marker);
 		print_marker("Stop marker: ", marker);
 		goto out;
