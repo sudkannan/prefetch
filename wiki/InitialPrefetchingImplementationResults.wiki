@@ -101,7 +101,8 @@ http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmach
   # Caching pages is more effective than caching metadata (dentries/inodes), but even dentries and inodes are responsible for much slowdown in startup - the warm startup is ~4.5s while startup with dropped dentries and inodes is ~7.5s.
   # By prefetching dentries/inodes we can gain ~1.5 second (10.77s vs 9.28s).
   # Prefetching in this way seems not to be able to cut down startup time below ~9second, even with prefetching inodes/dentries. There seems to be other blocking part - either the layout on disk does not allow data to be read faster (or some IO limitations), there is some bottleneck in kernel, missed accesses in tracing affect the prefetching significantly or prefetching scheme is inefficient.
-  
+  # Current prefetching implementation, in lack of OpenOffice prefetching, gives almost 2 seconds gain (10.77s vs 12.98s) and is slightly better than OpenOffice hand-crafted prefetching (11.20s), but without need for manual configuration of prefetching.
+
 == Test 3 ==
 This test purpose is to check the startup time of OpenOffice with pagein (OpenOffice own hand-crafted prefetching tool) disabled on generic and custom kernel, for comparisons with prefetching results.
 
