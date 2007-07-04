@@ -61,5 +61,5 @@ Cannot find inode, sector=1049272 block=1049335 program=measure_openoff
 === Conclusions ===
   # Prefetch tracing does not notice directory reads (which is not surprising, as they are not in pagecache) 
   # Prefetch tracing misses some small files, apparently they are evicted from cache pretty quickly or inodes are discarded. 
-   # Prefetch tracing misses some accesses to libraries (but not other  accesses) and some accesses to big files (for example splash image) -  this is pretty surprising, but it might be the same problem as with small files, the pages might be used only once for initialization and  discarded afterwards. 
+  # Prefetch tracing misses some accesses to libraries (but not other  accesses) and some accesses to big files (for example splash image) -  this is pretty surprising, but it might be the same problem as with small files, the pages might be used only once for initialization and  discarded afterwards. 
   # OpenOffice is using its own manually crafted prefetch scheme using "pagein" application which pulls into memory libraries upon OpenOffice start.
