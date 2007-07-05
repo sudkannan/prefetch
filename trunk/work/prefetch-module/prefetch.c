@@ -28,6 +28,8 @@
 #include <linux/sort.h>
 #include <linux/file.h>
 #include <linux/delayacct.h>
+#include <linux/workqueue.h>
+
 
 //Inode walk session
 struct session {
@@ -61,7 +63,9 @@ int async_prefetching = 0;
 
 enum
 {
-    PREFETCH_TRACE_SIZE = 65536
+    PREFETCH_TRACE_SIZE = 128*1024,
+    TRACING_INTERVAL_SECS = 2,
+    TRACING_INTERVALS_NUM = 6, //12 seconds of tracing
 };
 
 struct prefetch_trace_t {
@@ -646,7 +650,8 @@ static void session_release(struct session *s)
 
 enum tracing_command_t {
 	START_TRACING,
-	STOP_TRACING
+	STOP_TRACING,
+	CONTINUE_TRACING
 };
 
 typedef struct {
@@ -829,6 +834,8 @@ int walk_pages(enum tracing_command_t command, trace_marker_t *marker)
 			invalid_trace_counter = 1;
 		}
 		*marker = get_trace_marker();
+	} else if (command == CONTINUE_TRACING) {
+		*marker = get_trace_marker();
 	}
 
 out_error:
@@ -863,6 +870,15 @@ out:
 int prefetch_start_trace(trace_marker_t *marker)
 {
 	return walk_pages(START_TRACING, marker);
+}
+
+/**
+	Performs interim tracing run, returns marker which points to current place in trace.
+*/
+int prefetch_continue_trace(trace_marker_t *marker)
+{
+	//the same as stop tracing, for now
+	return walk_pages(CONTINUE_TRACING, marker);
 }
 
 /**
@@ -914,6 +930,120 @@ int ooffice_trace_size = 0;
 trace_marker_t ooffice_start_marker;
 pid_t ooffice_pid;
 
+
+/**
+	Structure describing one tracing run for given application.
+	Mutex @mutex prevents concurrent end of tracing and periodic tracing.
+	It also protects members from concurrent changes.
+*/
+typedef struct {
+	struct delayed_work work;
+	struct mutex mutex; 
+	int traces_left;
+	int num_trace_offsets;
+	int *trace_offsets; ///array of trace offsets in intervals
+} ooffice_trace_work_t;
+
+ooffice_trace_work_t ooffice_trace_work;
+
+void ooffice_finish_tracing(void)
+{
+	trace_marker_t ooffice_end_marker;
+	trace_marker_t ooffice_start_marker_copy;
+	void *trace_fragment = NULL;
+	int trace_fragment_size = 0;
+	int ret;
+	
+	//use the work mutex for exclusiveness for now
+	mutex_lock(&ooffice_trace_work.mutex);
+	
+	if (delayed_work_pending(&ooffice_trace_work.work))
+		cancel_delayed_work(&ooffice_trace_work.work);
+	
+	ooffice_start_marker_copy = ooffice_start_marker;
+	ret = prefetch_stop_trace(&ooffice_end_marker);
+	ooffice_trace_in_progress = 0;
+	if (ret < 0) {
+		printk(KERN_WARNING "Failed to stop ooffice trace\n");
+		goto out_unlock;
+	}
+	
+	ret = get_prefetch_trace_fragment(
+		ooffice_start_marker_copy,
+		ooffice_end_marker,
+		&trace_fragment,
+		&trace_fragment_size
+		);
+	if (ret < 0) {
+		printk(KERN_WARNING "Failed to fetch ooffice trace fragment\n");
+		goto out_unlock;
+	}
+
+	clear_trace();
+
+	if (trace_fragment_size <= 0) {
+		printk(KERN_WARNING "Empty ooffice trace\n");
+		goto out_unlock;
+	}
+
+	sort_trace_fragment(trace_fragment, trace_fragment_size);
+
+	if (ooffice_trace != NULL) {
+		//FIXME: race with deallocation possible
+		kfree(ooffice_trace);
+	}
+
+	ooffice_trace_size = trace_fragment_size;
+	ooffice_trace = trace_fragment;
+	
+out_unlock:
+	mutex_unlock(&ooffice_trace_work.mutex);
+}
+
+/**
+	Function called in scheduled intervals to perform tracing with better resolution.
+*/
+static void ooffice_interim_tracing(struct work_struct *workptr)
+{
+	trace_marker_t interim_marker;
+	int offset;
+	int ret;
+	
+	mutex_lock(&ooffice_trace_work.mutex);
+	
+	ooffice_trace_work.traces_left--;
+	if (ooffice_trace_work.traces_left <= 0) {
+		//finish tracing
+		printk("End of tracing after scheduled number of intervals\n");
+		mutex_unlock(&ooffice_trace_work.mutex);
+		ooffice_finish_tracing();
+		goto out;
+	}
+	
+	if (ooffice_trace_work.trace_offsets == NULL) {
+		printk("Trace offsets not allocated\n");
+		goto out_unlock;
+	}
+
+	ret = prefetch_continue_trace(&interim_marker);
+	if (ret != 0) {
+		printk(KERN_WARNING "Interim trace error=%d\n", ret);
+		goto out_unlock;
+	}
+	
+	offset = prefetch_trace_fragment_size(ooffice_start_marker, interim_marker);
+	
+	ooffice_trace_work.trace_offsets[ooffice_trace_work.num_trace_offsets] = offset;
+	ooffice_trace_work.num_trace_offsets++;
+	//schedule next run
+	schedule_delayed_work(&ooffice_trace_work.work, HZ*TRACING_INTERVAL_SECS);
+	
+out_unlock:
+	mutex_unlock(&ooffice_trace_work.mutex);
+out:
+	return;
+}
+
 void prefetch_exec_hook(char *filename)
 {
 	int ret;
@@ -937,6 +1067,18 @@ void prefetch_exec_hook(char *filename)
 			//FIXME: concurrent traces possible
 			ooffice_trace_in_progress = 1;
 			ooffice_pid = current->pid;
+
+			//start delayed work
+			mutex_lock(&ooffice_trace_work.mutex);
+			
+			if (ooffice_trace_work.trace_offsets != NULL)
+				kfree(ooffice_trace_work.trace_offsets);
+			ooffice_trace_work.traces_left = TRACING_INTERVALS_NUM;
+			ooffice_trace_work.num_trace_offsets = 0;
+			ooffice_trace_work.trace_offsets = kmalloc(ooffice_trace_work.traces_left *sizeof(ooffice_trace_work.trace_offsets[0]), GFP_KERNEL); //FIXME: ignoring memory not allocated for now
+			schedule_delayed_work(&ooffice_trace_work.work, HZ*TRACING_INTERVAL_SECS);
+			
+			mutex_unlock(&ooffice_trace_work.mutex);
 		}
 		if (ooffice_trace != NULL) {
 			printk("Starting prefetch\n");
@@ -950,48 +1092,9 @@ void prefetch_exec_hook(char *filename)
 */
 void prefetch_exit_hook(pid_t pid)
 {
-	trace_marker_t ooffice_end_marker;
-	trace_marker_t ooffice_start_marker_copy;
-	void *trace_fragment = NULL;
-	int trace_fragment_size = 0;
-	int ret;
-	
 	if (ooffice_trace_in_progress && ooffice_pid == pid) {
-		printk(KERN_INFO "ooffice exit noticed\n");
-		ooffice_start_marker_copy = ooffice_start_marker;
-		ret = prefetch_stop_trace(&ooffice_end_marker);
-		ooffice_trace_in_progress = 0;
-		if (ret < 0) {
-			printk(KERN_WARNING "Failed to start ooffice trace\n");
-			return;
-		}
-		ret = get_prefetch_trace_fragment(
-			ooffice_start_marker_copy,
-			ooffice_end_marker,
-			&trace_fragment,
-			&trace_fragment_size
-			);
-		if (ret < 0) {
-			printk(KERN_WARNING "Failed to fetch ooffice trace fragment\n");
-			return;
-		}
-
-		clear_trace();
-			
-		if (trace_fragment_size <= 0) {
-			printk(KERN_WARNING "Empty ooffice trace\n");
-			return;
-		}
-
-		sort_trace_fragment(trace_fragment, trace_fragment_size);
-
-		if (ooffice_trace != NULL) {
-			//FIXME: race with deallocation possible
-			kfree(ooffice_trace);
-		}
-		
-		ooffice_trace_size = trace_fragment_size;
-		ooffice_trace = trace_fragment;
+		printk(KERN_INFO "ooffice exit noticed during tracing\n");
+		ooffice_finish_tracing();
 	}
 }
 
@@ -1126,6 +1229,14 @@ static __init int prefetch_init(void)
 	struct proc_dir_entry *entry;
 	clear_trace();
 
+	//initialize periodic work
+	INIT_DELAYED_WORK(&ooffice_trace_work.work, ooffice_interim_tracing);
+	mutex_init(&ooffice_trace_work.mutex);
+	ooffice_trace_work.traces_left = 0; //just in case
+	ooffice_trace_work.num_trace_offsets = 0;
+	ooffice_trace_work.trace_offsets = NULL;
+
+	//create proc entry
 	entry = create_proc_entry("prefetch", 0600, NULL);
 	if (entry)
 		entry->proc_fops = &proc_prefetch_fops;
