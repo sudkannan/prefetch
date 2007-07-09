@@ -220,3 +220,32 @@ http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmach
  
 === Conclusions ===
   * Only intercepting page releases does not help in spotting missed accesses. Next possible culprit are inodes which are freed, but not released.
+
+== Test 7 ==
+This test purpose is to check if walking inodes which are in freed state gives better trace.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * Custom kernel prefetch module with tracing at 6 second intervals for a total of 12 seconds of tracing.
+  * Run blktrace through network and saving prefetch trace to file.
+  * Prefetch function enabled.
+  * Tracing with page release hook.
+
+Test preparation: 
+  * One warmup run to warm up trace.
+
+Measurements repeatability:
+  * 2 runs of OpenOffice, before each test run drop_caches was set to 3
+
+=== Test results ===
+Comparison of blktrace and prefetch trace was done using script.
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmachine-kl1/test-7-tracing-with-freed-inodes/
+ 
+=== Conclusions ===
+  * Walking freed inodes does not affect trace quality, there are still references for example to openintro_ubuntu.bmp.
