@@ -54,12 +54,15 @@ struct session {
 	int page_blocks;
 };
 
+///Disables/enables the whole module functionality
+static int prefetching_module_enabled = 1;
 
-int prefetch_enabled = 1;
+///Disables/enables prefetching of data during application start
+static int prefetch_enabled = 1;
 
 ///Whether prefetching should be synchronous or asynchronous
 ///i.e. wait for prefetch to finish before going forward or not.
-int async_prefetching = 0;
+static int async_prefetching = 0;
 
 enum
 {
@@ -1050,7 +1053,7 @@ void prefetch_exec_hook(char *filename)
 
 	if (strcmp(filename, "/usr/lib/openoffice/program/soffice.bin") == 0)
 	{
-		if (!prefetch_enabled) {
+		if (!prefetching_module_enabled) {
 			printk("Prefetch disabled, not doing tracing nor prefetching\n");
 			return;
 		}
@@ -1081,8 +1084,12 @@ void prefetch_exec_hook(char *filename)
 			mutex_unlock(&ooffice_trace_work.mutex);
 		}
 		if (ooffice_trace != NULL) {
-			printk("Starting prefetch\n");
-			prefetch_start_prefetch(ooffice_trace, ooffice_trace_size, async_prefetching);
+			if (prefetch_enabled) {
+				printk("Starting prefetch\n");
+				prefetch_start_prefetch(ooffice_trace, ooffice_trace_size, async_prefetching);
+			} else {
+				printk("Prefetch disabled\n");
+			}
 		}
 	}
 }
@@ -1188,12 +1195,24 @@ ssize_t prefetch_proc_write(struct file *proc_file, const char __user * buffer,
 
 	if (param_match(name, "enable")) {
 		printk(KERN_INFO "Prefetch module enabled\n");
-		prefetch_enabled = 1;
+		prefetching_module_enabled = 1;
 		goto out;
 	}
 	
 	if (param_match(name, "disable")) {
 		printk(KERN_INFO "Prefetch module disabled\n");
+		prefetching_module_enabled = 0;
+		goto out;
+	}
+	
+	if (param_match(name, "prefetch enable")) {
+		printk(KERN_INFO "Prefetching enabled\n");
+		prefetch_enabled = 1;
+		goto out;
+	}
+	
+	if (param_match(name, "prefetch disable")) {
+		printk(KERN_INFO "Prefetching disabled\n");
 		prefetch_enabled = 0;
 		goto out;
 	}
