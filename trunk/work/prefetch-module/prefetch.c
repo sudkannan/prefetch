@@ -317,8 +317,8 @@ static int ivec_push(struct session *s, struct inode *inode)
 {
 	if (!atomic_read(&inode->i_count))
 		return 0;
-	if (inode->i_state & (I_FREEING|I_CLEAR|I_WILL_FREE))
-		return 0;
+/*	if (inode->i_state & (I_FREEING|I_CLEAR|I_WILL_FREE))
+		return 0;*/
 	if (!inode->i_mapping)
 		return 0;
 
