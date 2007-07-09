@@ -67,8 +67,8 @@ static int async_prefetching = 0;
 enum
 {
     PREFETCH_TRACE_SIZE = 128*1024,
-    TRACING_INTERVAL_SECS = 2,
-    TRACING_INTERVALS_NUM = 6, //12 seconds of tracing
+    TRACING_INTERVAL_SECS = 6,
+    TRACING_INTERVALS_NUM = 2, //12 seconds of tracing
 };
 
 struct prefetch_trace_t {
@@ -76,7 +76,9 @@ struct prefetch_trace_t {
 	unsigned int buffer_size;
 	void *buffer;
 	spinlock_t prefetch_trace_lock;
+	int overflow;
 	int overflow_reported;
+	int page_release_traced;
 };
 
 struct prefetch_trace_t prefetch_trace = {
@@ -280,18 +282,13 @@ void prefetch_trace_add(
 	pgoff_t range_length
 	)
 {
-	int overflow_reported = 0;
 	prefetch_trace_record_t *record;
 	
 	spin_lock(&prefetch_trace.prefetch_trace_lock);
 
 	if (prefetch_trace.buffer_used + sizeof(prefetch_trace_record_t) >= prefetch_trace.buffer_size) {
-		overflow_reported = prefetch_trace.overflow_reported;
-		prefetch_trace.overflow_reported = 1;
+		prefetch_trace.overflow = 1;
 		spin_unlock(&prefetch_trace.prefetch_trace_lock);
-		
-		if (!overflow_reported)
-			printk(KERN_WARNING "Prefetch buffer overflow\n");
 		return;
 	}
 
@@ -419,6 +416,49 @@ void add_referenced_page_range(struct session *s,
 		if (inode && inode->i_sb && inode->i_sb->s_bdev)
 			prefetch_trace_add(inode->i_sb->s_bdev->bd_dev, inode->i_ino, start, len);
 	}
+}
+
+/**
+	Add page to trace if it was referenced.
+
+	NOTE: spinlock might be held while this function is called.
+*/
+void prefetch_add_page_to_trace(struct page *page)
+{
+	struct address_space *mapping;
+	struct inode * inode;
+
+	//if not tracing, nothing to be done
+	if (atomic_read(&tracers_count) <= 0)
+		return;
+
+	//if page was not touched
+	if (!PageReferenced(page))
+		return;
+
+	//FIXME: swap pages are not interesting?
+	if (PageSwapCache(page))
+		return;
+
+	//no locking, just stats
+	prefetch_trace.page_release_traced++;
+	
+	mapping = page_mapping(page);
+	
+	inode = mapping->host;
+	if (inode && inode->i_sb && inode->i_sb->s_bdev)
+		prefetch_trace_add(inode->i_sb->s_bdev->bd_dev, inode->i_ino, page_index(page), 1);
+}
+
+/**
+	Hook called when page is about to be freed, so we have to check
+	if it was referenced, as inode walk will not notice it.
+
+	NOTE: spinlock is held while this function is called.
+*/
+void prefetch_page_release_hook(struct page *page)
+{
+	prefetch_add_page_to_trace(page);
 }
 
 static void walk_file_cache(struct session *s,
@@ -789,6 +829,18 @@ int walk_pages(enum tracing_command_t command, trace_marker_t *marker)
 	int clearing = 0;
 	int invalid_trace_counter = 0;
 	prefetch_timer_t walk_pages_timer;
+	int report_overflow = 0;
+
+       spin_lock(&prefetch_trace.prefetch_trace_lock);
+	if (prefetch_trace.overflow && ! prefetch_trace.overflow_reported) {
+		prefetch_trace.overflow_reported = 1;
+		report_overflow = 1;
+	}
+	spin_unlock(&prefetch_trace.prefetch_trace_lock);
+	
+	//FIXME: stop walking if overflow?
+	if (report_overflow)
+		printk(KERN_WARNING "Prefetch buffer overflow\n");
 	
 	s = session_create();
 	if (IS_ERR(s)) {
@@ -889,6 +941,7 @@ int prefetch_continue_trace(trace_marker_t *marker)
 */
 int prefetch_stop_trace(trace_marker_t *marker)
 {
+	printk(KERN_INFO "Released pages traced: %d\n", prefetch_trace.page_release_traced);
 	return walk_pages(STOP_TRACING, marker);
 }
 
@@ -1122,24 +1175,42 @@ static int prefetch_proc_release(struct inode *inode, struct file *proc_file)
 
 void clear_trace(void)
 {
+	void *new_buffer = NULL;
+
 	printk(KERN_INFO "Clearing prefetch trace\n");
 
 	spin_lock(&prefetch_trace.prefetch_trace_lock);
 
 	if (prefetch_trace.buffer == NULL) {
-		prefetch_trace.buffer = kmalloc(PREFETCH_TRACE_SIZE, GFP_KERNEL);
-		if (prefetch_trace.buffer == NULL) {
+		spin_unlock(&prefetch_trace.prefetch_trace_lock);
+		
+		new_buffer = kmalloc(PREFETCH_TRACE_SIZE, GFP_KERNEL);
+		
+		if (new_buffer == NULL) {
 			//failed to allocate memory
-			goto out_unlock;
+			printk(KERN_WARNING "Cannot allocate memory for trace buffer\n");
+			goto out;
 		}
-		prefetch_trace.buffer_size = PREFETCH_TRACE_SIZE;
+		
+		spin_lock(&prefetch_trace.prefetch_trace_lock);
+		
+		if (prefetch_trace.buffer != NULL) {
+			//someone already allocated it
+			kfree(new_buffer);
+		} else {
+			prefetch_trace.buffer = new_buffer;
+			prefetch_trace.buffer_size = PREFETCH_TRACE_SIZE;
+		}
 	}
 	//reset used buffer counter
 	prefetch_trace.buffer_used = 0;
+	prefetch_trace.overflow = 0;
 	prefetch_trace.overflow_reported = 0;
+	prefetch_trace.page_release_traced = 0;
 
-out_unlock:
 	spin_unlock(&prefetch_trace.prefetch_trace_lock);
+out:
+	return;
 }
 
 static int param_match(char *line, char *param_name)
