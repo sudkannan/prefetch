@@ -161,7 +161,7 @@ http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmach
 === Conclusions ===
   # Greater resolution gives slight decrease of startup time (10.62s vs 10.77s for sync, 11.28s vs 11.61s for async), but it is in in error margin.
 
-== Test 4a ==
+== Test 5 ==
 This test purpose is to check if performing pages scan with smaller intervals gives better resolution of trace.
 
 === Test description ===
@@ -172,18 +172,21 @@ Test environment:
   * Standard desktop environment.
   * Custom kernel prefetch module with tracing at 2 second intervals for a total of 12 seconds of tracing.
   * Run blktrace through network and saving prefetch trace to file.
+  * Prefetch function disabled, only tracing.
 
 Test preparation: 
-  * Done after test 4.
+  * None
 
 Measurements repeatability:
-  * 1 run of OpenOffice, before run drop_caches was set to 3
+  * 2 runs of OpenOffice, first after cold start, before each test run drop_caches was set to 3
 
 === Test results ===
 Comparison of blktrace and prefetch trace was done using script.
-File map, blktrace and prefetch trace are attached.
+Then results of missing accesses were compared by sorting, removing timestamps and comparing with missing accesses from test 1 and test 4.
 
 Raw results are at: 
-http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmachine-kl1/test-4-tracing-intervals/
+http://prefetch.googlecode.com/svn/trunk/results/openoffice/prefetching/testmachine-kl1/test-5-blktrace-without-prefetch/
  
 === Conclusions ===
+  * Greater resolution (2 second intervals) does not help much, there are still many missed accesses. Maybe decreasing interval would help, but smaller interval might have impact on performance of system, so it doesn't seem feasible. Other solution is needed.
+  * Run 1 and run 2 have are very similar, so the tracing is repeatable.
