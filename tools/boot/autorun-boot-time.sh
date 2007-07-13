@@ -28,7 +28,7 @@ if [ $PHASE -eq 0 -o $PHASE -eq 1 ]; then
 	#now run openoffice before measuring boot startup time
 	echo "#running openoffice as part of boot" >>"$LOG_FILE"
 	cd ~/prefetch/trunk/tools/openoffice
-	./measure_openoffice_start_time.sh >>"$LOG_FILE"
+	NO_WAIT_FOR_RESULTS=yes ./measure_openoffice_start_time.sh >>"$LOG_FILE"
 fi
 
 #record time since start

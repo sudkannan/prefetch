@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#Environment variables:
+#NO_WAIT_FOR_RESULTS - if set to yes, script ends immediately when openoffice startup hook,
+#	is run, without waiting for results or processing them.
+
 THIS_SCRIPT_DIR=`dirname "$0"`
 
 . "$THIS_SCRIPT_DIR"/../toolslib.sh
@@ -71,11 +75,15 @@ oowriter $OPENOFFICE_OPTIONS ./recordStart.odt &
 
 while true; do
 	if [ -e "$RESULT_FILE" ]; then
+		if [ "$NO_WAIT_FOR_RESULTS" = "yes" ]; then
+			killall soffice.bin
+			exit 0
+		fi
 		#sleep a while as a workaround for race condition writing to output file
 		sleep 2
 		break
 	fi
-	sleep 1
+	sleep 0.2
 done
 set `cat "$RESULT_FILE"`
 END_TIME=$1
