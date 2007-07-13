@@ -26,12 +26,12 @@ This page will contain information about progress of implementation.
       * OpenOffice startup time (see OpenOfficeStartupTimeResults) (*done*)
       * Firefox startup time (_deferred_)
     * evaluation of pagecache as tracing tool (*done*)
-    * integration of tracing into boot scripts  (_deferred_)
-    * integration of prefetching into boot scripts  (_deferred_)
+    * integration of tracing into boot scripts  (_in progress_, see InitialBootPrefetchingResults)
+    * integration of prefetching into boot scripts  (_in progress_)
   * 2nd half of June - 1st half of July: implementation of hooking into application start, analysis of impact and performance of prefetching during application start.
      * Tracing based on pagecache (*done*)
-     * Prefetching during application startup (_in progress_)
-     * Tests of impact of prefetching during application startup (_in progress_)
+     * Prefetching during application startup (_in progress_, see InitialPrefetchingImplementationResults)
+     * Tests of impact of prefetching during application startup (_in progress_, see InitialPrefetchingImplementationResults)
   * 2nd half of July - improving disk layout tool, intensive testing and analysis of impact.
   * August - in case of slips, time to fix problems, otherwise implementing metadata prefetching and partial prefetching during boot. 
   * September and later - writing a paper describing results of analysis for later submission to Linux conferences, improving things which were identified as problems during analysis of implemented solution.
