@@ -14,7 +14,7 @@ Test environment:
 
 Test method:
   * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
- * For readahead 2 cases were tested - with Ubuntu readahead enabled and disabled (using chmod a-x /etc/init.d/readahead*)
+  * For readahead 2 cases were tested - with Ubuntu readahead enabled and disabled (using `chmod a-x /etc/init.d/readahead*`)
   * For simulating change of boot sequence and readahead adaptation, batches of tests were run with OpenOffice automatically started in script which was run after system start. OpenOffice was started using script used to measure its startup time. Boot time was measured after this script run.
 
 Test preparation: 
