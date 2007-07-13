@@ -44,3 +44,7 @@ Raw results are at:
 http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-1-ubuntu-readahead
  
 === Conclusions ===
+  * Ubuntu readahead gain is almost 3 seconds (2.89s).
+  * The variance of boot time is quite big  - 1.4s with readahead enabled, 1.1s with disabled, so for enabled readahead it is almost half of gain in comparison to readahead disabled.
+  * OpenOffice startup with readahead disabled is 1s slower, apparently readahead files contain also files used by OpenOffice and not by other applications started during boot.
+  * Time of boot with openoffice started is ~6 seconds longer than summing up boot time and openoffice startup time. The reason is probably that the script which measures openoffice time sleeps a few times while waiting for results to appear (with 1s intervals), then sleeps 2s before fetching the result and finally waits 2s before killing OpenOffice. This gives constant 4s overhead and 1 second variable overhead depending on scheduling of script versus OpenOffice. The results of boot time with openoffice started are not reliable and should be repeated with this overhead removed.
