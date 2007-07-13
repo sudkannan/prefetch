@@ -1,0 +1,80 @@
+Restarts left: 9
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #45 SMP Mon Jul 9 13:35:12 CEST 2007 i686 GNU/Linux
+-rwxr-xr-x 1 root root 1492 2007-04-13 21:51 /etc/init.d/readahead
+-rwxr-xr-x 1 root root 1957 2007-04-13 21:51 /etc/init.d/readahead-desktop
+#readahead will be enabled next time
+#running openoffice as part of boot
+68.70 28.27
+Restarts left: 8
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #45 SMP Mon Jul 9 13:35:12 CEST 2007 i686 GNU/Linux
+-rwxr-xr-x 1 root root 1492 2007-04-13 21:51 /etc/init.d/readahead
+-rwxr-xr-x 1 root root 1957 2007-04-13 21:51 /etc/init.d/readahead-desktop
+#readahead will be enabled next time
+#running openoffice as part of boot
+69.12 28.90
+Restarts left: 7
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #45 SMP Mon Jul 9 13:35:12 CEST 2007 i686 GNU/Linux
+-rwxr-xr-x 1 root root 1492 2007-04-13 21:51 /etc/init.d/readahead
+-rwxr-xr-x 1 root root 1957 2007-04-13 21:51 /etc/init.d/readahead-desktop
+#readahead will be enabled next time
+#running openoffice as part of boot
+69.68 29.35
+Restarts left: 6
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #45 SMP Mon Jul 9 13:35:12 CEST 2007 i686 GNU/Linux
+-rwxr-xr-x 1 root root 1492 2007-04-13 21:51 /etc/init.d/readahead
+-rwxr-xr-x 1 root root 1957 2007-04-13 21:51 /etc/init.d/readahead-desktop
+#readahead will be enabled next time
+#running openoffice as part of boot
+68.84 28.07
+Restarts left: 5
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #45 SMP Mon Jul 9 13:35:12 CEST 2007 i686 GNU/Linux
+-rwxr-xr-x 1 root root 1492 2007-04-13 21:51 /etc/init.d/readahead
+-rwxr-xr-x 1 root root 1957 2007-04-13 21:51 /etc/init.d/readahead-desktop
+#readahead will be disabled next time
+#running openoffice as part of boot
+68.92 28.49
+Restarts left: 4
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #45 SMP Mon Jul 9 13:35:12 CEST 2007 i686 GNU/Linux
+-rw-r--r-- 1 root root 1492 2007-04-13 21:51 /etc/init.d/readahead
+-rw-r--r-- 1 root root 1957 2007-04-13 21:51 /etc/init.d/readahead-desktop
+#readahead will be disabled next time
+#running openoffice as part of boot
+69.89 29.68
+Restarts left: 3
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #45 SMP Mon Jul 9 13:35:12 CEST 2007 i686 GNU/Linux
+-rw-r--r-- 1 root root 1492 2007-04-13 21:51 /etc/init.d/readahead
+-rw-r--r-- 1 root root 1957 2007-04-13 21:51 /etc/init.d/readahead-desktop
+#readahead will be disabled next time
+#running openoffice as part of boot
+70.10 29.43
+Restarts left: 2
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #45 SMP Mon Jul 9 13:35:12 CEST 2007 i686 GNU/Linux
+-rw-r--r-- 1 root root 1492 2007-04-13 21:51 /etc/init.d/readahead
+-rw-r--r-- 1 root root 1957 2007-04-13 21:51 /etc/init.d/readahead-desktop
+#readahead will be disabled next time
+#running openoffice as part of boot
+70.90 29.97
+Restarts left: 1
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #45 SMP Mon Jul 9 13:35:12 CEST 2007 i686 GNU/Linux
+-rw-r--r-- 1 root root 1492 2007-04-13 21:51 /etc/init.d/readahead
+-rw-r--r-- 1 root root 1957 2007-04-13 21:51 /etc/init.d/readahead-desktop
+#readahead will be disabled next time
+#running openoffice as part of boot
+70.42 30.01
+Restarts left: 0
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #45 SMP Mon Jul 9 13:35:12 CEST 2007 i686 GNU/Linux
+-rw-r--r-- 1 root root 1492 2007-04-13 21:51 /etc/init.d/readahead
+-rw-r--r-- 1 root root 1957 2007-04-13 21:51 /etc/init.d/readahead-desktop
+#readahead will be enabled next time
+#running openoffice as part of boot
+69.98 29.60
