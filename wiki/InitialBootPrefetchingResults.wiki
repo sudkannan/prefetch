@@ -48,3 +48,42 @@ http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl
   * The variance of boot time is quite big  - 1.4s with readahead enabled, 1.1s with disabled, so for enabled readahead it is almost half of gain in comparison to readahead disabled.
   * OpenOffice startup with readahead disabled is 1s slower, apparently readahead files contain also files used by OpenOffice and not by other applications started during boot.
   * Time of boot with openoffice started is ~6 seconds longer than summing up boot time and openoffice startup time. The reason is probably that the script which measures openoffice time sleeps a few times while waiting for results to appear (with 1s intervals), then sleeps 2s before fetching the result and finally waits 2s before killing OpenOffice. This gives constant 4s overhead and 1 second variable overhead depending on scheduling of script versus OpenOffice. The results of boot time with openoffice started are not reliable and should be repeated with this overhead removed.
+
+== Test 2 ==
+This test purpose is to check what is the benefit of Ubuntu current readahead implementation and what is its behaviour in case boot sequence changes. This is supplemental test to straighten out time with openoffice start.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * Custom compiled kernel.
+
+Test method:
+  * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
+  * For readahead 2 cases were tested - with Ubuntu readahead enabled and disabled (using `chmod a-x /etc/init.d/readahead*`)
+  * Tests were run with OpenOffice automatically started in script which was run after system start. OpenOffice was started using script used to measure its startup time. Boot time was measured after this script run.
+  * OpenOffice startup script was tweaked to exit immediately when OpenOffice is started, without waiting.
+
+Test preparation: 
+  * None, each test was run automatically after restart.
+
+Measurements repeatability:
+  * Each combination of parameters was tested 5 times.
+
+=== Test results ===
+Results of runs without openoffice were taken from Test 1.
+
+||		||	readahead enabled	||	readahead disabled	||	difference	||
+||	Without openoffice: avg	||	54.63	||	57.52	||	2.89	||
+||	stddev	||	1.41	||	1.17	||	-0.24	||
+||	With openoffice: avg	||	69.05	||	70.26	||	1.21	||
+||	stddev	||	0.38	||	0.41	||	0.03	||
+||	Difference: avg	||	14.43	||	12.74	||		||
+||	stddev	||	-1.03	||	-0.76	||		||
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-2-boot-with-openoffice/
+ 
+=== Conclusions ===
