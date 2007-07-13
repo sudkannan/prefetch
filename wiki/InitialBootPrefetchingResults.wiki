@@ -1,0 +1,46 @@
+#summary Results of initial implementation of automatic tracing and prefetching during boot
+#labels tests,results,readahead,boot
+
+== Test 1 ==
+This test purpose is to check what is the benefit of Ubuntu current readahead implementation and what is its behaviour in case boot sequence changes.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * Custom compiled kernel.
+
+Test method:
+  * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
+ * For readahead 2 cases were tested - with Ubuntu readahead enabled and disabled (using chmod a-x /etc/init.d/readahead*)
+  * For simulating change of boot sequence and readahead adaptation, batches of tests were run with OpenOffice automatically started in script which was run after system start. OpenOffice was started using script used to measure its startup time. Boot time was measured after this script run.
+
+Test preparation: 
+  * None, each test was run automatically after restart.
+
+Measurements repeatability:
+  * Each combination of parameters was tested 5 times.
+
+Notes: 
+  * 1 result for combination of readahead enabled and openoffice not run was removed as it was much longer than others - apparently fsck was run upon reboot. 
+
+=== Test results ===
+
+||		||	readahead enabled	||	readahead disabled	||	difference	||
+||	Without openoffice: avg	||	54.63	||	57.52	||	2.89	||
+||	stddev	||	1.41	||	1.17	||	-0.24	||
+||	With openoffice: avg	||	72.68	||	74.6	||	1.92	||
+||	stddev	||	0.41	||	0.42	||	0.01	||
+||	Openoffice startup: avg	||	11.74	||	12.72	||	0.99	||
+||	stddev	||	0.81	||	1.24	||	0.43	||
+||	Boot time minus openoffice startup: avg	||	60.94	||	61.87	||	0.93	||
+||	stddev	||	-0.4	||	-0.82	||	-0.43	||
+||	Boot time without openoffice difference to plain boot	||	6.31	||	4.36	||		||
+
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-1-ubuntu-readahead
+ 
+=== Conclusions ===
