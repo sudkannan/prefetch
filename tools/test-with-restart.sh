@@ -27,7 +27,7 @@ NUM_RESTARTS_LEFT=$[ $NUM_RESTARTS_LEFT - 1 ]
 echo "$NUM_RESTARTS_LEFT" >"$RESTARTS_FILE"
 echo "Running autorun file"
  
-"$AUTORUN_FILE"
+"$AUTORUN_FILE" "$NUM_RESTARTS_LEFT"
 
 if [ "$NUM_RESTARTS_LEFT" -le 0 ]; then
 	echo "All tests have been performed"
