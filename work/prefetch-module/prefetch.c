@@ -30,7 +30,7 @@
 #include <linux/delayacct.h>
 #include <linux/workqueue.h>
 #include <linux/file.h>
-
+  
 static char * boot_trace_filename = "/.prefetch-boot.trace";
 void sort_trace_fragment(void *trace, int trace_size);
 
@@ -932,7 +932,8 @@ int prefetch_save_trace_fragment(trace_marker_t start_marker, trace_marker_t end
 	}
 
 	sort_trace_fragment(fragment, allocated_fragment_size);
-	fragment_size = merge_trace_fragment(fragment, allocated_fragment_size);
+// 	fragment_size = merge_trace_fragment(fragment, allocated_fragment_size);
+	fragment_size = allocated_fragment_size;
 	printk(KERN_INFO "Merging fragment done, size before merge=%d, after=%d\n",
 		allocated_fragment_size,
 		fragment_size
