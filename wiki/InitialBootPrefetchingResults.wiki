@@ -114,3 +114,47 @@ http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl
   * Tests confirm that openoffice starts a bit faster when readahead is disabled (12.42s) than when it is enabled. The difference is small and in the margin of error. However, such small difference suggests that readahead does not affect OpenOffice startup time (which is correct, as readahead has static list of files to read).
   * OpenOffice startup during boot is slightly slower than when system has quiesced after boot (12.42s vs 11.19s).
   
+== Test 4 ==
+This test purpose is measure effectiveness of first implementation of boot prefetching.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * Custom compiled kernel.
+
+Test method:
+  * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
+  * 5 tests were run with plain boot to desktop environments, then subsequently 5 runs with openoffice started.
+
+Boot prefetching implementation:
+  * Tracing was started when /etc/init.d/readahead script was run.
+  * Tracing was done only once, 60 seconds after /etc/init.d/stop-readahead script was called.
+  * Merging of trace was not done.
+
+Test preparation: 
+  * Before starting first run prefetch trace file was removed. First run was thus with tracing, without prefetching.
+
+Measurements repeatability:
+  * Each combination of parameters was tested 5 times.
+
+=== Test results ===
+Results of runs with ubuntu readahead enabled were taken from Test 3 for comparison.
+
+||		||	readahead enabled	||	prefetch	||	difference	||
+||	Without openoffice: avg	||	54.63	||	54.26	||	-0.36	||
+||	stddev	||	1.41	||	1.3	||	-0.11	||
+||	With openoffice: avg	||	69.03	||	72.94	||	3.91	||
+||	stddev	||	0.22	||	1.82	||	1.59	||
+||	Openoffice startup: avg	||	12.77	||	12.42	||	-0.35	||
+||	stddev	||	2.05	||	1.39	||	-0.66	||
+||	Boot time minus openoffice startup: avg	||	56.25	||	60.51	||	4.26	||
+||	stddev	||	-1.83	||	0.42	||	2.26	||
+||	Boot time without openoffice difference to plain boot	||	1.63	||	6.25	||		||
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-4-boot-with-prefetching/ 
+
+=== Conclusions ===
