@@ -29,7 +29,10 @@
 #include <linux/file.h>
 #include <linux/delayacct.h>
 #include <linux/workqueue.h>
+#include <linux/file.h>
 
+static char * boot_trace_filename = "/.prefetch-boot.trace";
+void sort_trace_fragment(void *trace, int trace_size);
 
 //Inode walk session
 struct session {
@@ -66,7 +69,7 @@ static int async_prefetching = 0;
 
 enum
 {
-    PREFETCH_TRACE_SIZE = 128*1024,
+    PREFETCH_TRACE_SIZE = 256*1024, //256 KB, just in case
     TRACING_INTERVAL_SECS = 6,
     TRACING_INTERVALS_NUM = 2, //12 seconds of tracing
 };
@@ -547,12 +550,55 @@ void prefetch_print_trace_fragment(struct seq_file *m,
 	}
 }
 
+/**
+	Merges consecutive entries in trace. Trace must be sorted, otherwise assertion fails!
+
+	Returns size of merged fragment.
+*/
+int merge_trace_fragment(
+	void *trace_fragment, int trace_size
+	)
+{
+	prefetch_trace_record_t *record = (prefetch_trace_record_t*)trace_fragment;
+	prefetch_trace_record_t *next_record = record + 1;
+
+	while (next_record < (prefetch_trace_record_t*)(trace_fragment + trace_size)) {
+		if (record->device == next_record->device
+			&& record->inode_no == next_record->inode_no
+			&& record->range_start + record->range_length >= next_record->range_start ) {
+			BUG_ON(next_record->range_start < record->range_start); //fragment must be sorted
+			//can merge two consecutive records
+			record->range_length = max(
+				record->range_length,
+				next_record->range_start + next_record->range_length - record->range_start
+				);
+			//go to next record for examination, leave merged record alone
+			++next_record;
+		} else {
+			//cannot merge items
+			++next_record;
+			++record;
+		}
+	}
+	return (void *)record - trace_fragment;
+}
+
+void *alloc_trace_buffer(int len)
+{
+	return (void *)__get_free_pages(GFP_KERNEL, get_order(len));
+}
+
+void free_trace_buffer(void *buffer, int len)
+{
+	free_pages((unsigned long)buffer, get_order(len));
+}
+
 void print_prefetch_trace(struct seq_file *m)
 {
 	void *trace_copy;
 	unsigned int trace_size;
 
-	trace_copy = kmalloc(PREFETCH_TRACE_SIZE, GFP_KERNEL);
+	trace_copy = alloc_trace_buffer(PREFETCH_TRACE_SIZE);
 	if (trace_copy == NULL) {
 		printk(KERN_WARNING "Cannot allocate memory for prefetch trace copy");
 		return;
@@ -570,13 +616,13 @@ void print_prefetch_trace(struct seq_file *m)
 
 	prefetch_print_trace_fragment(m, trace_copy,  trace_size);
 
-	kfree(trace_copy);
+	free_trace_buffer(trace_copy, PREFETCH_TRACE_SIZE);
 
 	return;
 
 out_unlock_free:
 	spin_unlock(&prefetch_trace.prefetch_trace_lock);
-	kfree(trace_copy);
+	free_trace_buffer(trace_copy, PREFETCH_TRACE_SIZE);
 	printk(KERN_WARNING "Printing prefetch trace failed");
 }
 
@@ -702,6 +748,8 @@ typedef struct {
 	unsigned generation;
 } trace_marker_t;
 
+trace_marker_t boot_start_marker;
+
 void print_marker(char *msg, trace_marker_t marker)
 {
 	printk("%s %u.%u\n", msg, marker.generation, marker.position);
@@ -758,7 +806,7 @@ static int trace_marker_position_in_buffer(trace_marker_t marker)
 
 /**
 	Fetches fragment of trace between start marker and end_marker.
-	Returns memory allocated using kmalloc() which holds trace fragment
+	Returns memory allocated using __get_free_pages() which holds trace fragment
 	or error on @fragment_result in case of success and its size on @fragment_size_result.
 	If fragment_size == 0, fragment is NULL.
 */
@@ -781,7 +829,7 @@ int get_prefetch_trace_fragment(trace_marker_t start_marker,
 		return 0;
 	}
 
-	fragment = kmalloc(fragment_size, GFP_KERNEL);
+	fragment = alloc_trace_buffer(fragment_size);
 	if (fragment == NULL)
 		return -ENOMEM;
 	
@@ -815,7 +863,103 @@ int get_prefetch_trace_fragment(trace_marker_t start_marker,
 	
 out_free:
 	spin_unlock(&prefetch_trace.prefetch_trace_lock);
-	kfree(fragment);
+	free_trace_buffer(fragment, fragment_size);
+	return ret;
+}
+
+static struct file *open_file(char const *file_name, int flags, int mode)
+{
+	int orig_fsuid = current->fsuid;
+	int orig_fsgid = current->fsgid;
+	struct file *file = NULL;
+#if BITS_PER_LONG != 32
+	flags |= O_LARGEFILE;
+#endif
+	current->fsuid = 0;
+	current->fsgid = 0;
+	
+	file = filp_open( file_name, flags, mode );
+	current->fsuid = orig_fsuid;
+	current->fsgid = orig_fsgid;
+	return file;
+}
+
+static void close_file(struct file *file )
+{
+	if (file->f_op && file->f_op->flush)
+	{
+		file->f_op->flush(file, current->files);
+	}
+	fput(file);
+}
+
+static int kernel_write(struct file *file, unsigned long offset, const char * addr, unsigned long count)
+{
+	mm_segment_t old_fs;
+	loff_t pos = offset;
+	int result = -ENOSYS;
+	
+	if (!file->f_op->write)
+	       goto fail;
+	old_fs = get_fs();
+	set_fs(get_ds());
+	result = file->f_op->write(file, addr, count, &pos);
+	set_fs(old_fs);
+fail:
+	return result;
+}
+
+
+int prefetch_save_trace_fragment(trace_marker_t start_marker, trace_marker_t end_marker, char *filename)
+{
+	void *fragment;
+	int fragment_size;
+	int allocated_fragment_size;
+	int ret;
+	int written = 0;
+	struct file *file;
+	
+	ret = get_prefetch_trace_fragment(
+		start_marker,
+		end_marker,
+		&fragment,
+		&allocated_fragment_size
+		);
+	
+	if (ret < 0) {
+		printk("Cannot save trace fragment - cannot get trace fragment, error=%d\n", ret);
+		return ret;
+	}
+
+	sort_trace_fragment(fragment, allocated_fragment_size);
+	fragment_size = merge_trace_fragment(fragment, allocated_fragment_size);
+	printk(KERN_INFO "Merging fragment done, size before merge=%d, after=%d\n",
+		allocated_fragment_size,
+		fragment_size
+		);
+	
+	file = open_file(filename, O_CREAT| O_TRUNC | O_RDWR, 0600);
+	
+	if ( IS_ERR( file ) ) {
+		ret = PTR_ERR( file );
+		printk("Cannot open file %s, error=%d\n", filename, ret);
+		goto out_free;
+	}
+	//O_TRUNC does not seem to truncate the file
+// 	do_truncate(file->f_path.dentry, 0, ATTR_MTIME|ATTR_CTIME, file);
+
+	while (written < fragment_size) {
+		ret = kernel_write(file, written, fragment + written, fragment_size - written);
+
+		if (ret < 0) {
+			printk("Error while writing to file %s, error=%d\n", filename, ret);
+			goto out_free;
+		}
+		written += ret;
+	}
+out_free:
+	free_trace_buffer(fragment, allocated_fragment_size);
+	close_file(file);
 	return ret;
 }
 
@@ -1046,7 +1190,7 @@ void ooffice_finish_tracing(void)
 
 	if (ooffice_trace != NULL) {
 		//FIXME: race with deallocation possible
-		kfree(ooffice_trace);
+		free_trace_buffer(ooffice_trace, ooffice_trace_size);
 	}
 
 	ooffice_trace_size = trace_fragment_size;
@@ -1158,6 +1302,67 @@ void prefetch_exit_hook(pid_t pid)
 	}
 }
 
+int do_prefetch_from_file(char *filename)
+{
+	struct file *file;
+	void *buffer;
+	int data_read = 0;
+	int file_size;
+	int ret = 0;
+
+	file = open_file(filename, O_RDONLY, 0600);
+	
+	if ( IS_ERR( file ) ) {
+		ret = PTR_ERR( file );
+		printk("Cannot open file %s for reading, error=%d\n", filename, ret);
+		return ret;
+	}
+
+	file_size = file->f_mapping->host->i_size;
+
+	if (file_size <= 0) {
+		printk(KERN_INFO "Empty trace, not doing prefetching\n");
+		goto out_close;
+	}
+	
+	buffer = alloc_trace_buffer(file_size);
+	if (buffer == NULL) {
+		printk(KERN_INFO "Cannot allocate memory for trace, not doing prefetching\n");
+		goto out_close;
+	}
+
+	while (data_read < file_size) {
+		ret = kernel_read(file, data_read, buffer + data_read, file_size - data_read);
+
+		if (ret < 0) {
+			printk("Error while reading from file %s, error=%d\n", filename, ret);
+			goto out_close_free;
+		}
+		if (ret == 0) {
+			printk(KERN_WARNING "File too short, data_read=%d, file_size=%d\n",
+				data_read,
+				file_size
+				);
+			break;
+		}
+		
+		data_read += ret;
+	}
+	if (data_read > file_size)
+		data_read = file_size;
+	
+	ret = prefetch_start_prefetch(buffer, data_read, 0);
+	if (ret < 0)
+		printk(KERN_WARNING "prefetch_start_prefetch failed, error=%d\n", ret);
+	
+out_close_free:
+	free_trace_buffer(buffer, file_size);
+out_close:
+	close_file(file);
+	return ret;
+}
+
+
 
 /*
  * Proc file operations.
@@ -1184,7 +1389,7 @@ void clear_trace(void)
 	if (prefetch_trace.buffer == NULL) {
 		spin_unlock(&prefetch_trace.prefetch_trace_lock);
 		
-		new_buffer = kmalloc(PREFETCH_TRACE_SIZE, GFP_KERNEL);
+		new_buffer = alloc_trace_buffer(PREFETCH_TRACE_SIZE);
 		
 		if (new_buffer == NULL) {
 			//failed to allocate memory
@@ -1196,7 +1401,7 @@ void clear_trace(void)
 		
 		if (prefetch_trace.buffer != NULL) {
 			//someone already allocated it
-			kfree(new_buffer);
+			free_trace_buffer(new_buffer, PREFETCH_TRACE_SIZE);
 		} else {
 			prefetch_trace.buffer = new_buffer;
 			prefetch_trace.buffer_size = PREFETCH_TRACE_SIZE;
@@ -1297,6 +1502,29 @@ ssize_t prefetch_proc_write(struct file *proc_file, const char __user * buffer,
 	if (param_match(name, "stop")) {
 		prefetch_stop_trace(&marker);
 		print_marker("Stop marker: ", marker);
+		goto out;
+	}
+	
+	if (param_match(name, "boot tracing start")) {
+		prefetch_start_trace(&boot_start_marker);
+		print_marker("Boot start marker: ", boot_start_marker);
+		
+		goto out;
+	}
+	
+	if (param_match(name, "boot prefetch")) {
+		printk(KERN_INFO "Running boot prefetch\n");
+		do_prefetch_from_file(boot_trace_filename);
+		
+		goto out;
+	}
+	
+	if (param_match(name, "boot tracing stop")) {
+		prefetch_stop_trace(&marker);
+		print_marker("Boot stop marker: ", marker);
+
+		prefetch_save_trace_fragment(boot_start_marker, marker, boot_trace_filename);
+		
 		goto out;
 	}
 out:
