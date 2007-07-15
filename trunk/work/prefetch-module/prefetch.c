@@ -1247,6 +1247,7 @@ out:
 void prefetch_exec_hook(char *filename)
 {
 	int ret;
+	return; //KLDEBUG: disabled for now
 
 	if (strcmp(filename, "/usr/lib/openoffice/program/soffice.bin") == 0)
 	{
