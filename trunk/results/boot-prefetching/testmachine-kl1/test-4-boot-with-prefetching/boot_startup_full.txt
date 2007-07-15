@@ -1,0 +1,50 @@
+Restarts left: 9
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #53 SMP Sun Jul 15 19:24:32 CEST 2007 i686 GNU/Linux
+53.85 23.98
+Restarts left: 8
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #53 SMP Sun Jul 15 19:24:32 CEST 2007 i686 GNU/Linux
+52.99 22.28
+Restarts left: 7
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #53 SMP Sun Jul 15 19:24:32 CEST 2007 i686 GNU/Linux
+54.73 23.16
+Restarts left: 6
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #53 SMP Sun Jul 15 19:24:32 CEST 2007 i686 GNU/Linux
+54.19 21.97
+Restarts left: 5
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #53 SMP Sun Jul 15 19:24:32 CEST 2007 i686 GNU/Linux
+53.71 23.31
+Restarts left: 4
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #53 SMP Sun Jul 15 19:24:32 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+11.7008192539 589 #stamp: 20070715-20:39:21 #all:  1184524773.346253613 589 stat: 5058 (soffice.bin) S 5042 4935 4935 34817 4935 4202496 19350 238 1015 0 304 42 0 0 17 0 7 0 5768 193441792 18072 4294967295 134512640 134860204 3214992400 3214990956 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 589
+68.14 28.20
+Restarts left: 3
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #53 SMP Sun Jul 15 19:24:32 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+10.54093647 580 #stamp: 20070715-20:41:54 #all:  1184524925.449613826 580 stat: 5047 (soffice.bin) S 5034 4994 4994 34821 4994 4202496 19587 239 776 0 300 45 0 0 17 0 7 0 6184 193445888 18073 4294967295 134512640 134860204 3219969584 3219968140 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 580
+72.40 32.44
+Restarts left: 2
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #53 SMP Sun Jul 15 19:24:32 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+13.0892875195  #stamp: 20070715-20:44:21 #all:  1184525074.504820274
+74.30 33.83
+Restarts left: 1
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #53 SMP Sun Jul 15 19:24:32 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+15.5709576607  #stamp: 20070715-20:46:46 #all:  1184525222.445615041
+72.33 31.66
+Restarts left: 0
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #53 SMP Sun Jul 15 19:24:32 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+13.5344674587 680 #stamp: 20070715-20:49:16 #all:  1184525370.404719152 680 stat: 5048 (soffice.bin) S 5012 4932 4932 34821 4932 4202496 19458 239 911 0 305 43 0 0 17 0 7 0 6168 193445888 18073 4294967295 134512640 134860204 3216573616 3216572172 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 680
+73.25 32.51
