@@ -107,3 +107,10 @@ As no waiting for results is done, some openoffice startup results were missing 
 
 Raw results are at: 
 http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-3-boot-with-openoffice-times/
+
+=== Conclusions ===
+  * These tests confirm that total boot time with openoffice is almost the same with readahead disabled and enabled (1.16s difference).
+  * When readahead is enabled, there is still some overhead apart from openoffice startup in boot (1.63s), when it is disabled, it drops to 0.24s.
+  * Tests confirm that openoffice starts a bit faster when readahead is disabled (12.42s) than when it is enabled. The difference is small and in the margin of error. However, such small difference suggests that readahead does not affect OpenOffice startup time (which is correct, as readahead has static list of files to read).
+  * OpenOffice startup during boot is slightly slower than when system has quiesced after boot (12.42s vs 11.19s).
+  
