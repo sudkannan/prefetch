@@ -136,6 +136,7 @@ Boot prefetching implementation:
 
 Test preparation: 
   * Before starting first run prefetch trace file was removed. First run was thus with tracing, without prefetching.
+  * For prefetching upon startup trace file from previous run was used.
 
 Measurements repeatability:
   * Each combination of parameters was tested 5 times.
@@ -158,3 +159,5 @@ Raw results are at:
 http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-4-boot-with-prefetching/ 
 
 === Conclusions ===
+  * Prefetch performance is on par with readahead for plain boot (slightly better). When calculating average, first result (without prefetching) was counted and last 3 results were <54s so it is possible that in the longer run results would be a bit better than readahead.
+  * Boot with openoffice is much worse ~3.9s. It seems that watching openoffice start and prefetching its files upon boot spoils the boot process, instead of improving it. Possible reason is that openoffice pages, as unused, are freed by swapper before they are used. Needs further investigation.
