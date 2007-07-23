@@ -1,5 +1,5 @@
 /*
- * linux/fs/proc/filecache.c
+ * linux/fs/proc/prefetch.c
  *
  * Copyright (C) 2006 Fengguang Wu <wfg@ustc.edu>
  * Copyright (C) 2007 Krzysztof Lichota <lichota@mimuw.edu.pl>
@@ -30,8 +30,7 @@
 #include <linux/delayacct.h>
 #include <linux/workqueue.h>
 #include <linux/file.h>
-  
-static char * boot_trace_filename = "/.prefetch-boot.trace";
+
 void sort_trace_fragment(void *trace, int trace_size);
 
 //Inode walk session
@@ -196,7 +195,9 @@ int prefetch_do_prefetch(void *trace, int trace_size)
 	struct file *file = NULL;
 	struct inode *inode = NULL;
 	int ret = 0;
-	int readahead_ret = 0;
+	int readaheads_failed = 0;
+	int readahead_ret;
+	
 	printk(KERN_INFO "Delay io ticks before prefetching: %d\n", (int)delayacct_blkio_ticks(current));
 	
 	prefetch_start_timing(&timer, "Prefetching");
@@ -258,12 +259,20 @@ int prefetch_do_prefetch(void *trace, int trace_size)
 			continue;
 		//FIXME: use force_page_cache_readahead()?
  		readahead_ret = force_page_cache_readahead(inode->i_mapping, file, record->range_start, record->range_length);
+ 		if (readahead_ret < 0) {
+ 			readaheads_failed++;
+ 			if (readaheads_failed < 10) {
+	 			printk(KERN_WARNING "Readahead failed, inode=%ld, start=%ld, length=%ld, error=%d\n", record->inode_no, record->range_start, record->range_length, readahead_ret);
+			}
+ 			if (readaheads_failed == 10) 
+ 				printk(KERN_WARNING "Readaheads failed reached limit, not printing next failures\n");
+ 		}
 	}
 
 out:
-	if (readahead_ret < 0) {
-		printk(KERN_WARNING "Readahead caused some error, error=%d", readahead_ret);
-	}
+	if (readaheads_failed > 0)
+		printk(KERN_WARNING "Readaheads  failed: %d\n", readaheads_failed);
+	
 	if (sb)
 		drop_super(sb);
 	if (inode)
@@ -747,8 +756,6 @@ typedef struct {
 	unsigned position;
 	unsigned generation;
 } trace_marker_t;
-
-trace_marker_t boot_start_marker;
 
 void print_marker(char *msg, trace_marker_t marker)
 {
@@ -1419,6 +1426,140 @@ void clear_trace(void)
 out:
 	return;
 }
+/*************** Boot tracing **************/
+#define BOOT_TRACE_FILENAME_TEMPLATE "/.prefetch-boot-trace.%s"
+///maximum size of phase name, not including trailing NULL
+#define PHASE_NAME_MAX 10
+///maximum size as string, keep in sync with PHASE_NAME_MAX
+#define PHASE_NAME_MAX_S "10"
+
+struct mutex boot_prefetch_mutex;
+/** 
+ * 	Phase start marker, protected by boot_prefetch_mutex.
+*/
+trace_marker_t boot_start_marker;
+char boot_phase_name[PHASE_NAME_MAX + 1] = "init";
+int boot_tracing_running = 0;
+
+/**
+	Saves boot trace fragment for phase @phase_name which 
+	starts at boot_start_marker and ends at @end_phase_marker.
+	
+	boot_prefetch_mutex must be held while calling this function.
+*/
+int prefetch_save_boot_trace(
+	char *phase_name,
+	trace_marker_t end_phase_marker
+	)
+{
+	char *boot_trace_filename = NULL;
+	int ret = 0;
+	
+	boot_trace_filename = kasprintf(GFP_KERNEL, BOOT_TRACE_FILENAME_TEMPLATE,
+		phase_name
+		);
+	
+	if (boot_trace_filename == NULL) {
+		printk(KERN_WARNING "Cannot allocate memory for trace filename in phase %s\n", phase_name);
+		ret = -ENOMEM;
+		goto out;
+	}
+	ret = prefetch_save_trace_fragment(
+		boot_start_marker,
+		end_phase_marker,
+		boot_trace_filename
+		);
+out:
+	if (boot_trace_filename != NULL)
+		kfree(boot_trace_filename);
+	return ret;
+}
+
+
+/**
+	Starts next phase of boot.
+	Starts tracing. Then, if trace is available, loads it and starts
+	prefetch.
+	@phase_name is the name of new phase, if you want to keep its contents,
+	copy it somewhere, as it will be deallocated.
+*/
+int prefetch_start_boot_phase(char *phase_name)
+{
+	char *new_boot_trace_filename = NULL;
+	trace_marker_t marker;
+	int ret = 0;
+	int r;
+	
+	new_boot_trace_filename = kasprintf(GFP_KERNEL, BOOT_TRACE_FILENAME_TEMPLATE,
+		phase_name
+		);
+	
+	if (new_boot_trace_filename == NULL) {
+		printk(KERN_WARNING "Cannot allocate memory for trace filename\n");
+		ret = -ENOMEM;
+		goto out;
+	}
+	
+	mutex_lock(&boot_prefetch_mutex);
+	
+	if (boot_tracing_running) {
+		//boot tracing was already running
+		prefetch_continue_trace(&marker);
+		
+		r = prefetch_save_boot_trace(boot_phase_name, marker);
+		if (r < 0)
+			//NOTE: just warn and continue, prefetching might still succeed
+			printk(KERN_WARNING "Saving boot trace failed, phase %s, error=%d\n", boot_phase_name, r);
+		
+		boot_start_marker = marker;
+	} else {
+		//first phase of tracing
+		prefetch_start_trace(&boot_start_marker);
+	}
+	strncpy(boot_phase_name, phase_name, PHASE_NAME_MAX);
+	boot_phase_name[PHASE_NAME_MAX] = 0;
+	
+	boot_tracing_running = 1;
+	
+	do_prefetch_from_file(new_boot_trace_filename);
+	printk(KERN_INFO "Boot phase %s marker: ", phase_name);
+	print_marker("Marker: ", boot_start_marker);
+	
+	mutex_unlock(&boot_prefetch_mutex);
+out:
+	if (new_boot_trace_filename != NULL)
+		kfree(new_boot_trace_filename);
+	return ret;
+}
+
+int prefetch_stop_boot_tracing(void)
+{
+	trace_marker_t marker;
+	int ret = 0;
+	printk(KERN_INFO "Stopping boot tracing and prefetching\n");
+	
+	mutex_lock(&boot_prefetch_mutex);
+	
+	if (!boot_tracing_running) {
+		printk("Trying to stop boot tracing although tracing is not running\n");
+		ret = -EINVAL;
+		goto out_unlock;
+	}
+	
+	prefetch_stop_trace(&marker);
+	boot_tracing_running = 0;
+	print_marker("Boot stop marker: ", marker);
+	
+	ret = prefetch_save_boot_trace(boot_phase_name, marker);
+	if (ret < 0) {
+		printk(KERN_WARNING "Saving final boot trace failed, phase %s, error=%d\n", boot_phase_name, ret);
+		goto out_unlock;
+	}
+	
+out_unlock:
+	mutex_unlock(&boot_prefetch_mutex);
+	return ret;
+}
 
 static int param_match(char *line, char *param_name)
 {
@@ -1435,6 +1576,8 @@ ssize_t prefetch_proc_write(struct file *proc_file, const char __user * buffer,
 	char *name;
 	int e = 0;
 	trace_marker_t marker;
+	int r;
+	char *phase_name;
 
 	if (count >= PATH_MAX)
 		return -ENAMETOOLONG;
@@ -1507,26 +1650,34 @@ ssize_t prefetch_proc_write(struct file *proc_file, const char __user * buffer,
 		goto out;
 	}
 	
-	if (param_match(name, "boot tracing start")) {
-		prefetch_start_trace(&boot_start_marker);
-		print_marker("Boot start marker: ", boot_start_marker);
-		
+	#define BOOT_COMMAND_PREFIX "boot tracing start phase"
+	if (param_match(name, BOOT_COMMAND_PREFIX)) {
+		phase_name = kzalloc(PHASE_NAME_MAX + 1, GFP_KERNEL); //1 for terminating NULL
+		if (phase_name == NULL) {
+			printk(KERN_WARNING "Cannot allocate memory for phase name\n");
+			goto out;
+		}
+		r = sscanf(name, 
+			BOOT_COMMAND_PREFIX " %10s", //FIXME: hardcoded buffer size
+			phase_name
+			);
+		if (r != 1) {
+			e = -EINVAL;
+			printk(KERN_WARNING "Wrong parameter to "
+				BOOT_COMMAND_PREFIX ", command was: %s\n",
+				name
+				);
+			kfree(phase_name);
+			goto out;
+		}
+		prefetch_start_boot_phase(phase_name);
+		kfree(phase_name);
 		goto out;
 	}
-	
-	if (param_match(name, "boot prefetch")) {
-		printk(KERN_INFO "Running boot prefetch\n");
-		do_prefetch_from_file(boot_trace_filename);
-		
-		goto out;
-	}
+	#undef BOOT_COMMAND_PREFIX
 	
 	if (param_match(name, "boot tracing stop")) {
-		prefetch_stop_trace(&marker);
-		print_marker("Boot stop marker: ", marker);
-
-		prefetch_save_trace_fragment(boot_start_marker, marker, boot_trace_filename);
-		
+		prefetch_stop_boot_tracing();
 		goto out;
 	}
 out:
@@ -1548,6 +1699,8 @@ static __init int prefetch_init(void)
 {
 	struct proc_dir_entry *entry;
 	clear_trace();
+	
+	mutex_init(&boot_prefetch_mutex);
 
 	//initialize periodic work
 	INIT_DELAYED_WORK(&ooffice_trace_work.work, ooffice_interim_tracing);
