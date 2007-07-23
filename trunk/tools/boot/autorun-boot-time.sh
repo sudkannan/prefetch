@@ -8,23 +8,13 @@ NUM_RUNS_IN_TEST=5
 echo "#restart" >>"$LOG_FILE"
 echo "#" `uname -a` >>"$LOG_FILE"
 #record readahead state in this test
-ls -l /etc/init.d/readahead* >>"$LOG_FILE"
 
 PHASE=$[ $NUM_RESTARTS_LEFT / $NUM_RUNS_IN_TEST ]
 NEXT_PHASE=$[ ( $NUM_RESTARTS_LEFT - 1 ) / $NUM_RUNS_IN_TEST ]
 
-#PHASE is in 0..3
-if [ $NEXT_PHASE -eq 1 -o $NEXT_PHASE -eq 3 -o $NUM_RESTARTS_LEFT -eq 0 ]; then
-	#enable readahead for next tests
-	sudo chmod a+x /etc/init.d/readahead* 
-	echo "#readahead will be enabled next time" >>"$LOG_FILE"
-else
-	#disable readahead for next tests, we assume test started with readahead enabled
-	sudo chmod a-x /etc/init.d/readahead* 
-	echo "#readahead will be disabled next time" >>"$LOG_FILE"
-fi
+#PHASE is in 0..1
 
-if [ $PHASE -eq 0 -o $PHASE -eq 1 ]; then
+if [ $PHASE -eq 0 ]; then
 	#now run openoffice before measuring boot startup time
 	echo "#running openoffice as part of boot" >>"$LOG_FILE"
 	cd ~/prefetch/trunk/tools/openoffice
@@ -33,3 +23,15 @@ fi
 
 #record time since start
 cat /proc/uptime >>"$LOG_FILE"
+
+cat "$LOG_FILE"
+while true; do
+	dmesg | grep 'Boot stop marker'
+	if [ $? -eq 0 ]; then
+		break
+	fi
+	sleep 2
+done
+
+dmesg >~/dmesg.$NUM_RESTARTS_LEFT
+sudo tar zcf ~/.prefetch-boot-traces.$NUM_RESTARTS_LEFT.tgz /.prefetch-boot-trace.*
