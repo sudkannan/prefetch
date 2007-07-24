@@ -216,3 +216,44 @@ http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl
   * From other tests it seems that so consistent readahead results are suspicious, variance was much larger and results were up to 55s. This might be coincidence, tests with larger number of runs than 5 should be performed.
   * Prefetch with OpenOffice is faster than readahead, which is expected, as prefetch notices OpenOffice and prefetches its files, while readahead has static list of files to read. The difference is 2.68s, but if first run is not counted (as trace does not contain OpenOffice files then) it rises to 3.5s. Trace from previous runs also affects the results, so they should be repeated with removing saved trace before OpenOffice tests.
   * Measured OpenOffice startup time is much shorter with prefetch (7.03s vs 12.93s for readahead). Startup time for last OpenOffice run (5.68s) is pretty close to warm startup time (~4.5s). This comes somehow at the cost of making earlier boot phase longer, but the net gain is ~3.5s. Relocating files closer to each other could improve prefetching time and thus make boot shorter.
+
+== Test 6 ==
+This test purpose is measure effectiveness of boot prefetching with phases in more test runs in order to have more thorough results and to observe trends in results.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * Custom compiled kernel.
+
+Test method:
+  * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
+  * 10 tests were run with plain boot to desktop environments, then subsequently 10 runs with openoffice started. 
+  * The same tests were repeated of Ubuntu readahead.
+
+Test preparation: 
+  * Before starting first run prefetch trace file was removed. First run was thus with tracing, without prefetching.
+  * Before first boot with openoffice traces were removed to simulate first system start.
+
+Measurements repeatability:
+  * Each combination of parameters was tested 10 times.
+  * First runs (plain boot and with openoffice) from both prefetch and readahead were not taken into account in order to simulate warming up prefetch trace.
+
+=== Test results ===
+||		||	readahead enabled	||	prefetch	||	difference	||
+||	Without openoffice: avg	||	53.11	||	53.51	||	0.40	||
+||	stddev	||	1.06	||	0.80	||	-0.26	||
+||	With openoffice: avg	||	68.37	||	65.00	||	-3.37	||
+||	stddev	||	0.33	||	0.42	||	0.09	||
+||	Openoffice startup: avg	||	13.00	||	6.34	||	-6.66	||
+||	stddev	||	1.05	||	0.82	||	-0.22	||
+||	Boot time minus openoffice startup: avg	||	55.37	||	58.66	||	3.29	||
+||	stddev	||	-0.72	||	-0.41	||	0.31	||
+||	Boot time without openoffice difference to plain boot	||	2.26	||	5.15	||		||
+
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-6-boot-with-phases-2/
+=== Conclusions ===
