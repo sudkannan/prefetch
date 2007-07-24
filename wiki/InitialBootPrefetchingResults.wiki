@@ -252,8 +252,12 @@ Measurements repeatability:
 ||	Boot time minus openoffice startup: avg	||	55.37	||	58.66	||	3.29	||
 ||	stddev	||	-0.72	||	-0.41	||	0.31	||
 ||	Boot time without openoffice difference to plain boot	||	2.26	||	5.15	||		||
+||	Boot with openoffice difference to plain boot	||	15.26	||	11.49	||	-3.77	||
 
 
 Raw results are at: 
 http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-6-boot-with-phases-2/
 === Conclusions ===
+  * Plain boot is slightly slower (0.4s) than readahead. It is possible that prefetching whole files or larger fragments of it might be beneficial as pattern of disk accesses is not exactly the same in each boot. Prefetching some additional pages, especially in holes between other fragments might cause cache hit in such case.
+  * This test confirms prefetch is steadily better in boot with OpenOffice as it adapts to it. The difference is 3.37s which is noticeable, but not impressive. 
+  * Boot with OpenOffice is 15.26s longer than plain boot with readahead and 11.49s longer for prefetch. It looks like in case of prefetch OpenOffice makes boot longer by the same amount of time as cold startup (using drop_caches) with OpenOffice built-in prefetching using pagein (~11.5s). 
