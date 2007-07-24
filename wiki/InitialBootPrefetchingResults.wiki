@@ -266,8 +266,24 @@ http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl
 
 [http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-6-boot-with-phases-2/chart-boot-time.png http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-6-boot-with-phases-2/chart-boot-time.png]
 
+Conclusions:
+  * First boot for prefetch is better than the rest. It is possible that prefetching in subsequent runs disturbs tracing and produces worse trace.
+  * There is no clear trend or stabilization in prefetch boot times, the results have significant variance even after a few runs.
+  * Some kind of accumulation or averaging of traces might help to stabilize and improve traces and in result boot times.
+
 === Trends for boot with OpenOffice ===
+
 [http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-6-boot-with-phases-2/chart-boot-time-with-openoffice.png http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-6-boot-with-phases-2/chart-boot-time-with-openoffice.png]
 
+Conclusions:
+  * The results are not as erratic as with plain boot, but there is also some tendency to increase boot time. It might be cause by some external reasons or by lowering of trace quality.
+  * The first result is not the best one, but interestingly it is also not the worst one.
+  * The same means as for plain boot (aggregation) might help to improve trace quality and boot time. Needs further investigation.
+
 === Trends for OpenOffice startup during boot ===
+
 [http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-6-boot-with-phases-2/chart-openoffice-startup.png http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-6-boot-with-phases-2/chart-openoffice-startup.png]
+
+Conclusions:
+  * Openoffice startup time has large variance and is probably heavily affected by conincidences in disk access patterns during boot.
+  * Openoffice startup time does not corellate with boot time with OpenOffice - shorter startup time does not  mean shorter boot time and the other way round. This means OpenOffice startup time is not a good metric, so it should be dropped.
