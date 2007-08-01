@@ -1,5 +1,5 @@
 EXECS=prefetch-print-trace prefetch-process-trace
-CXXFLAGS=-g -O0
+CXXFLAGS=-g -Wall
 
 all: $(EXECS)
 

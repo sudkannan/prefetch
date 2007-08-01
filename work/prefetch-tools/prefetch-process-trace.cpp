@@ -185,15 +185,15 @@ int ranges_overlap(pgoff_t start1, pgoff_t len1, pgoff_t start2, pgoff_t len2)
 void ranges_overlap_test(bool result, pgoff_t start1, pgoff_t len1, pgoff_t start2, pgoff_t len2)
 {
 	int r = ranges_overlap(start1, len1, start2, len2);
-	if (r && result != true) {
-		fprintf(stderr, "ranges_overlap test failed: %ld %ld %ld %ld\n", start1, len1, start2, len2);
+	if (r && result != true || !r && result == true) {
+		fprintf(stderr, "ranges_overlap test failed, r=%d, expected=%d:  %ld %ld %ld %ld\n", r, result, start1, len1, start2, len2);
 		exit(7);
 	}
 	
 	//now reverse, as this function should be symmetric
 	r = ranges_overlap(start2, len2, start1, len1);
-	if (r && result != true) {
-		fprintf(stderr, "ranges_overlap test failed: %ld %ld %ld %ld\n", start2, len2, start1, len1);
+	if (r && result != true || !r && result == true) {
+		fprintf(stderr, "ranges_overlap test failed, r=%d, expected=%d: %ld %ld %ld %ld\n", r, result, start2, len2, start1, len1);
 		exit(7);
 	}
 }
@@ -211,6 +211,7 @@ void unittest_ranges_overlap()
 	ranges_overlap_test(true, 1, 6, 3, 4); //to the end
 	
 	//overlap inside
+	ranges_overlap_test(true, 0, 4, 0, 9); //to beginning
 	ranges_overlap_test(true, 1, 1, 1, 7); //to beginning
 	ranges_overlap_test(true, 2, 2, 1, 7); //completely inside
 	ranges_overlap_test(true, 2, 2, 0, 4); //to the end
@@ -230,7 +231,6 @@ void trace_merge(records_container_t &trace_container, records_container_t::iter
 	records_container_t::iterator it;
 	records_container_t output;
 	records_container_t::iterator current = end; //currently merged record
-	int new_data_pending = 0;
 	
 	for (it = begin; it != end; ++it) {
 		if (current == end) {
@@ -441,6 +441,36 @@ void unittest_trace_merge()
 		
 		trace_merge_test("Two consecutive merged with not merged after", input, expected_result);
 	}
+	{
+		records_container_t input;
+		records_container_t expected_result;
+		//input
+		push_test_record(input, inode1_7, 0, 0, 4);
+		push_test_record(input, inode1_7, 1, 0, 9);
+		push_test_record(input, inode1_7, 2, 10, 7);
+		//expected_result
+		push_test_record(expected_result, inode1_7, 0, 0, 9);
+		push_test_record(expected_result, inode1_7, 2, 10, 7);
+		
+		trace_merge_test("Two overlapping merged with not merged after", input, expected_result);
+	}
+	{
+		records_container_t input;
+		records_container_t expected_result;
+		//input
+		push_test_record(input, inode1_7, 0, 29, 1);
+		push_test_record(input, inode1_7, 1, 32, 3);
+		push_test_record(input, inode1_7, 2, 35, 1);
+		push_test_record(input, inode1_7, 3, 37, 2);
+		push_test_record(input, inode1_7, 4, 37, 6);
+		push_test_record(input, inode1_7, 4, 42, 1);
+		//expected_result
+		push_test_record(expected_result, inode1_7, 0, 29, 1);
+		push_test_record(expected_result, inode1_7, 1, 32, 4);
+		push_test_record(expected_result, inode1_7, 3, 37, 6);
+		
+		trace_merge_test("Two overlapping merged with not merged after", input, expected_result);
+	}
 }
 
 /**
@@ -460,7 +490,7 @@ void trace_file_data_sorted_sum(trace_file_data_t *data)
 */
 int output_trace_file_data(trace_file_data_t *data)
 {
-	int i;
+	unsigned i;
 	int r;
 	int record_size = sizeof(data->records[0].record);
 	
@@ -490,11 +520,7 @@ enum {
 
 int main(int argc, char **argv)
 {
-	prefetch_trace_record_t record;
-	int r;
-	int fd;
 	char *filename;
-	prefetch_trace_desc_t tracefile;
 	int c;
 	char *command = NULL;
 	
@@ -507,7 +533,6 @@ int main(int argc, char **argv)
 
 	for (;;)
 	{
-		int this_option_optind = optind ? optind : 1;
 		int option_index = 0;
 		
 		c = getopt_long(argc, argv, "hc:", long_options, &option_index);
