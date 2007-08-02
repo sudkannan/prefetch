@@ -1,0 +1,34 @@
+#!/bin/sh -e
+# init script for readahead
+
+# Get LSB functions
+. /lib/lsb/init-functions
+. /etc/default/rcS
+
+
+# Remember that any major changes to this script need to also be made to
+# readahead-desktop.init
+
+case "$1" in
+    start|restart|force-reload)
+	# This can take a while
+	if type usplash_write >/dev/null 2>&1; then
+	    usplash_write "TIMEOUT 360" || true
+	fi
+	
+	echo "boot tracing start" >/proc/prefetch
+	echo "boot prefetch" >/proc/prefetch
+
+	if type usplash_write >/dev/null 2>&1; then
+	    usplash_write "TIMEOUT 15" || true
+	fi
+	;;
+    stop)
+	;;
+    *)
+	echo "Usage: /etc/init.d/readahead {start|stop|restart|force-reload}"
+	exit 1
+	;;
+esac
+
+exit 0
