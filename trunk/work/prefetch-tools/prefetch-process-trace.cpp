@@ -395,6 +395,17 @@ void unittest_trace_merge()
 		records_container_t input;
 		records_container_t expected_result;
 		//input
+		push_test_record(input, inode1_7, 0, 1, 3);
+		push_test_record(input, inode1_7, 1, 1, 3);
+		//expected_result
+		push_test_record(expected_result, inode1_7, 0, 1, 3);
+		
+		trace_merge_test("Two the same merged", input, expected_result);
+	}
+	{
+		records_container_t input;
+		records_container_t expected_result;
+		//input
 		push_test_record(input, inode1_7, 0, 1, 1);
 		push_test_record(input, inode1_7, 1, 2, 1);
 		push_test_record(input, inode1_7, 2, 3, 2);
@@ -588,10 +599,10 @@ int main(int argc, char **argv)
 			if (trace_file_read_data(filename, &data) < 0) {
 				exit(1);
 			}
-			trace_file_data_sorted_sum(&data);
-			if (output_trace_file_data(&data) < 0) {
-				exit(1);
-			}
+		}
+		trace_file_data_sorted_sum(&data);
+		if (output_trace_file_data(&data) < 0) {
+			exit(1);
 		}
 	} else {
 		fprintf(stderr, "Error: invalid command %s\n", command);
