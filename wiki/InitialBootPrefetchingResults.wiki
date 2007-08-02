@@ -392,3 +392,5 @@ Measurements repeatability:
 Raw results are at: 
 http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-8-boot-with-5-aggregated/
 === Conclusions ===
+  * Aggregation over 5 runs seems to produce slightly worse results than aggregating over 3 runs. It also could cause worse results in case of sudden changes as 5 runs must pass before trace is no longer affected by what was in trace before change.
+  * This test also suffers from increasing plain boot time in 8, 9 and 10th run.
