@@ -348,3 +348,47 @@ http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl
   * Aggregation for 3 runs is also slightly (0.32s) worse than readahead. Maybe prefetching whole files would alleviate this difference. It is worth noting though that in 2 runs boot time with 3-aggregation dropped below 51 seconds (minimum is 50.44s), while for readahead minimum was 51.22s. Versus prefetch it is even more evident (52.27s vs 50.44s).
   * Aggregation for 3 runs is slightly better when OpenOffice is run (0.49s). It comes at the cost of increasing variation, though (it rises to 1.82). 
   * The sudden rise in boot times in runs 8, 9 and 10 needs further investigation. Eliminating this rise would improve results.
+
+== Test 8 ==
+This test purpose is to check if aggregating traces for 5 runs improves boot prefetching results over aggregating for 3 runs.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * Custom compiled kernel.
+
+Prefetch method details:
+  * After each run, in stop-readahead last 5 traces were aggregated using "prefetch-process-trace -c sort-sum", i.e. trace is sorted and logical sum of data blocks is taken. Such aggregated trace is copied to be used upon next boot.
+
+Test method:
+  * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
+  * 10 tests were run with plain boot to desktop environments, then subsequently 10 runs with openoffice started. 
+
+Test preparation: 
+  * Before starting first run prefetch trace file was removed. First run was thus with tracing, without prefetching.
+  * Before first boot with openoffice traces were removed to simulate first system start.
+
+Measurements repeatability:
+  * Each combination of parameters was tested 10 times.
+  * First runs (plain boot and with openoffice) from both prefetch and readahead were not taken into account in order to simulate warming up prefetch trace.
+
+=== Test results ===
+||		||	Prefetch – 3 aggregated	||	Prefetch – 5 aggregated	||	difference	||
+||	Without openoffice: avg	||	53.43	||	53.86	||	0.43	||
+||	stddev	||	1.82	||	1.35	||	-0.46	||
+||	With openoffice: avg	||	64.51	||	64.65	||	0.14	||
+||	stddev	||	0.28	||	0.26	||	-0.02	||
+||	Openoffice startup: avg	||	6.54	||	5.99	||	-0.55	||
+||	stddev	||	0.95	||	0.76	||	-0.18	||
+||	Boot time minus openoffice startup: avg	||	57.97	||	58.66	||	0.69	||
+||	stddev	||	-0.67	||	-0.51	||	0.16	||
+||	Boot time without openoffice difference to plain boot	||	4.54	||	4.79	||		||
+||	Boot with openoffice difference to plain boot	||	11.08	||	10.79	||	-0.29	||
+
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-8-boot-with-5-aggregated/
+=== Conclusions ===
