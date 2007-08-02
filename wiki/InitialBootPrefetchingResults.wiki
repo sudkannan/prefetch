@@ -287,3 +287,61 @@ Conclusions:
 Conclusions:
   * Openoffice startup time has large variance and is probably heavily affected by conincidences in disk access patterns during boot.
   * Openoffice startup time does not corellate with boot time with OpenOffice - shorter startup time does not  mean shorter boot time and the other way round. This means OpenOffice startup time is not a good metric, so it should be dropped.
+
+== Test 7 ==
+This test purpose is to check if aggregating traces for 3 runs improves boot prefetching results.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * Custom compiled kernel.
+
+Prefetch method details:
+  * After each run, in stop-readahead last 3 traces were aggregated using "prefetch-process-trace -c sort-sum", i.e. trace is sorted and logical sum of data blocks is taken. Such aggregated trace is copied to be used upon next boot.
+
+Test method:
+  * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
+  * 10 tests were run with plain boot to desktop environments, then subsequently 10 runs with openoffice started. 
+
+Test preparation: 
+  * Before starting first run prefetch trace file was removed. First run was thus with tracing, without prefetching.
+  * Before first boot with openoffice traces were removed to simulate first system start (except for old traces in /.prefetch directory).
+
+Measurements repeatability:
+  * Each combination of parameters was tested 10 times.
+  * First runs (plain boot and with openoffice) from both prefetch and readahead were not taken into account in order to simulate warming up prefetch trace.
+
+=== Test results ===
+Versus readahead:
+||		||	readahead enabled	||	prefetch	||	difference	||
+||	Without openoffice: avg	||	53.11	||	53.43	||	0.32	||
+||	stddev	||	1.06	||	1.82	||	0.75	||
+||	With openoffice: avg	||	68.37	||	64.51	||	-3.86	||
+||	stddev	||	0.33	||	0.28	||	-0.05	||
+||	Openoffice startup: avg	||	13.00	||	6.54	||	-6.46	||
+||	stddev	||	1.05	||	0.95	||	-0.10	||
+||	Boot time minus openoffice startup: avg	||	55.37	||	57.97	||	2.60	||
+||	stddev	||	-0.72	||	-0.67	||	0.05	||
+||	Boot time without openoffice difference to plain boot	||	2.26	||	4.54	||		||
+||	Boot with openoffice difference to plain boot	||	15.26	||	11.08	||	-4.18	||
+
+Versus prefetch using only last trace:
+||		||	Prefetch	||	Prefetch – 3 aggregated	||	difference	||
+||	Without openoffice: avg	||	53.51	||	53.43	||	-0.08	||
+||	stddev	||	0.80	||	1.82	||	1.01	||
+||	With openoffice: avg	||	65.00	||	64.51	||	-0.49	||
+||	stddev	||	0.42	||	0.28	||	-0.14	||
+||	Openoffice startup: avg	||	6.34	||	6.54	||	0.20	||
+||	stddev	||	0.82	||	0.95	||	0.12	||
+||	Boot time minus openoffice startup: avg	||	58.66	||	57.97	||	-0.69	||
+||	stddev	||	-0.41	||	-0.67	||	-0.26	||
+||	Boot time without openoffice difference to plain boot	||	5.15	||	4.54	||		||
+||	Boot with openoffice difference to plain boot	||	11.49	||	11.08	||	-0.41	||
+
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-7-boot-with-3-aggregated/
+=== Conclusions ===
