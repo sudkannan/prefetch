@@ -345,3 +345,6 @@ Versus prefetch using only last trace:
 Raw results are at: 
 http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-7-boot-with-3-aggregated/
 === Conclusions ===
+  * Aggregation for 3 runs is also slightly (0.32s) worse than readahead. Maybe prefetching whole files would alleviate this difference. It is worth noting though that in 2 runs boot time with 3-aggregation dropped below 51 seconds (minimum is 50.44s), while for readahead minimum was 51.22s. Versus prefetch it is even more evident (52.27s vs 50.44s).
+  * Aggregation for 3 runs is slightly better when OpenOffice is run (0.49s). It comes at the cost of increasing variation, though (it rises to 1.82). 
+  * The sudden rise in boot times in runs 8, 9 and 10 needs further investigation. Eliminating this rise would improve results.
