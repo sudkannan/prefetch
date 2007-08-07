@@ -410,13 +410,14 @@ Test environment:
 Test method:
   * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
   * 10 tests were run with plain boot to desktop environments, then subsequently 10 runs with openoffice started. 
+  * Prefetch results for comparison were taken from 3-aggregation results.
 
 Measurements repeatability:
   * Each combination of parameters was tested 10 times.
   * First runs (plain boot and with openoffice) from both prefetch and readahead were not taken into account in order to simulate warming up.
 
 === Test results ===
-||		||	readahead enabled	||	prefetch	||	difference	||
+||		||	plain boot	||	prefetch	||	difference	||
 ||	Without openoffice: avg	||	54.72	||	53.43	||	-1.29	||
 ||	stddev	||	1.40	||	1.82	||	0.41	||
 ||	With openoffice: avg	||	69.42	||	64.51	||	-4.91	||
@@ -431,4 +432,7 @@ Measurements repeatability:
 
 Raw results are at: 
 http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-9-versus-plain/
+
 === Conclusions ===
+  * In simple boot scenario prefetch advantage is very little (1.29s), but it means in this setup readahead is not much better. It might mean that the main bottleneck is not prefetching file contents, but prefetching filesystem metadata.
+  * In scenario with OpenOffice started at boot, prefetch gains larger advantage (4.91s difference), similar as in comparison with readahead (3.37s).
