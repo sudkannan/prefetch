@@ -8,7 +8,7 @@ This test purpose is to check what is the benefit of Ubuntu current readahead im
 Test machine: [TestMachineKL1 KL1]
 
 Test environment: 
-  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-06-10.
   * Standard desktop environment.
   * Custom compiled kernel.
 
@@ -56,7 +56,7 @@ This test purpose is to check what is the benefit of Ubuntu current readahead im
 Test machine: [TestMachineKL1 KL1]
 
 Test environment: 
-  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-06-10.
   * Standard desktop environment.
   * Custom compiled kernel.
 
@@ -121,7 +121,7 @@ This test purpose is measure effectiveness of first implementation of boot prefe
 Test machine: [TestMachineKL1 KL1]
 
 Test environment: 
-  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-06-10.
   * Standard desktop environment.
   * Custom compiled kernel.
 
@@ -173,7 +173,7 @@ This test purpose is measure effectiveness of boot prefetching implementation wh
 Test machine: [TestMachineKL1 KL1]
 
 Test environment: 
-  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-06-10.
   * Standard desktop environment.
   * Custom compiled kernel.
 
@@ -224,7 +224,7 @@ This test purpose is measure effectiveness of boot prefetching with phases in mo
 Test machine: [TestMachineKL1 KL1]
 
 Test environment: 
-  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-06-10.
   * Standard desktop environment.
   * Custom compiled kernel.
 
@@ -295,7 +295,7 @@ This test purpose is to check if aggregating traces for 3 runs improves boot pre
 Test machine: [TestMachineKL1 KL1]
 
 Test environment: 
-  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-06-10.
   * Standard desktop environment.
   * Custom compiled kernel.
 
@@ -356,7 +356,7 @@ This test purpose is to check if aggregating traces for 5 runs improves boot pre
 Test machine: [TestMachineKL1 KL1]
 
 Test environment: 
-  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-06-10.
   * Standard desktop environment.
   * Custom compiled kernel.
 
@@ -402,7 +402,7 @@ The purpose of this test is to compare prefetching against plain boot by disabli
 Test machine: [TestMachineKL1 KL1]
 
 Test environment: 
-  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-06-10.
   * Standard desktop environment.
   * Custom compiled kernel with prefetching disabled using compilation directive.
 
@@ -436,3 +436,31 @@ http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl
 === Conclusions ===
   * In simple boot scenario prefetch advantage is very little (1.29s), but it means in this setup readahead is not much better. It might mean that the main bottleneck is not prefetching file contents, but prefetching filesystem metadata.
   * In scenario with OpenOffice started at boot, prefetch gains larger advantage (4.91s difference), similar as in comparison with readahead (3.37s).
+  * It would be useful to see why the advantage of prefetch in simple boot scenario is so small using bootchart to see timing of events.
+
+== Test 9a ==
+The purpose of this test is to compare plain boot with boot with prefetching using bootcharts.
+
+The purpose of this test is to compare prefetching against plain boot by disabling prefetching functionality and recompiling exactly the same kernel.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-06-10 and bootchart installed as of 2007-08-05 (pulled in some upgrades along).
+  * Standard desktop environment.
+  * Custom compiled kernel with prefetching. Prefetching core disabled using module parameter.
+
+
+Test method:
+  * Boot once with prefetching (warm trace) and once with prefetching disabled using module parameter.
+  * Bootchart was running in the background.
+
+Measurements repeatability:
+  * One run.
+
+=== Test results ===
+[http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-9-versus-plain/bootchart-prefetch-sync.png Bootchart with prefetching]
+[http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-9-versus-plain/bootchart-noprefetch.png Bootchart with prefetching disabled]
+
+=== Conclusions ===
