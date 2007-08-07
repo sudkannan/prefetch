@@ -461,6 +461,9 @@ Measurements repeatability:
 
 === Test results ===
 [http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-9-versus-plain/bootchart-prefetch-sync.png Bootchart with prefetching]
+
 [http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-9-versus-plain/bootchart-noprefetch.png Bootchart with prefetching disabled]
 
 === Conclusions ===
+  * Prefetch causes stall in boot for time needed to prefetch GUI files. It makes up for it later because applications start faster.
+  * If prefetching GUI files were done earlier, it should be possible to cut down startup time by about 6 seconds.
