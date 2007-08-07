@@ -394,3 +394,41 @@ http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl
 === Conclusions ===
   * Aggregation over 5 runs seems to produce slightly worse results than aggregating over 3 runs. It also could cause worse results in case of sudden changes as 5 runs must pass before trace is no longer affected by what was in trace before change.
   * This test also suffers from increasing plain boot time in 8, 9 and 10th run.
+
+== Test 9 ==
+The purpose of this test is to compare prefetching against plain boot by disabling prefetching functionality and recompiling exactly the same kernel.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2006-06-10.
+  * Standard desktop environment.
+  * Custom compiled kernel with prefetching disabled using compilation directive.
+
+
+Test method:
+  * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
+  * 10 tests were run with plain boot to desktop environments, then subsequently 10 runs with openoffice started. 
+
+Measurements repeatability:
+  * Each combination of parameters was tested 10 times.
+  * First runs (plain boot and with openoffice) from both prefetch and readahead were not taken into account in order to simulate warming up.
+
+=== Test results ===
+||		||	readahead enabled	||	prefetch	||	difference	||
+||	Without openoffice: avg	||	54.72	||	53.43	||	-1.29	||
+||	stddev	||	1.40	||	1.82	||	0.41	||
+||	With openoffice: avg	||	69.42	||	64.51	||	-4.91	||
+||	stddev	||	0.40	||	0.28	||	-0.12	||
+||	Openoffice startup: avg	||	12.99	||	6.54	||	-6.45	||
+||	stddev	||	1.27	||	0.95	||	-0.32	||
+||	Boot time minus openoffice startup: avg	||	56.42	||	57.97	||	1.54	||
+||	stddev	||	-0.87	||	-0.67	||	0.20	||
+||	Boot time without openoffice difference to plain boot	||	1.71	||	4.54	||		||
+||	Boot with openoffice difference to plain boot	||	14.7	||	11.08	||	-3.62	||
+
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-9-versus-plain/
+=== Conclusions ===
