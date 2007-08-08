@@ -467,3 +467,42 @@ Measurements repeatability:
 === Conclusions ===
   * Prefetch causes stall in boot for time needed to prefetch GUI files. It makes up for it later because applications start faster.
   * If prefetching GUI files were done earlier, it should be possible to cut down startup time by about 6 seconds.
+
+== Test 10 ==
+The purpose of this test is to check if prefetching GUI files early in the background (right after readahead-desktop phase) helps improve boot time.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-08-05.
+  * Standard desktop environment.
+  * Custom compiled kernel with prefetching  with support for separating boot tracing and boot prefetching phases.
+
+
+Test method:
+  * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
+  * 10 tests were run with plain boot to desktop environments, then subsequently 10 runs with openoffice started. 
+  * Prefetch results for comparison were taken from 3-aggregation results.
+
+Measurements repeatability:
+  * Each combination of parameters was tested 10 times.
+  * First runs (plain boot and with openoffice) from both prefetch and readahead were not taken into account in order to simulate warming up.
+
+=== Test results ===
+||		||	Prefetch 3-aggregated	||	Early GUI prefetch	||	difference	||
+||	Without openoffice: avg	||	53.43	||	52.63	||	-0.80	||
+||	stddev	||	1.82	||	1.38	||	-0.44	||
+||	With openoffice: avg	||	64.51	||	63.38	||	-1.13	||
+||	stddev	||	0.28	||	0.38	||	0.10	||
+||	Openoffice startup: avg	||	6.54	||	6.60	||	0.06	||
+||	stddev	||	0.95	||	0.97	||	0.03	||
+||	Boot time minus openoffice startup: avg	||	57.97	||	56.78	||	-1.19	||
+||	stddev	||	-0.67	||	-0.59	||	0.07	||
+||	Boot time without openoffice difference to plain boot	||	4.54	||	4.15	||		||
+||	Boot with openoffice difference to plain boot	||	11.08	||	10.75	||	-0.33	||
+
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-10-gui-early-prefetch/
+=== Conclusions ===
