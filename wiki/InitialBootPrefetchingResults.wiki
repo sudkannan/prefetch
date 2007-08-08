@@ -506,3 +506,6 @@ Measurements repeatability:
 Raw results are at: 
 http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-10-gui-early-prefetch/
 === Conclusions ===
+  * Early prefetching improves boot time in plain boot scenario by 0.8s. It is worth noting that such low result is due to one boot time dropping below 50 seconds to 49.36s, but this result was not repeated. It would be preferable to perform more test runs to see behaviour in longer term.
+  * Early prefetching (52.63s) performs even better than readahead (53.11s).
+  * In OpenOffice scenario difference is even bigger - early prefetch is better by 1.13s.
