@@ -420,7 +420,7 @@ index 0000000..94cf994
 +		if (entry)
 +			entry->proc_fops = &proc_boot_prefetch_fops;
 +	}
-+	printk(KERN_INFO "App prefetching module started, enabled=%d, prefetching=%d\n",
++	printk(KERN_INFO "Boot prefetching module started, enabled=%d, prefetching=%d\n",
 +		enabled,
 +		prefetch_enabled
 +		);
