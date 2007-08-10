@@ -509,3 +509,50 @@ http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl
   * Early prefetching improves boot time in plain boot scenario by 0.8s. It is worth noting that such low result is due to one boot time dropping below 50 seconds to 49.36s, but this result was not repeated. It would be preferable to perform more test runs to see behaviour in longer term.
   * Early prefetching (52.63s) performs even better than readahead (53.11s).
   * In OpenOffice scenario difference is even bigger - early prefetch is better by 1.13s.
+
+== Test 11 ==
+The purpose of this test is to check how prefetch will perform on standard Ubuntu kernel with prefetching patches.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-08-05.
+  * Standard desktop environment.
+  * Kernel 2.6.22.1-9pf.2 - kernel source of linux-2.6.22-9.25 compiled with [http://prefetch.googlecode.com/svn/trunk/kernel-patches/2.6.22/ prefetching patches], with config copied from generic kernel and prefetching enabled.
+
+
+Test method:
+  * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
+  * 10 tests were run with plain boot to desktop environments, then subsequently 10 runs with openoffice started. 
+  * Tests were performed for 3 setups: prefetch, prefetch disabled and Ubuntu readahead.
+
+Prefetch setup:
+  * Prefetching was run with 3-aggregation and with early GUI prefetching.
+
+Prefetch disabled setup:
+  * Prefetching was disabled by specifying prefetch_core.enabled=0 on kernel command line
+
+Readahead setup:
+  * Standard Ubuntu readahead with [http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-11-ubuntu-kernel-with-prefetch/readahead-lists.tgz shipped readahead lists].
+
+Measurements repeatability:
+  * Each combination of parameters was tested 10 times.
+  * First runs (plain boot and with openoffice) from all setups were not taken into account in order to simulate warming up.
+
+=== Test results ===
+||		||	Prefetch disabled	||	Prefetch	||	Ubuntu readahead	||	Prefetch - Prefetch disabled	||	Ubuntu readahead - Prefetch	||	Ubuntu readahead - Prefetch disabled	||
+||	Without openoffice: avg	||	69.06	||	62.94	||	67.63	||	-6.11	||	4.68	||	-1.43	||
+||	stddev	||	1.24	||	1.88	||	1.18	||	0.64	||	-0.71	||	-0.07	||
+||	min	||	67.93	||	60.75	||	65.89	||	-7.18	||	5.14	||	-2.04	||
+||	max	||	71.04	||	65.97	||	69.14	||	-5.07	||	3.17	||	-1.90	||
+||	With openoffice: avg	||	84.83	||	74.08	||	83.23	||	-10.75	||	9.15	||	-1.60	||
+||	stddev	||	0.22	||	0.36	||	0.35	||	0.14	||	-0.01	||	0.14	||
+||	min	||	84.50	||	73.59	||	82.89	||	-10.91	||	9.30	||	-1.61	||
+||	max	||	85.15	||	74.60	||	83.90	||	-10.55	||	9.30	||	-1.25	||
+
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-11-ubuntu-kernel-with-prefetch/
+
+=== Conclusions ===
