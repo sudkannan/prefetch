@@ -11,14 +11,16 @@ General articles:
      * {{{The really dangerous bit is that we need to be very sure our sequential slab is still up to date. It also does not address the dentry cache, which appears to be a dominant factor in bootup.}}}
      * {{{It is natural to assume that seeking to locations close to the current location of the head is faster, which in fact is true. For example, current Fujitsu MASxxxx technology drives specify the ‘full stroke’ seek as 8ms and track-to-track latency as 0.3ms. However, for many systems the actual seeking is dwarfed by the rotational latency. On average, the head will have to wait half a rotation for the desired data to pass by. A quick calculation shows that for a 5400RPM disk, as commonly found in laptops, this wait will on average be 5.6ms. This means that even seeking a small amount will at least take 5.6ms. The news gets worse—the laptop this article is authored on has a Toshiba MK8025GAS disk, which at 4200RPM claims to have an average seek time of 12ms. Real life measurements show this to be in excess of 20ms.}}}
 
-Blktrace:
-  * [https://secure.engr.oregonstate.edu/wiki/CS411/index.php/Blktrace_Guide Short guide how to use blktrace]
-  * [http://git.kernel.dk/data/git/blktrace.hg/README Bltktrace README with instructions how to use it]
-  * [http://brick.kernel.dk/snaps/fcache-git-latest.tar.gz Snapshot of fcache git tree]
-  *  blktrace git tree: git://brick.kernel.dk/data/git/blktrace.git
-  * [http://git.kernel.dk/ WWW git frontend for blktrace repository]
-  * [http://www.gelato.org/pdf/apr2006/gelato_ICE06apr_blktrace_brunelle_hp.pdf Presentation about blktrace by Alan D. Brunelle]
-  * [http://www.nabble.com/linux-btrace-f12411.html blktrace mailing list archive]
+Tools:
+  * Blktrace:
+    * [https://secure.engr.oregonstate.edu/wiki/CS411/index.php/Blktrace_Guide Short guide how to use blktrace]
+    * [http://git.kernel.dk/data/git/blktrace.hg/README Bltktrace README with instructions how to use it]  
+    * [http://brick.kernel.dk/snaps/fcache-git-latest.tar.gz Snapshot of fcache git tree]
+    *  blktrace git tree: git://brick.kernel.dk/data/git/blktrace.git
+    * [http://git.kernel.dk/ WWW git frontend for blktrace repository]
+    * [http://www.gelato.org/pdf/apr2006/gelato_ICE06apr_blktrace_brunelle_hp.pdf Presentation about blktrace by Alan D. Brunelle]
+    * [http://www.nabble.com/linux-btrace-f12411.html blktrace mailing list archive]
+  * [http://oss.oracle.com/~mason/seekwatcher/ Seekwatcher - visualisation tool creating graphs and movies from blktrace traces]
 
 Disk access characteristics:
   * [http://www.cs.ucsb.edu/research/tech_reports/reports/2004-18.pdf Paper: "Diskbench: User-level Disk Feature Extraction Tool" by Zoran Dimitrijevic, Raju Rangaswami , David Watson , and Anurag Acharya] - contains diagrams of disk seek time relative to cylinder distance and other useful disk characteristics
