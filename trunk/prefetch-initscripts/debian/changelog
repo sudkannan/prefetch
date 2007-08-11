@@ -1,0 +1,5 @@
+prefetch (0.2.1) gutsy; urgency=low
+
+  * Initial release.
+
+ -- Krzysztof Lichota <lichota@mimuw.edu.pl>  Sat, 11 Aug 2007 20:31:33 +0200

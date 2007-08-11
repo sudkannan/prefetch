@@ -1,0 +1,12 @@
+# /etc/defaults/prefetch
+# configuration variables for prefetch
+
+#Directory where historical traces are kept
+PREFETCH_DIR=/.prefetch
+
+#Delay (in seconds) after login to wait before stopping tracing
+LOGIN_TRACING_DELAY=60
+
+#Number of last historical traces which are merged together
+#to produce trace used for prefetching during next boot
+TRACE_AGGREGATION_COUNT=3
