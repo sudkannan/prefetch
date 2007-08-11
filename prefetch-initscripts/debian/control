@@ -1,0 +1,19 @@
+Source: prefetch
+Section: admin
+Priority: optional
+Maintainer: Krzysztof Lichota <lichota@mimuw.edu.pl>
+Build-Depends: debhelper (>= 4.1.16)
+Standards-Version: 3.6.1.0
+
+Package: prefetch
+Architecture: any
+Depends: ${shlibs:Depends}
+Replaces: readahead
+Provides: readahead
+Conflicts: readahead
+Description: automatically prefetch files into the page cache
+ Prefetch is successor of readahead - it automatically traces boot
+ and prefetches files into page cache for faster boot.
+ .
+ Prefetch requires kernel patched for prefetching functionality.
+ See Prefetch project page: http://code.google.com/p/prefetch/
