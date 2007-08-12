@@ -8,16 +8,21 @@ This version is precompiled for Debian-based systems (tested on Ubuntu Gutsy, ot
 
 Standard disclaimer applies: this is experimental version, it might damage your system use at your own risk and only on systems where you have backups.
 
-= Details =
+= Installation =
 
 In order to use kernel with prefetching:
   * Download [http://prefetch.googlecode.com/files/linux-image-2.6.22.1-9pf.3_2.6.22-9pf.3_i386.deb kernel linux-image deb]
   * Install linux-image deb package
-  * *Remove readahead package* using: `sudo apt-get remove --purge readahead` - please note that this will cause removing *-desktop package.
+  * *Remove readahead package* using: `sudo apt-get remove --purge readahead` - please note that this will cause removing (x/k/edu)ubuntu-desktop package.
   * Download [http://prefetch.googlecode.com/files/prefetch_0.2.1_i386.deb userspace prefetch support deb] and install it using: `dpkg -i prefetch*.deb`
 
 Now reboot and select "kernel 2.6.22.1-9pf.3" during boot. 
 
 Please measure boot time and report results in order to check effectiveness of prefetching support.
 
-
+= Uninstallation =
+In order to remove kernel with prefetching:
+  # Reboot into standard (non-prefetching) kernel.
+  # Remove prefetch userspace support files using `apt-get remove --purge prefetch`
+  # Install readahead and (x/k/edu)ubuntu-desktop package.
+  # Remove linux-image package with prefetching support (with "pf" in name).
