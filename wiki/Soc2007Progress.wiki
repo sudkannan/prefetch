@@ -37,7 +37,7 @@ This page will contain information about progress of implementation.
 
 == News ==
   * Sun, 12 Jul 2007
-     * Fully functional boot prefetching released for testing, for installation instructions see TestingBootPrefetching)
+     * Fully functional boot prefetching released for testing, for installation instructions see [TestingBootPrefetching this page], for announcement see [https://lists.ubuntu.com/archives/ubuntu-devel-discuss/2007-August/001440.html this mail to ubuntu-devel-discuss]
   * Mon, 16 Jul 2007
      * Debian packages with initial implementation of boot prefetching are available, see [http://groups.google.com/group/prefetch-devel/t/8d959216d14c22d0 this announcement]
 
