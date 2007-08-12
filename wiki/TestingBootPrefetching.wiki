@@ -4,7 +4,7 @@
 = Introduction =
 First testing version of kernel with automatic boot prefetching and tracing is available.
 
-This version is precompiled for Debian-based systems (tested on Ubuntu Gutsy, other distributions might not work). The kernel is standard Ubuntu kernel with these [http://prefetch.googlecode.com/svn/trunk/kernel-patches/2.6.22/submitted/ prefetch patches]
+This version is precompiled for Debian-based systems (tested on Ubuntu Gutsy, other distributions might not work). The kernel is standard Ubuntu kernel with these [http://prefetch.googlecode.com/svn/trunk/kernel-patches/2.6.22/submitted/ prefetch patches].
 
 Standard disclaimer applies: this is *experimental* version, it might damage your system use at your own risk and only on systems where you have backups.
 
