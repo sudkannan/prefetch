@@ -27,17 +27,14 @@ To be done. If you know how to do it, please send e-mail
 
 = Experiments =
 Now you can experiment to see what is the effect of prefetching kernel on your system.
-Boot a few times (at least 5 times, preferably 10) with prefetching (first run is not accelerated as trace does not exist), then a the same number of times with standard kernel and compare the results.
+Boot a few times (at least 5 times, preferably 10) with prefetching (first run is not accelerated as trace does not exist), then a the same number of times with standard kernel (with and without readahead installed) and compare the results.
 
-Results are put in file ~/boot_time.log. Lines starting with # are comments which show run parameters. Each reboot starts with line `@restart`. Results are put in lines without #, boot time (in seconds) is the first number in this line.
+Results are put in file ~/boot_time.log. Lines starting with `#` are comments which show run parameters. Each reboot starts with line `@restart`. Results are put in lines without #, boot time (in seconds) is the first number in this line.
 
 You can repeat tests after modifying your boot sequence: add apps to Autostart, install some services started during boot (like Apache) or otherwise change your boot sequence.
 Prefetching should automatically adapt to changed sequence after 1-2 reboots.
 
-Please stick to following guidelines when performing tests:
-  * Repeat boots with one set of parameters at least 5 times (preferably 10) - boot time has large variance, so average of results must be compared
-  * 
-
 = Submit your results =
+Please split ~/boot_time.log into separate files, so that run with one set of parameters is in separate file.
 
-prefetch-users@googlegroups.com
+Please describe your environment (processor, RAM, partitions), attach results and send e-mail with results to prefetch-users@googlegroups.com with subject "Prefetch test results".
