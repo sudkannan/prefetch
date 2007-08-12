@@ -1,8 +1,17 @@
 #summary Instructions how to measure boot time with prefetching.
+#labels Instructions
 
-= Installation =
+= Introduction =
+By measuring boot time in your setup you can help us improve boot prefetching to make boot even shorter.
 
-To measure boot time:
+Please install measurement script, perform the experiments and submit the results.
+
+
+= Installation of measurement script =
+This script measures boot time in repeatable manner. It should be run using your desktop environment autostart facility (not manually) in order to get consistent results.
+*Your login manager (GDM, KDM or XDM) should be set to autologin your user in order to remove random time when you log in to the system*.
+
+To install measuring script:
   # Download [http://prefetch.googlecode.com/svn/trunk/tools/record-boot-time/record-boot-time.sh script which logs boot time]
   # Copy script into your home directory
   # Change script permissions to mark it executable
@@ -17,6 +26,17 @@ In order to add measurement script to KDE autostart:
 To be done. If you know how to do it, please send e-mail 
 
 = Experiments =
+Now you can experiment to see what is the effect of prefetching kernel on your system.
+Boot a few times (at least 5 times, preferably 10) with prefetching (first run is not accelerated as trace does not exist), then a the same number of times with standard kernel and compare the results.
+
+Results are put in file ~/boot_time.log. Lines starting with # are comments which show run parameters. Each reboot starts with line `@restart`. Results are put in lines without #, boot time (in seconds) is the first number in this line.
+
+You can repeat tests after modifying your boot sequence: add apps to Autostart, install some services started during boot (like Apache) or otherwise change your boot sequence.
+Prefetching should automatically adapt to changed sequence after 1-2 reboots.
+
+Please stick to following guidelines when performing tests:
+  * Repeat boots with one set of parameters at least 5 times (preferably 10) - boot time has large variance, so average of results must be compared
+  * 
 
 = Submit your results =
 
