@@ -6,7 +6,7 @@ First testing version of kernel with automatic boot prefetching and tracing is a
 
 This version is precompiled for Debian-based systems (tested on Ubuntu Gutsy, other distributions might not work).
 
-Standard disclaimer applies: this is experimental version, it might damage your system use at your own risk and only on systems where you have backups.
+Standard disclaimer applies: this is *experimental* version, it might damage your system use at your own risk and only on systems where you have backups.
 
 = Installation =
 
@@ -17,8 +17,6 @@ In order to use kernel with prefetching:
   * Download [http://prefetch.googlecode.com/files/prefetch_0.2.1_i386.deb userspace prefetch support deb] and install it using: `dpkg -i prefetch*.deb`
 
 Now reboot and select "kernel 2.6.22.1-9pf.3" during boot. 
-
-Please measure boot time and report results in order to check effectiveness of prefetching support.
 
 = Uninstallation =
 In order to remove kernel with prefetching:
