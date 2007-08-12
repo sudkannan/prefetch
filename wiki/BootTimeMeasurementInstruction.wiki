@@ -1,0 +1,23 @@
+#summary Instructions how to measure boot time with prefetching.
+
+= Installation =
+
+To measure boot time:
+  # Download [http://prefetch.googlecode.com/svn/trunk/tools/record-boot-time/record-boot-time.sh script which logs boot time]
+  # Copy script into your home directory
+  # Change script permissions to mark it executable
+  # Add script to your desktop environment autostart scripts (for specific instructions see below)
+
+== Adding measurement script to KDE autostart ==
+In order to add measurement script to KDE autostart:
+  # Download [http://prefetch.googlecode.com/svn/trunk/tools/record-boot-time/autostart-test.desktop desktop file which starts script]
+  # Copy this desktop file to folder ~/.kde/Autostart/
+
+== Adding measurement script to Gnome autostart ==
+To be done. If you know how to do it, please send e-mail 
+
+= Experiments =
+
+= Submit your results =
+
+prefetch-users@googlegroups.com
