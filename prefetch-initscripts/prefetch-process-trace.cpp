@@ -1,4 +1,5 @@
-#include "prefetch_trace.h"
+#include "prefetch_lib.h"
+#include "prefetch_types.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -12,38 +13,6 @@
 
 using namespace std;
 
-typedef int prefetch_trace_desc_t;
-
-//FIXME: move these functions to library
-
-/**
-	Opens trace file from file named @filename. Puts file descriptor in @file in case of success.
-	Returns 0 if success, <0 in case of error.
-*/
-int open_trace_file(char *filename, prefetch_trace_desc_t *file)
-{
-	int fd = open(filename, O_RDONLY);
-	if (fd == -1) {
-		perror("Cannot open trace file");
-		return -1;
-	}
-	*file = fd;
-	return 0;
-}
-
-/**
-	Closes trace file @file.
-	Returns 0 if success, <0 in case of error.
-*/
-int close_trace_file(prefetch_trace_desc_t file)
-{
-	if (close(file) == -1) {
-		perror("Error closing trace file");
-		return -1;
-	}
-	return 0;
-}
-
 typedef struct {
 	prefetch_trace_record_t record;
 	int index;
@@ -55,31 +24,6 @@ typedef struct {
 	records_container_t records;
 } trace_file_data_t;
 
-/**
-	Reads one prefetch record from @file and puts it in @record.
-	Returns 0 if successfully read, 1 if end of file, <0 in case of error.
-*/
-int read_prefetch_record(prefetch_trace_desc_t file, prefetch_trace_record_t *record)
-{
-	int r;
-	int record_size = sizeof(*record);
-	//FIXME: use buffered IO
-	
-	r = read(file, record, record_size);
-	if (r == 0) {
-		return 1;
-	}
-	if (r < 0) {
-		perror("Error while reading trace file");
-		return -1;
-	}
-	if (r != record_size) {
-		//FIXME: read the rest in loop
-		fprintf(stderr, "Size read not matching requested size\n");
-		return -1;
-	}
-	return 0;
-}
 
 /**
 	Reads conents of trace file @filename to @data structure.
@@ -504,6 +448,15 @@ int output_trace_file_data(trace_file_data_t *data)
 	unsigned i;
 	int r;
 	int record_size = sizeof(data->records[0].record);
+	prefetch_trace_header_t header;
+	
+	fill_trace_file_header(&header);
+	
+	r = fwrite(&header, sizeof(header), 1, stdout);
+	if (ferror(stdout)) {
+		fprintf(stderr, "Error writing header to stdout\n");
+		return -1;
+	}
 	
 	for (i = 0; i < data->records.size(); ++i) {
 		r = fwrite(&data->records[i].record, record_size, 1, stdout);

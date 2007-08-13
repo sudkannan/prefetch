@@ -16,9 +16,9 @@ uninstall:
 	@rm -f $(DESTDIR)/usr/sbin/prefetch-process-trace
 	@rm -f $(DESTDIR)/bin/prefetch-print-trace
 
-prefetch-print-trace: prefetch-print-trace.cpp
+prefetch-print-trace: prefetch-print-trace.cpp prefetch_lib.cpp
 
-prefetch-process-trace: prefetch-process-trace.cpp
+prefetch-process-trace: prefetch-process-trace.cpp prefetch_lib.cpp
 
 clean: 
 	@rm -f $(EXECS)
