@@ -19,6 +19,9 @@ stop_boot_trace() {
     		LAST_TRACES=$(ls -t1 "$PREFETCH_DIR/$FILEBASENAME".* | head -n ${TRACE_AGGREGATION_COUNT:-1})
     		#merge them and put as trace used at the next boot
     		/usr/sbin/prefetch-process-trace -c sort-sum $LAST_TRACES >"$file"
+    		#remove obsolete files
+    		FIRST_OBSOLETE=$[ ${TRACE_AGGREGATION_COUNT:-1} + 1 ]
+    		ls -t1 "$PREFETCH_DIR/$FILEBASENAME".* | tail -n +$FIRST_OBSOLETE | xargs rm -f
     	done
 }
 
