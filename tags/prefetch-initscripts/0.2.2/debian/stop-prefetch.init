@@ -1,0 +1,40 @@
+#!/bin/sh -e
+# init script for stopping prefetch profiling
+
+# Get LSB functions
+. /lib/lsb/init-functions
+. /etc/default/rcS
+. /etc/default/prefetch
+
+stop_boot_trace() {
+	sleep ${LOGIN_TRACING_DELAY:-60}
+    	echo "boot tracing stop" >/proc/prefetch/boot
+    	mkdir -p "$PREFETCH_DIR"
+    	STAMP=`date +'%Y%m%d-%T'`
+    	for file in /.prefetch-boot-trace.*; do
+    		FILEBASENAME=$(basename "$file")
+    		#copy latest trace
+    		cp -af "$file" "$PREFETCH_DIR/$FILEBASENAME.$STAMP"
+    		#take latest traces
+    		LAST_TRACES=$(ls -t1 "$PREFETCH_DIR/$FILEBASENAME".* | head -n ${TRACE_AGGREGATION_COUNT:-1})
+    		#merge them and put as trace used at the next boot
+    		/usr/sbin/prefetch-process-trace -c sort-sum $LAST_TRACES >"$file"
+    		#remove obsolete files
+    		FIRST_OBSOLETE=$[ ${TRACE_AGGREGATION_COUNT:-1} + 1 ]
+    		ls -t1 "$PREFETCH_DIR/$FILEBASENAME".* | tail -n +$FIRST_OBSOLETE | xargs rm -f
+    	done
+}
+
+case "$1" in
+    start)
+    	stop_boot_trace &
+	;;
+    stop|restart|force-reload)
+	;;
+    *)
+	echo "Usage: /etc/init.d/stop-prefetch {start|stop|restart|force-reload}"
+	exit 1
+	;;
+esac
+
+exit 0
