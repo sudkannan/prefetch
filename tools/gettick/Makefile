@@ -1,1 +1,0 @@
-gettick: gettick.c
