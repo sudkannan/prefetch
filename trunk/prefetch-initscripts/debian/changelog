@@ -1,3 +1,9 @@
+prefetch (0.2.2) gutsy; urgency=low
+
+  * Implemented removing obsolete trace files, so that they do not fill up root partition.
+
+ -- Krzysztof Lichota <lichota@mimuw.edu.pl> Mon, 13 Aug 2007 18:50:28 +0200
+
 prefetch (0.2.1) gutsy; urgency=low
 
   * Initial release.
