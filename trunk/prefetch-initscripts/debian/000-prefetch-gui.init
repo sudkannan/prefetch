@@ -7,6 +7,9 @@
 . /etc/default/rcS
 . /etc/default/prefetch
 
+#check if prefetch package is installed
+[ -x /usr/sbin/prefetch-process-trace ] || exit 0
+
 #check if kernel has boot prefetching support
 if [ ! -e /proc/prefetch/boot ]; then
 	log_warning_msg "Kernel does not have prefetching support, skipping boot prefetching"
