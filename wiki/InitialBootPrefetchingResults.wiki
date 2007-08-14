@@ -558,3 +558,48 @@ http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl
 === Conclusions ===
   * The boot time is very long, this appeared to be caused by compiling the kernel with debugging information which made all modules huge (the whole kernel package was 200 MB, 10 times more than usual)
   * Readahead results might be skewed as readahead lists in readahead package were not regenerated since April.
+
+== Test 12 ==
+The purpose of this test is to check how prefetch will perform on standard Ubuntu kernel with prefetching patches, compiled without debugging symbols.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-08-05.
+  * Standard desktop environment.
+  * Kernel 2.6.22.1-9pf.3 - kernel source of linux-2.6.22-9.25 compiled with [http://prefetch.googlecode.com/svn/trunk/kernel-patches/2.6.22/ prefetching patches], with config copied from generic kernel, prefetching enabled and debugging symbols disabled.
+
+Test method:
+  * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
+  * 10 tests were run with plain boot to desktop environments, then subsequently 10 runs with openoffice started. 
+  * Tests were performed for 3 setups: Prefetch kernel + prefetch, Prefetch kernel + readahead and Ubuntu kernel + readahead
+
+Prefetch kernel + prefetch setup:
+  * Prefetching was run with 3-aggregation and with early GUI prefetching.
+
+Prefetch kernel + readahead setup:
+  * Prefetching was disabled by removing init scripts and readahead was installed instead
+
+Ubuntu kernel + readahead setup:
+  * Standard Ubuntu kernel 2.6.22-9.25-generic was used with standard readahead package.
+
+Measurements repeatability:
+  * Each combination of parameters was tested 10 times.
+  * First runs (plain boot and with openoffice) from all setups were not taken into account in order to simulate warming up.
+
+=== Test results ===
+||		||	Prefetch kernel + prefetch	||	Prefetch kernel + readahead	||	Ubuntu kernel + readahead	||	Prefetch kernel + readahead - Prefetch kernel + prefetch	||	Ubuntu kernel + readahead - Prefetch kernel + readahead	||	Ubuntu kernel + readahead - Prefetch kernel + prefetch	||
+||	Without openoffice: avg	||	54.91	||	58.76	||	61.21	||	3.86	||	2.45	||	6.31	||
+||	stddev	||	1.04	||	1.76	||	1.81	||	0.72	||	0.05	||	0.76	||
+||	min	||	53.09	||	54.35	||	57.84	||	1.26	||	3.49	||	4.75	||
+||	max	||	56.55	||	60.43	||	63.47	||	3.88	||	3.04	||	6.92	||
+||	With openoffice: avg	||	65.53	||	74.43	||	81.01	||	8.89	||	6.58	||	15.48	||
+||	stddev	||	0.28	||	0.43	||	0.51	||	0.15	||	0.08	||	0.23	||
+||	min	||	65.22	||	73.81	||	80.29	||	8.59	||	6.48	||	15.07	||
+||	max	||	66.20	||	75.05	||	81.74	||	8.85	||	6.69	||	15.54	||
+
+Raw results are at: 
+http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-12-ubuntu-kernel-with-prefetch-no-debug/
+
+=== Conclusions ===
