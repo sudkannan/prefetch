@@ -164,10 +164,10 @@ http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl
 
 == Test 5 ==
 This test purpose is measure effectiveness of boot prefetching implementation when tracing and prefetching is split into 3 phases:
-# Boot with root partition: since first init script (rcS.d/S01readahead)
-# Boot with all partitions: since all partitions are mounted (rcS.d/S39readahead-desktop)
-# Loading GUI: since KDM is started (rcX.d/S99-aaa-readahead-gui).
-# End of tracing is 60 seconds after loading KDM (rcX.d/S99-stop-readahead + 60 seconds wait time)
+  # Boot with root partition: since first init script (rcS.d/S01readahead)
+  # Boot with all partitions: since all partitions are mounted (rcS.d/S39readahead-desktop)
+  # Loading GUI: since KDM is started (rcX.d/S99-aaa-readahead-gui).
+  # End of tracing is 60 seconds after loading KDM (rcX.d/S99-stop-readahead + 60 seconds wait time)
 
 === Test description ===
 Test machine: [TestMachineKL1 KL1]
@@ -603,3 +603,5 @@ Raw results are at:
 http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-12-ubuntu-kernel-with-prefetch-no-debug/
 
 === Conclusions ===
+  * Boot time is shorter, thanks to smaller kernel modules.
+  * Prefetch still shows advantage over readahead, probably caused by outdated readahead lists. It would be feasible to update readahead lists manually and check performance of readahead then.
