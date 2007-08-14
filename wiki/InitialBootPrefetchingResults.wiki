@@ -556,3 +556,5 @@ Raw results are at:
 http://prefetch.googlecode.com/svn/trunk/results/boot-prefetching/testmachine-kl1/test-11-ubuntu-kernel-with-prefetch/
 
 === Conclusions ===
+  * The boot time is very long, this appeared to be caused by compiling the kernel with debugging information which made all modules huge (the whole kernel package was 200 MB, 10 times more than usual)
+  * Readahead results might be skewed as readahead lists in readahead package were not regenerated since April.
