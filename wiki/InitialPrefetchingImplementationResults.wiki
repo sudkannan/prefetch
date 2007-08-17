@@ -297,7 +297,7 @@ OpenOffice startup time:
 ||	min	||	10.81	||	10.88	||	12.62	||	14.29	||	0.07	||	1.74	||	1.67	||	3.49	||
 ||	max	||	11.15	||	11.27	||	12.88	||	14.48	||	0.12	||	1.61	||	1.6	||	3.34	||
 
-IO ticks:															
+IO ticks (in centisecs = 1/100s):															
 ||	IO ticks	||	Just prefetch	||	Prefetch + pagein	||	Just pagein	||	None	||	Prefetch + pagein - Just prefetch	||	Just pagein - Prefetch + pagein	||	None - Just pagein	||	None - Just prefetch	||
 ||	Average	||	594.69	||	493.92	||	648	||	915.31	||	-100.77	||	154.08	||	267.31	||	320.62	||
 ||	Stddev	||	10.77	||	6.58	||	10.47	||	8.48	||	-4.2	||	3.9	||	-1.99	||	-2.29	||
@@ -308,3 +308,9 @@ Raw results are at:
 http://prefetch.googlecode.com/svn/trunk/results/openoffice/app-prefetching/testmachine-kl1/test-1-automatic-prefetching-last-trace/
 
 === Conclusions ===
+  * Automatic application prefetching works.
+  * Performance of app prefetching is better than built-in OpenOffice prefetching by 1.67s.
+  * App prefetching works also in presence of built-in OpenOffice prefetching and has almost the same performance (0.05s worse). So it can be used without disabling built-in OpenOffice prefetching.
+  * Prefetching can cut down OpenOffice startup time by 3.36s, from 14.38s to 11.01s.
+  * Interesting is that in case of pagein+prefetch it uses signigicantly less IO ticks (100 centisecs, i.e. 1s of IO wait time), but the startup time is comparable.
+  * The method used (load last trace) is not perfect, in case some other, unrelated apps are loaded at the same time, the trace will catch also their disk accesses. Some method of cutting off these unrelated accesses should be added, maybe intersection of last 2 traces?
