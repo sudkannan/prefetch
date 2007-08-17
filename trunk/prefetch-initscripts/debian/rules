@@ -72,7 +72,7 @@ binary-arch: build install
 	dh_testroot
 	dh_install --sourcedir=debian/prefetch
 	dh_installdocs
-	dh_installinit --no-start -- start 01 S .
+	dh_installinit --no-start -- start 01 S . stop 50 0 6 .
 	dh_installinit --name=prefetch-system --no-start -- start 39 S .
 	dh_installinit --name=000-prefetch-gui --no-start -- start 99 2 .
 	dh_installinit --name=stop-prefetch --no-start -- start 99 2 .
