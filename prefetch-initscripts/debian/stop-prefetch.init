@@ -18,6 +18,13 @@ fi
 stop_boot_trace() {
 	sleep ${LOGIN_TRACING_DELAY:-60}
     	echo "boot tracing stop" >/proc/prefetch/boot
+	#Enable app prefetching after boot
+	if [ -e /proc/prefetch/app ] ; then
+		if [ ${ENABLE_APP_PREFETCHING:-1} -eq "1" ] ; then
+			echo "enable" >/proc/prefetch/app
+		fi
+	fi 
+    	
     	mkdir -p "$PREFETCH_DIR"
     	STAMP=`date +'%Y%m%d-%T'`
     	for file in /.prefetch-boot-trace.*; do

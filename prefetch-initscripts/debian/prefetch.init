@@ -15,6 +15,21 @@ if [ ! -e /proc/prefetch/boot ]; then
 	log_warning_msg "Kernel does not have prefetching support, skipping boot prefetching"
 	exit 0
 fi
+
+APP_LIST="$PREFETCH_DIR/app-list.list"
+APP_BLACKLIST="$PREFETCH_DIR/app-blacklist.list"
+
+
+load_filelist() {
+	LISTFILE="$1"
+	COMMAND="$2"
+	if [ ! -r "$LISTFILE" ] ; then
+		return 1
+	fi
+	cat "$LISTFILE" | while read i; do
+		echo "add $COMMAND $i">/proc/prefetch/app || echo "Failed to add $i using $COMMAND"
+	done
+}
                 
 
 case "$1" in
@@ -23,14 +38,26 @@ case "$1" in
 	if type usplash_write >/dev/null 2>&1; then
 	    usplash_write "TIMEOUT 360" || true
 	fi
+	echo "start both phase boot" >/proc/prefetch/boot
 	
-	echo "start both phase boot" >/proc/prefetch/boot &
+	#Disable app prefetching for time of boot
+	if [ -e /proc/prefetch/app ] ; then
+		echo "disable" >/proc/prefetch/app
+		#load previous applications file list
+		load_filelist "$APP_LIST" "app-list"
+		load_filelist "$APP_BLACKLIST" "app-blacklist"
+	fi 
+	
 
 	if type usplash_write >/dev/null 2>&1; then
 	    usplash_write "TIMEOUT 15" || true
 	fi
 	;;
     stop)
+    	#save traced application list
+    	if [ -e /proc/prefetch/app-list ] ; then 
+	    	cat /proc/prefetch/app-list >"$APP_LIST"
+	fi
 	;;
     *)
 	echo "Usage: /etc/init.d/prefetch {start|stop|restart|force-reload}"

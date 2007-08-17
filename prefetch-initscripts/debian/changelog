@@ -1,3 +1,14 @@
+prefetch (0.2.4) gutsy; urgency=low
+
+  * Added handling of application prefetching module.
+  * Upon boot application prefetching is disabled and app lists are restored 
+    from files. 
+  * When boot tracing is turned on, application prefetching is turned on (if
+    enabled in /etc/default/prefetch).
+  * Upon shutdown traced applications list is saved.
+
+ -- Krzysztof Lichota <lichota@mimuw.edu.pl>  Fri, 17 Aug 2007 22:44:39 +0200
+
 prefetch (0.2.3) gutsy; urgency=low
 
   * Implementation of handling trace file format with header.
