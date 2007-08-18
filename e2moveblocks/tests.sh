@@ -80,11 +80,11 @@ trap cleanup EXIT
 trap cleanup TERM
 
 #long test
-#FS_SIZES="100 1000"
-#FILL_FACTORS="10 30 40 50 90 99 100"
-
-FS_SIZES="100"
-FILL_FACTORS="40 99"
+FS_SIZES="100 1000"
+FILL_FACTORS="10 30 40 50 90 99 100"
+#short test
+#FS_SIZES="100"
+#FILL_FACTORS="40 99"
 
 for FS_SIZE in $FS_SIZES; do
     for FILL in $FILL_FACTORS; do
