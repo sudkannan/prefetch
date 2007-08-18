@@ -1079,12 +1079,28 @@ int process_layout_list(
     return 1;
 }
 
+void usage()
+{
+    fprintf(stderr, "Usage: e2moveblocks device layout-file\n");
+    fprintf(stderr, "\tdevice - name of block device or file name containing filesystem\n");
+    fprintf(stderr, "\tlayout-file - file with requested layout of files in filesystem\n");
+}
+
 int main(int argc, char **argv)
 {
+    if (argc != 3)
+    {
+        usage();
+        exit(1);
+    }
+    
+    char *devicename = argv[1];
+    char *layoutfile = argv[2];
+
     initialize_ext2_error_table();
     
     filesystem_info fs_info;
-    if (!open_filesystem("ext3.img", &fs_info))
+    if (!open_filesystem(devicename, &fs_info))
     {
         exit(3);
     }
@@ -1100,7 +1116,7 @@ int main(int argc, char **argv)
     relocation *relocations;
     int num_relocations;
 
-    if (! process_layout_list(&fs_info, "layout.txt", &size_in_blocks, &relocations, &num_relocations))
+    if (! process_layout_list(&fs_info, layoutfile, &size_in_blocks, &relocations, &num_relocations))
     {
         error_msg("Cannot process relocations list\n");
         exit(5);
