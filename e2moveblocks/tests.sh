@@ -5,6 +5,10 @@
 export LC_ALL=C
 SCRIPT_DIR=`dirname "$0"`
 
+FS_IMAGE="ext3.img"
+FILE_LIST="ext3.img.list"
+LAYOUT_FILE="layout.txt"
+
 usage()
 {
     echo "Tests ext3 relayout tool on dummy filesystems images."
@@ -51,7 +55,7 @@ create_fs()
 
 optimize_fs()
 {
-    "$SCRIPT_DIR"/ext3_optimize 
+    "$SCRIPT_DIR"/e2moveblocks $FS_IMAGE $LAYOUT_FILE
     result=$?
     if [ $result = 0 ] ; then
         echo "Filesystem optimizer finished successfully"
@@ -71,15 +75,19 @@ fi
 
 s=1 #seed
 
-FS_IMAGE="ext3.img"
-FILE_LIST="ext3.img.list"
-LAYOUT_FILE="layout.txt"
 
 trap cleanup EXIT
 trap cleanup TERM
 
-for FS_SIZE in 100 1000; do
-    for FILL in 10 30 40 50 90 99 100; do
+#long test
+#FS_SIZES="100 1000"
+#FILL_FACTORS="10 30 40 50 90 99 100"
+
+FS_SIZES="100"
+FILL_FACTORS="40 99"
+
+for FS_SIZE in $FS_SIZES; do
+    for FILL in $FILL_FACTORS; do
         echo "=== Starting tests for size $FS_SIZE and fill $FILL" `date`
         create_fs $FS_SIZE $FILL
         
