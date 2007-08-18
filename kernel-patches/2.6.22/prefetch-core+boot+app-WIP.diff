@@ -275,10 +275,10 @@ index edb1b0b..c7d24b4 100644
  	mapping->nrpages--;
 diff --git a/mm/prefetch_app.c b/mm/prefetch_app.c
 new file mode 100644
-index 0000000..66d9277
+index 0000000..1c3ae91
 --- /dev/null
 +++ b/mm/prefetch_app.c
-@@ -0,0 +1,861 @@
+@@ -0,0 +1,1006 @@
 +/*
 + * linux/mm/prefetch_app.c
 + *
@@ -400,14 +400,15 @@ index 0000000..66d9277
 +	kfree(entry);
 +}
 +
-+void clear_hashtable(struct hlist_head *list, int hashtable_size)
++void __clear_hashtable(struct hlist_head *list, int hashtable_size)
 +{
 +	struct filename_entry *entry;
 +	struct hlist_node *cursor;
++	struct hlist_node *tmp;
 +	int i;
 +	
 +	for (i = 0; i < hashtable_size; ++i) {
-+		hlist_for_each_entry(entry, cursor, &list[i], entries_list) {
++		hlist_for_each_entry_safe(entry, cursor, tmp, &list[i], entries_list) {
 +			free_filename_entry(entry);
 +		}
 +		/* clear whole list at once */
@@ -415,6 +416,12 @@ index 0000000..66d9277
 +	}
 +}
 +
++void clear_hashtable(struct hlist_head *list, int hashtable_size, struct mutex *mutex)
++{
++	mutex_lock(mutex);
++	__clear_hashtable(list, hashtable_size);
++	mutex_unlock(mutex);
++}
 +
 +int initialize_hashtable(struct hlist_head **list, int hashtable_size)
 +{
@@ -462,8 +469,9 @@ index 0000000..66d9277
 +/**
 + * Adds filename @filename to hashtable @list
 + * Filename contents is copied.
++ * Proper mutex must be held.
 + */
-+int add_filename_to_list(char *filename, struct hlist_head *list)
++static int __add_filename_to_list(char *filename, struct hlist_head *list)
 +{
 +	int ret = 0;
 +	struct filename_entry *entry = NULL;
@@ -494,6 +502,20 @@ index 0000000..66d9277
 +	}
 +	return ret;
 +}
++
++static int add_filename_to_list_unique(char *filename, struct hlist_head *list, struct mutex *mutex)
++{
++	int ret = 0;
++	
++	mutex_lock(mutex);
++	if (!filename_on_list(filename, list))
++		ret = __add_filename_to_list(filename, list);
++	mutex_unlock(mutex);
++	
++	return ret;
++}
++
++
 +
 +/**
 + * Removes filename @filename from hashtable @list
@@ -663,7 +685,7 @@ index 0000000..66d9277
 +#endif
 +		mutex_lock(&prefetch_apps_list_mutex);
 +		if (!filename_on_list(trace_job->filename, prefetch_apps_list)) {
-+			add_filename_to_list(trace_job->filename, prefetch_apps_list);
++			__add_filename_to_list(trace_job->filename, prefetch_apps_list);
 +#ifdef CONFIG_PREFETCH_DEBUG
 +			printk(KERN_INFO "Added application %s to prefetching list\n", trace_job->filename);
 +#endif
@@ -938,6 +960,9 @@ index 0000000..66d9277
 +	//NOTE: job is not cancelled, it will wake up and clean up after itself
 +}
 +
++#define PREFETCH_PATH_MAX 512
++#define PREFETCH_PATH_MAX_S "512"
++
 +ssize_t app_prefetch_proc_write(struct file *proc_file, const char __user * buffer,
 +	size_t count, loff_t *ppos)
 +{
@@ -945,6 +970,7 @@ index 0000000..66d9277
 +	int e = 0;
 +	int tmp;
 +	int r;
++	char *s = NULL;
 +
 +	if (count >= PATH_MAX)
 +		return -ENAMETOOLONG;
@@ -993,8 +1019,8 @@ index 0000000..66d9277
 +		if (r != 1) {
 +			e = -EINVAL;
 +			printk(KERN_WARNING "Wrong parameter to set tracing timeout command, command was: %s\n",
-+			name
-+			);
++				name
++				);
 +			goto out;
 +		}
 +		if (tmp <= 0) {
@@ -1004,6 +1030,67 @@ index 0000000..66d9277
 +		}
 +		tracing_timeout = tmp;
 +		printk(KERN_INFO "Set tracing timeout to %d seconds\n", tracing_timeout);
++		goto out;
++	}
++	
++	if (param_match(name, "clear app-list")) {
++		clear_hashtable(prefetch_apps_list, filename_hashtable_size, &prefetch_apps_list_mutex);
++		printk(KERN_INFO "List of traced applications cleared\n");
++		goto out;
++	}
++	
++	if (param_match_prefix(name, "add app-list")) {
++		s = kzalloc(PREFETCH_PATH_MAX + 1, GFP_KERNEL);
++		if (s == NULL) {
++			printk(KERN_WARNING "Cannot allocate memory for path\n");
++			e = -ENOMEM;
++			goto out;
++		}
++		r = sscanf(name, "add app-list %" PREFETCH_PATH_MAX_S "s", s);
++		if (r != 1) {
++			e = -EINVAL;
++			printk(KERN_WARNING "Wrong parameter to add app-list command, command was: %s\n",
++				name
++				);
++		} else {
++			e = add_filename_to_list_unique(s, prefetch_apps_list, &prefetch_apps_list_mutex);
++			if (e < 0)
++				printk(KERN_WARNING "Failed to add application %s to prefetched applications list, error=%d\n", s, e);
++		}
++		kfree(s);
++		goto out;
++	}
++	
++	if (param_match(name, "clear app-blacklist")) {
++		clear_hashtable(prefetch_apps_blacklist, filename_hashtable_size, &prefetch_apps_blacklist_mutex);
++		printk(KERN_INFO "Blacklist of traced applications cleared\n");
++		goto out;
++	}
++	
++	if (param_match_prefix(name, "add app-blacklist")) {
++		s = kzalloc(PREFETCH_PATH_MAX + 1, GFP_KERNEL);
++		if (s == NULL) {
++			printk(KERN_WARNING "Cannot allocate memory for path\n");
++			e = -ENOMEM;
++			goto out;
++		}
++		
++		r = sscanf(name, "add app-blacklist %s", s);
++		if (r != 1) {
++			e = -EINVAL;
++			printk(KERN_WARNING "Wrong parameter to add app-blacklist command, command was: %s\n",
++				name
++				);
++		} else {
++			e = add_filename_to_list_unique(
++				s, 
++				prefetch_apps_blacklist, 
++				&prefetch_apps_blacklist_mutex
++				);
++			if (e < 0)
++				printk(KERN_WARNING "Failed to add application %s to blacklisted applications list, error=%d\n", s, e);
++		}
++		kfree(s);
 +		goto out;
 +	}
 +out:
@@ -1083,6 +1170,56 @@ index 0000000..66d9277
 +	.llseek		= seq_lseek,
 +};
 +
++static int app_list_show(struct seq_file *m, void *v)
++{
++	mutex_lock(&prefetch_apps_list_mutex);
++	seq_print_filename_list(m, prefetch_apps_list);
++	mutex_unlock(&prefetch_apps_list_mutex);
++	
++	return 0;
++}
++
++static int app_list_open(struct inode *inode, struct file *proc_file)
++{
++	return single_open(proc_file, app_list_show, NULL);
++}
++
++static int app_list_release_generic(struct inode *inode, struct file *proc_file)
++{
++	return single_release(inode, proc_file);
++}
++
++static struct file_operations proc_app_list_fops = {
++	.owner		= THIS_MODULE,
++	.open		= app_list_open,
++	.release		= app_list_release_generic,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++};
++
++static int app_blacklist_show(struct seq_file *m, void *v)
++{
++	mutex_lock(&prefetch_apps_blacklist_mutex);
++	seq_print_filename_list(m, prefetch_apps_blacklist);
++	mutex_unlock(&prefetch_apps_blacklist_mutex);
++	
++	return 0;
++}
++
++static int app_blacklist_open(struct inode *inode, struct file *proc_file)
++{
++	return  single_open(proc_file, app_blacklist_show, NULL);
++}
++
++static struct file_operations proc_app_blacklist_fops = {
++	.owner		= THIS_MODULE,
++	.open		= app_blacklist_open,
++	.release		= app_list_release_generic,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++};
++
++
 +static __init int app_prefetch_init(void)
 +{
 +	struct proc_dir_entry *entry;
@@ -1110,10 +1247,18 @@ index 0000000..66d9277
 +	if (prefetch_proc_dir == NULL) {
 +		printk(KERN_WARNING "Prefetch proc directory not present, proc interface  for app prefetching will not be available\n");
 +	} else {
-+		//create proc entry
++		//create main proc entry
 +		entry = create_proc_entry("app", 0600, prefetch_proc_dir);
 +		if (entry)
 +			entry->proc_fops = &proc_app_prefetch_fops;
++		//create apps list entry
++		entry = create_proc_entry("app-list", 0600, prefetch_proc_dir);
++		if (entry)
++			entry->proc_fops = &proc_app_list_fops;
++		//create apps blacklist entry
++		entry = create_proc_entry("app-blacklist", 0600, prefetch_proc_dir);
++		if (entry)
++			entry->proc_fops = &proc_app_blacklist_fops;
 +	}
 +	
 +	printk(KERN_INFO "App prefetching module started, enabled=%d, prefetching=%d\n",
