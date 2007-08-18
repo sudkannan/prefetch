@@ -3,6 +3,7 @@
 #(c) 2007 Krzysztof Lichota (lichota@mimuw.edu.pl)
 #Licence: GPL v2
 export LC_ALL=C
+PAGE_SIZE=4096
 
 usage()
 {
@@ -126,10 +127,27 @@ while [ `fs_usage_percent "$MNT_DIR"` -lt "$FILL_PERCENT" ] ; do
 done
 
 FILELIST_FILE="$PWD/$FS_IMAGE.list"
+MAX_LEN=20 #Max length of contiguous file block
 
 echo "/" > "$FILELIST_FILE"  #add root dir at the beginning
 pushd "$MNT_DIR"
-find -mindepth 1 | cut -c 2- >> "$FILELIST_FILE"
+find -mindepth 1 | cut -c 2- | while read i; do
+    RELATIVE_FILENAME=".$i" #result is: ./filename
+    SIZE=$(stat -c '%s' "$RELATIVE_FILENAME")
+    INODE=$(stat -c '%i' "$RELATIVE_FILENAME")
+    declare -i SIZE_IN_PAGES
+    SIZE_IN_PAGES=$[ $SIZE / $PAGE_SIZE ]
+    declare -i BEGINNING
+    BEGINNING=0
+    while [ $BEGINNING -le $SIZE_IN_PAGES ]; do
+        s=`expr '(' $s '*' 16807 ')' % 2147483647 `
+        declare -i LEFT
+        LEFT=$[ $SIZE_IN_PAGES - $BEGINNING + 1 ]
+        LEN=$[ ( ($s % $MAX_LEN) % $LEFT ) + 1 ]
+        echo "$INODE $BEGINNING $LEN"
+        BEGINNING=$[ $BEGINNING + $LEN ]
+    done 
+done >> "$FILELIST_FILE"
 popd
 
 umount "$MNT_DIR" || failure "Failed to unmount filesystem image, error=$?"

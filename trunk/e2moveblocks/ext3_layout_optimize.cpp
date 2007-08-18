@@ -979,6 +979,15 @@ int process_layout_list(
     *num_relocations = 0;
     *estimated_block_size = 0;
     
+    int page_size = sysconf(_SC_PAGESIZE);
+    int block_size = fs_info->fs->blocksize;
+    int page_to_blocks_factor = page_size / block_size;
+    if (page_to_blocks_factor * block_size != page_size)
+    {
+        error_msg("Unsupported configuration: page size is not multiple of block size, page size=%d, block size=%d\n", page_size, block_size);
+        return 0;
+    }
+    
     for (;;)
     {
         if (fgets(line_buf, BUF_SIZE, list_file) == NULL)
@@ -997,43 +1006,60 @@ int process_layout_list(
             continue;
         }
         
-        char *first_field = strtok(line_buf, "\t\n");
-        if (first_field == NULL)
+        char *delimeters = " \t\n";
+        char *field1 = strtok(line_buf, delimeters);
+        if (field1 == NULL)
         {
             error_msg("Ignoring invalid layout line: %s\n", line_buf);
             continue;
         }
         
-        char *second_field = strtok(NULL, "\t\n");
-        if (second_field != NULL)
-        {
-            debug_msg("2 fields, field1=%s, field2=%s\n", first_field, second_field);
-        }
-        else
-        {
-             debug_msg("1 fields, field1=%s\n", first_field);
-        }
+        char *field2 = strtok(NULL, delimeters);
+        char *field3 = strtok(NULL, delimeters);
+        debug_msg("field1=%s, field2=%s, field3=%s\n", field1 ? field1 : "None", field2 ? field2 : "None", field3 ? field3 : "None");
         
-        char *file_name = first_field;
+        
+        char *file_name = field1;
+        char *offset_field = field2;
+        char *length_field = field3;
         ext2_ino_t inode_number;
         ext2_inode inode;
         ext2_ino_t root;
         ext2_ino_t cwd;
         int retval;
         
-        //lookup file name
-        root = cwd = EXT2_ROOT_INO;
-        retval = ext2fs_namei_follow(
-            fs_info->fs, 
-            root, 
-            cwd, 
-            file_name,
-            &inode_number
-            );
-        if (retval != 0)
+        if (file_name[0] == '/') 
         {
-            error_msg("Warning: failed to lookup file %s, skipping it, error=%s\n", file_name, error_message(retval));
-            continue;
+            //file name - lookup it up
+            root = cwd = EXT2_ROOT_INO;
+            retval = ext2fs_namei_follow(
+                fs_info->fs, 
+                root, 
+                cwd, 
+                file_name,
+                &inode_number
+                );
+            if (retval != 0)
+            {
+                error_msg("Warning: failed to lookup file %s, skipping it, error=%s\n", file_name, error_message(retval));
+                continue;
+            }
+        } 
+        else if (file_name[0] >= '0' && file_name[0] <= '9')
+        {
+            //inode number
+            inode_number = atol(file_name);
+        } 
+        else 
+        {
+                error_msg("Warning: invalid file or inode name %s, skipping it\n", file_name);
+                continue;
+        }
+        
+        if (inode_number <= EXT2_FIRST_INO(fs_info->fs->super))
+        {
+                error_msg("Warning: trying to remap system inode %d (entry name %s), skipping it\n", inode_number, file_name);
+                continue;
         }
         
         if ((*num_relocations) >= memory_for_relocations)
@@ -1050,14 +1076,31 @@ int process_layout_list(
             
         if (retval != 0)
         {
-            error_msg("Error reading inode %d\n", inode_number);
-            return 1;
+            error_msg("Error reading inode %d (entry name %s), skipping it\n", inode_number, file_name);
+            continue;
         }
         
         (*relocations)[*num_relocations].inode_number = inode_number;
-        //FIXME: for now ignore block specifications
-        (*relocations)[*num_relocations].block_offset = 0;
-        (*relocations)[*num_relocations].blocks_count = ceil_div(inode_file_size(&inode), fs_info->fs->blocksize);
+        
+        if (offset_field == NULL)
+        {
+            (*relocations)[*num_relocations].block_offset = 0;
+        } 
+        else 
+        {
+            //input fields are in PAGE_SIZE units, scale it to blocks
+            (*relocations)[*num_relocations].block_offset = atol(offset_field) * page_to_blocks_factor;
+        }
+        if (length_field == NULL) 
+        {
+            //fill the rest until file end
+            (*relocations)[*num_relocations].blocks_count = ceil_div(inode_file_size(&inode), fs_info->fs->blocksize) - (*relocations)[*num_relocations].block_offset;
+        } 
+        else
+        {
+            //input fields are in PAGE_SIZE units, scale it to blocks
+            (*relocations)[*num_relocations].blocks_count = atol(length_field) * page_to_blocks_factor;
+        }
         e2_blkcnt_t estimated_blocks_count = estimate_blocks_for_range(
             fs_info,
             (*relocations)[*num_relocations].block_offset,
