@@ -1,13 +1,13 @@
 CC=g++
-CFLAGS=-g -O0 -Wall -Werror
-LDFLAGS=-L/usr/lib -lext2fs
+CFLAGS=-g -O0 -Wall -Werror -static
+LDFLAGS=-L/usr/lib -lext2fs -lcom_err
 
-EXECS=e2blockmap ext3_optimize
+EXECS=e2blockmap e2moveblocks
 
 all: $(EXECS)
 
-ext3_optimize: ext3_layout_optimize.cpp
-	$(CC) $(CFLAGS) ext3_layout_optimize.cpp -o ext3_optimize $(LDFLAGS)
+e2moveblocks: ext3_layout_optimize.cpp
+	$(CC) $(CFLAGS) ext3_layout_optimize.cpp -o e2moveblocks $(LDFLAGS)
 
 e2blockmap: e2blockmap.cpp
 	$(CC) $(CFLAGS) e2blockmap.cpp -o e2blockmap $(LDFLAGS)
