@@ -55,17 +55,20 @@ create_fs()
 
 optimize_fs()
 {
-    "$SCRIPT_DIR"/e2moveblocks $FS_IMAGE $LAYOUT_FILE
+    "$SCRIPT_DIR"/e2moveblocks "$FS_IMAGE" "$LAYOUT_FILE"
     result=$?
-    if [ $result = 0 ] ; then
-        echo "Filesystem optimizer finished successfully"
-        return 0
-    fi
-    if [ $result = 4 ] ; then
+    if [ $result -eq 4 ] ; then
         echo "Filesystem optimizer could not find free space"
         return 0
     fi
-    failure "Failed to run ext3_optimize, error=$result"
+    if [ $result -ne 0 ] ; then
+        failure "Failed to run e2moveblocks, error=$result"
+    fi
+    ./verifyfslayout.py "$FS_IMAGE" "$LAYOUT_FILE"
+    echo "Filesystem optimizer finished successfully"
+    echo "Press any key"
+    read dummy
+    return 0
 }
 
 if [ `id -u` -ne 0 ]; then
@@ -80,11 +83,11 @@ trap cleanup EXIT
 trap cleanup TERM
 
 #long test
-FS_SIZES="100 1000"
-FILL_FACTORS="10 30 40 50 90 99 100"
+#FS_SIZES="100 1000"
+#FILL_FACTORS="10 30 40 50 90 99 100"
 #short test
-#FS_SIZES="100"
-#FILL_FACTORS="40 99"
+FS_SIZES="100"
+FILL_FACTORS="40 99"
 
 for FS_SIZE in $FS_SIZES; do
     for FILL in $FILL_FACTORS; do
