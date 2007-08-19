@@ -11,6 +11,8 @@
 #include <ext2fs/ext2_err.h>
 #include <ext2fs/ext2_io.h>
 
+//#define DEBUG_VERBOSE
+
 struct filesystem_info
 {
     ext2_filsys fs;
@@ -1170,6 +1172,19 @@ int main(int argc, char **argv)
         error_msg("Cannot process relocations list\n");
         exit(5);
     }
+#ifdef DEBUG_VERBOSE
+    debug_msg("Relocations:\n");
+    for (int i = 0; i < num_relocations; ++i) 
+    {
+        debug_msg("Reloc: inode=%d start=%d count=%d\n", 
+            relocations[i].inode_number,
+            relocations[i].block_offset,
+            relocations[i].blocks_count
+            );
+        
+    }
+#endif
+
     
     blk_t found_first_block;
     if (! find_contiguous_free_space(&fs_info, size_in_blocks, &found_first_block))
