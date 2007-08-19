@@ -14,3 +14,10 @@ TRACE_AGGREGATION_COUNT=3
 #Whether to enable application prefetching after boot.
 #Change to 0 to disable
 ENABLE_APP_PREFETCHING=1
+
+#Whether to reorder files during shutdown for faster prefetching
+#WARNING: DANGEROUS, CAN DESTROY DATA ON YOUR DISK
+#Do not enable if you value your data, it is highly EXPERIMENTAL feature
+#And always keep backups
+ENABLE_FILE_REORDERING=0
+

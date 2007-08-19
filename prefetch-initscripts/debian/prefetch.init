@@ -30,7 +30,26 @@ load_filelist() {
 		echo "add $COMMAND $i">/proc/prefetch/app || echo "Failed to add $i using $COMMAND"
 	done
 }
-                
+
+separate_disk_traces()
+{
+	prefetch-print-trace "$TRACE_FILE" | while read DEVICE INODE START LEN; do 
+		echo "$INODE $START $LEN" >>"$PREFETCH_DIR/$DEVICE.layout"
+	done
+}
+
+prepare_disk_layouts()
+{
+	mkdir -p "$PREFETCH_DIR"
+	rm -f "$PREFETCH_DIR"/*.layout || true
+	#first boot traces in proper order, then application traces
+	for TRACE in /.prefetch-boot-trace.boot /.prefetch-boot-trace.system /.prefetch-boot-trace.gui  /.prefetch/*-????????; do
+		if [ ! -r "$TRACE" ]; then
+			continue
+		fi
+		separate_disk_traces "$TRACE"
+	done
+}
 
 case "$1" in
     start|restart|force-reload)
@@ -56,8 +75,9 @@ case "$1" in
     stop)
     	#save traced application list
     	if [ -e /proc/prefetch/app-list ] ; then 
-	    	cat /proc/prefetch/app-list >"$APP_LIST"
+		cat /proc/prefetch/app-list >"$APP_LIST"
 	fi
+	prepare_disk_layouts
 	;;
     *)
 	echo "Usage: /etc/init.d/prefetch {start|stop|restart|force-reload}"
