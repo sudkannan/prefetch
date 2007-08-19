@@ -33,6 +33,7 @@ load_filelist() {
 
 separate_disk_traces()
 {
+	TRACE_FILE="$1"
 	prefetch-print-trace "$TRACE_FILE" | while read DEVICE INODE START LEN; do 
 		echo "$INODE $START $LEN" >>"$PREFETCH_DIR/$DEVICE.layout"
 	done
