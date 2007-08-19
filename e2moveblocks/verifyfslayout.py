@@ -5,10 +5,16 @@ import subprocess
 import resource
 import re
 debug_mode = False
+block_size = None
+first_inode = None
 
 #Ratio of page size (unit of layout) to blocks (unit of disk allocation)
-def get_block_size(device_name):
-    regex = re.compile (r'^Block size:\s*(\d+).*')
+def parse_fs_info(device_name):
+    global block_size
+    global first_inode
+    
+    regex_blocksize = re.compile (r'^Block size:\s*(\d+).*')
+    regex_first_inode = re.compile (r'^First inode:\s*(\d+).*')
 
     try:
         popen_obj = subprocess.Popen(
@@ -26,15 +32,21 @@ def get_block_size(device_name):
         sys.exit(2)
         
     for line in output[0].split("\n"):
-        m = regex.search(line)
+        m = regex_blocksize.search(line)
         if m:
-            block_size = m.group(1)
-            return int(block_size)
-    print("Cannot determine block size for filesystem")
-    sys.exit(5)
+            block_size = int(m.group(1))
+        m = regex_first_inode.search(line)
+        if m:
+            first_inode = int(m.group(1))
+    if first_inode == None or block_size == None:
+        print("Cannot determine block size for filesystem")
+        sys.exit(5)
 
 def verify_layout(device_name, filename):
     global debug_mode
+    global block_size
+    global first_inode
+    parse_fs_info(device_name)
     
     present_blocks = set()
     blocks = []
@@ -43,7 +55,7 @@ def verify_layout(device_name, filename):
         disk_layout = []
     
     page_size = resource.getpagesize()
-    block_size = get_block_size(device_name)
+    block_size = block_size
     pages_to_blocks = page_size / block_size
     #print "Page size: %d" % page_size
     #print "Block size: %d" % block_size
@@ -61,6 +73,10 @@ def verify_layout(device_name, filename):
         start = int(tokens[1]) * pages_to_blocks
         length = int(tokens[2]) * pages_to_blocks
         
+        if inode < first_inode:
+            print "Skipping system inode in layout: %d" % inode
+            continue
+        
         for offset in range(start, start + length):
             block_tuple = (inode, offset)
             if block_tuple in present_blocks:
@@ -71,7 +87,7 @@ def verify_layout(device_name, filename):
             present_blocks.add(block_tuple)
             blocks.append(block_tuple)
         #get layout of files
-        command = ["e2blockmap", "-p", "", device_name,  str(inode),  str(start), str(length)]
+        command = ["./e2blockmap", "-p", "", device_name,  str(inode),  str(start), str(length)]
         try:
             popen_obj = subprocess.Popen(
                 command,
