@@ -1089,6 +1089,7 @@ int process_layout_list(
         }
         
         (*relocations)[*num_relocations].inode_number = inode_number;
+        unsigned file_size_in_blocks = ceil_div(inode_file_size(&inode), fs_info->fs->blocksize);
         
         if (offset_field == NULL)
         {
@@ -1099,15 +1100,42 @@ int process_layout_list(
             //input fields are in PAGE_SIZE units, scale it to blocks
             (*relocations)[*num_relocations].block_offset = atol(offset_field) * page_to_blocks_factor;
         }
+        
+        if ((*relocations)[*num_relocations].block_offset >= file_size_in_blocks)
+        {
+                //block begins after file end, skip it
+                debug_msg("Relocation block starts after file end, inode %d (entry name %s), start=%d, file size in blocks=%u, skipping it\n", 
+                    inode_number, 
+                    file_name, 
+                    (*relocations)[*num_relocations].block_offset,
+                    file_size_in_blocks
+                    );
+                continue;
+        }
+        
         if (length_field == NULL) 
         {
             //fill the rest until file end
-            (*relocations)[*num_relocations].blocks_count = ceil_div(inode_file_size(&inode), fs_info->fs->blocksize) - (*relocations)[*num_relocations].block_offset;
+            (*relocations)[*num_relocations].blocks_count = file_size_in_blocks - (*relocations)[*num_relocations].block_offset;
         } 
         else
         {
             //input fields are in PAGE_SIZE units, scale it to blocks
             (*relocations)[*num_relocations].blocks_count = atol(length_field) * page_to_blocks_factor;
+        }
+        if ((*relocations)[*num_relocations].block_offset + (*relocations)[*num_relocations].blocks_count > file_size_in_blocks)
+        {
+            //block end exceeds file end, cut it down to file size
+            unsigned new_count = file_size_in_blocks - (*relocations)[*num_relocations].block_offset;
+            debug_msg("Relocation block length exceeds file end, inode %d (entry name %s), start=%d, length=%d, file size in blocks=%u, cut it down to %d\n", 
+                inode_number, 
+                file_name, 
+                (*relocations)[*num_relocations].block_offset,
+                (*relocations)[*num_relocations].blocks_count,
+                file_size_in_blocks,
+                new_count
+                );
+            (*relocations)[*num_relocations].blocks_count = new_count;
         }
         e2_blkcnt_t estimated_blocks_count = estimate_blocks_for_range(
             fs_info,
