@@ -1064,7 +1064,7 @@ int process_layout_list(
                 continue;
         }
         
-        if (inode_number <= EXT2_FIRST_INO(fs_info->fs->super))
+        if (inode_number < EXT2_FIRST_INO(fs_info->fs->super))
         {
                 error_msg("Warning: trying to remap system inode %d (entry name %s), skipping it\n", inode_number, file_name);
                 continue;

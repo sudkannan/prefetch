@@ -129,7 +129,6 @@ done
 FILELIST_FILE="$PWD/$FS_IMAGE.list"
 MAX_LEN=20 #Max length of contiguous file block
 
-echo "/" > "$FILELIST_FILE"  #add root dir at the beginning
 pushd "$MNT_DIR"
 find -mindepth 1 | cut -c 2- | while read i; do
     RELATIVE_FILENAME=".$i" #result is: ./filename

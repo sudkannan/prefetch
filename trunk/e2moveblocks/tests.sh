@@ -65,9 +65,10 @@ optimize_fs()
         failure "Failed to run e2moveblocks, error=$result"
     fi
     ./verifyfslayout.py "$FS_IMAGE" "$LAYOUT_FILE"
-    echo "Filesystem optimizer finished successfully"
-    echo "Press any key"
-    read dummy
+    result=$?
+    if [ $result -ne 0 ] ; then
+        failure "Verification of filesystem layout failed, error=$result"
+    fi
     return 0
 }
 
@@ -83,13 +84,14 @@ trap cleanup EXIT
 trap cleanup TERM
 
 #long test
-#FS_SIZES="100 1000"
-#FILL_FACTORS="10 30 40 50 90 99 100"
+FS_SIZES="100 1000"
+FILL_FACTORS="10 30 40 50 90 99 100"
 #short test
-FS_SIZES="100"
-FILL_FACTORS="40 99"
+# FS_SIZES="100"
+# FILL_FACTORS="40 99"
 
 for FS_SIZE in $FS_SIZES; do
+    echo '************************* START ***********************'
     for FILL in $FILL_FACTORS; do
         echo "=== Starting tests for size $FS_SIZE and fill $FILL" `date`
         create_fs $FS_SIZE $FILL
