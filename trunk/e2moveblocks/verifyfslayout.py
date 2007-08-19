@@ -4,6 +4,7 @@ import sys
 import subprocess
 import resource
 import re
+debug_mode = False
 
 #Ratio of page size (unit of layout) to blocks (unit of disk allocation)
 def get_block_size(device_name):
@@ -33,10 +34,13 @@ def get_block_size(device_name):
     sys.exit(5)
 
 def verify_layout(device_name, filename):
+    global debug_mode
+    
     present_blocks = set()
     blocks = []
     disk_blocks = dict()
-    disk_layout = [] #KLDEBUG
+    if debug_mode:
+        disk_layout = []
     
     page_size = resource.getpagesize()
     block_size = get_block_size(device_name)
@@ -61,7 +65,8 @@ def verify_layout(device_name, filename):
             block_tuple = (inode, offset)
             if block_tuple in present_blocks:
                 #block already present
-                print "Block already present: " + str(block_tuple) #KLDEBUG
+                if debug_mode:
+                    print "Block already present: " + str(block_tuple)
                 continue
             present_blocks.add(block_tuple)
             blocks.append(block_tuple)
@@ -84,7 +89,7 @@ def verify_layout(device_name, filename):
             sys.exit(2)
             
         for map_line in output[0].split("\n"):
-            #print "File layout line: %s" % map_line #KLDEBUG
+            #print "File layout line: %s" % map_line
             map_tokens = map_line.split()
             if len(map_tokens) == 0:
                 #empty line
@@ -103,19 +108,26 @@ def verify_layout(device_name, filename):
                 print "Invalid offset %d in file layout output, expected in range [%d, %d), inode=%d: %s" % (map_offset, start, start + length, inode, map_line)
                 sys.exit(3)
             disk_blocks[(map_inode, map_offset)] = block_number
-            disk_layout.append(map_tuple) #KLDEBUG
+            if debug_mode:
+                disk_layout.append(map_tuple)
     
-    print "Disk layout:"
-    disk_layout.sort(lambda x,y: cmp(x[0], y[0]))
-    for i in disk_layout:
-        print "%s %s %s" % i
-    print "Expected layout:"
-    for i in blocks:
-        print "%s %s" % i
+    if debug_mode:
+        print "Disk layout:"
+        disk_layout.sort(lambda x,y: cmp(x[0], y[0]))
+        for i in disk_layout:
+            print "%s %s %s" % i
+        print "Expected layout:"
+        for i in blocks:
+            print "%s %s" % i
     #now compare expected layout and real layout
     missing_blocks = 0
     last_block = None
     
+    #maximum percentage of blocks which might be missing
+    #this is only to catch suspicious inconsistencies, there might
+    #be valid filesystems (with sparse files or lots of short files) which
+    #do not pass this check, but it is unlikely, so it needs investigation
+    allowed_missing_blocks_percent = 10
     max_allowed_skip = 3 #maximum number of blocks between subsequent data blocks
                             # this is possible due to indirect blocks coming in between
                             #i.e. indirect, double indirect, triple_indirect = 3 blocks max
@@ -142,8 +154,12 @@ def verify_layout(device_name, filename):
             print "Wrong layout, block is too far behind last block block=%s, last_block=%s, inode=%s, offset=%s, skip=%s, max_allowed_skip=%s" % (block, last_block, inode, offset, skip, max_allowed_skip)
             sys.exit(6)
         last_block = block
-    print "Maximum skip found: %s" % max_skip
-    
+    if missing_blocks > ((len(blocks) * allowed_missing_blocks_percent) / 100.0):
+        print "Too many missing blocks, it is suspicious, are these files all sparse? missing_blocks=%s, all blocks=%s, allowed percent=%s" % (missing_blocks, len(blocks), allowed_missing_blocks_percent)
+    if debug_mode:
+        print "Maximum skip found: %s" % max_skip
+        print "missing_blocks=%s, all blocks=%s, allowed percent=%s" % (missing_blocks, len(blocks), allowed_missing_blocks_percent)
+    print "Filesystem layout verification successful"
     return 0
 
 if __name__ == "__main__":
