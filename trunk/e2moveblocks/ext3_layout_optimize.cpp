@@ -455,8 +455,9 @@ int relocate_block_in_inode(
     
     if (in_range(block, relocation_area))
     {
-        debug_msg("Block already in relocation area, skipping, inode=%d, block=%d\n",
+        debug_msg("Block already in relocation area, skipping, inode=%d, offset=%d, block=%d\n",
             inode_number,
+            index_in_inode_blocks,
             block
             );
         return 1;
@@ -472,6 +473,11 @@ int relocate_block_in_inode(
     {
         return 0;
     }
+    debug_msg("Successfully relocated block, inode=%d, offset=%d, block=%d\n",
+        inode_number,
+        index_in_inode_blocks,
+        block
+        );
     inode->i_block[index_in_inode_blocks] = *target_block;
     *target_block += 1;
     return 1;
