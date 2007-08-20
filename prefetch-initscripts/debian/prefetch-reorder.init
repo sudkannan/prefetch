@@ -80,6 +80,12 @@ case "$1" in
   		echo "Prefetch reordering files not enabled "
   		exit 0
   	fi
+	if [ mount -l  | grep " on / " | grep -q "(ro" ]; then
+		echo "Root partition is mounted read-only, proceeding"
+	else
+		echo "Root partition is mounted read-write, aborting reordering"
+		exit 1
+	fi
   	BASE_DIR=/dev/shm
   	mkdir -p "$BASE_DIR"
 	cd "$BASE_DIR"
