@@ -44,7 +44,9 @@ State at coding deadline for Google Summer of Code (August 20, 2007):
      * Copying necessary files into chroot takes long time (>20s).
      * Reordering files takes quite some time (~15s). Disk layout tool should be improved to allow fitting prefetch data into multiple free areas and disk access should be streamlined. Also it could check if files need reordering at all to save time.
      * Disk layout tool not always can find area to fit chunk of prefetch data into it. It should be smarter.
-     
+
+Known bugs:
+  * 3-aggregation does not work currently for gui and system traces (it works for boot), apparently some bug was introduced in script which processes trace.
 
 == News ==
   * Sun, 12 Aug 2007
