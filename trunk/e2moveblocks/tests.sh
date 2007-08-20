@@ -26,7 +26,7 @@ cleanup()
 {
     if [ -e "$FS_IMAGE" ]; then
         echo
-        #KLDEBUG:rm -f "$FS_IMAGE"
+        rm -f "$FS_IMAGE"
     fi
 }
 
