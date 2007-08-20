@@ -43,33 +43,18 @@ prepare_disk_layouts()
 {
 	mkdir -p "$PREFETCH_DIR"
 	rm -f "$PREFETCH_DIR"/*.layout || true
+	rm -f "$PREFETCH_DIR"/*.layout.??? || true
+	#now prepare chunks
+	#split by length, so that they are at maximum 2000 blocks size
+	CHUNK_SIZE=${CHUNK_SIZE_BLOCKS:-2000}
 	#first boot traces in proper order, then application traces
+	cd "$PREFETCH_DIR"
 	for TRACE in /.prefetch-boot-trace.boot /.prefetch-boot-trace.system /.prefetch-boot-trace.gui  /.prefetch/*-????????; do
 		if [ ! -r "$TRACE" ]; then
 			continue
 		fi
-		separate_disk_traces "$TRACE"
-	done
-	#now prepare chunks
-	#split by length, so that they are at maximum 2000 blocks size
-	CHUNK_SIZE=${CHUNK_SIZE_BLOCKS:-2000}
-	for TRACE in "$PREFETCH_DIR"/*.layout; do
-		if [ ! -r "$TRACE" ]; then
-			continue
-		fi
-		rm -f "$TRACE.???"
-		cat "$TRACE" | (COUNT=0; TRACE_NUM=0; TRACE_NAME="$TRACE.000"; while read INODE START LENGTH; do
-			NEW_COUNT=`expr $COUNT + $LENGTH `
-			if [ $NEW_COUNT -gt $CHUNK_SIZE ]; then
-				TRACE_NUM=`expr $TRACE_NUM + 1`
-				SUFFIX=`printf "%03d" $TRACE_NUM`
-				TRACE_NAME="$TRACE.$SUFFIX"
-				COUNT=0
-			fi
-			echo "$INODE $START $LENGTH" >> "$TRACE_NAME"
-			COUNT=`expr $COUNT + $LENGTH `
-		done )
-	done
+		prefetch-print-trace "$TRACE"
+	done | split-prefetch-trace.py /dev/stdin "$CHUNK_SIZE"
 }
 
 case "$1" in
