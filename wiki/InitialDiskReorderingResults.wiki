@@ -55,3 +55,48 @@ IO ticks:
   * Disk with ~4.7 GB does not have large free areas for relocation, splitting prefetched area into chunks is necessary.
   * Current chunk splitting technique is not good, it causes some chunks to fail. It also slows down reordering as reordering tool must be run several times. Layout tool should be improved to look for several areas with free space and fit prefetch data into these areas accordingly.
   * Speed of reordering tool should be improved. 20s is rather the upper bound of time which can be used during shutdown for purpose of reordering. Consolidating reordering chunks should help, but also speedups in blocks moving would be useful.
+
+== Test 2 ==
+The purpose of this test is to check what is a performance impact of automatic reordering files on disk.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-06-10, moved to other partition (hda13).
+  * Standard desktop environment.
+  * Custom compiled Gutsy kernel with automatic application prefetching implementation ([http://prefetch.googlecode.com/svn/trunk/kernel-patches/2.6.22/prefetch-core+boot+app-WIP.diff patch]).
+  * dir_indexes turned off for root partition.
+  * Prefetching was turned on.
+  * 3-aggregation was not used, prefetch always used last trace (side effect of some other change).
+
+Test method:
+  * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
+  * One setup were tested: with reordering using automatic disk reordering.
+
+Automatic reordering setup:
+  * During reboot files on disk were automatically reordered using prefetch-reorder init script.
+  * Layout was split into 2000-blocks chunks (default in /etc/default/prefetch).
+
+Measurements repeatability:
+  * Each combination of parameters was tested 10 times.
+  * First run used boot traces from previous runs.
+
+=== Test results ===
+Notes: 
+  # Reordering time for this setup was 14s - 20s.
+  # Copying files to chroot took longer.
+
+||	Startup time	||	Manual reordering	||	Automatic reordering	||	Without reordering	||	Automatic reordering - Manual reordering	||	Without reordering - Automatic reordering	||
+||	Average	||	46.89	||	47.75	||	52.68	||	0.86	||	4.93	||
+||	Stddev	||	2.19	||	2.35	||	2.26	||	0.17	||	-0.09	||
+||	min	||	44	||	45.1	||	49.13	||	1.1	||	4.03	||
+||	max	||	50.28	||	53.38	||	57.2	||	3.1	||	3.82	||
+												
+||	IO ticks	||	Manual reordering	||	Automatic reordering	||	Without reordering	||	Automatic reordering - Manual reordering	||	Without reordering - Automatic reordering	||
+||	Average	||	17.38	||	18.17	||	21.84	||	0.79	||	3.68	||
+||	Stddev	||	0.28	||	2.33	||	0.33	||	2.05	||	-2	||
+||	min	||	16.82	||	16.7	||	21.43	||	-0.12	||	4.73	||
+||	max	||	17.83	||	24.75	||	22.6	||	6.92	||	-2.15	||
+
+=== Conclusions ===
