@@ -6,14 +6,14 @@
 This page will contain information about progress of implementation.
 
 = Timeline and progress =
-  * April - May 2007
+  * Community bonding period:
     * setting up project (*done*)
     * establishing contact with Ubuntu developers (*done*)
     * establishing contact with preload developers (*done*)
     * establishing contact with bootcache developers (*done*)
     * establishing contact with ext3 developers (*done*)
     * submitting disk layout tool for review by ext3 developers (*done*)
-  * 1st half of June: implementation of tracing facility and integration with Ubuntu boot scripts, analysis of impact on boot time.
+  * Coding period: implementation of tracing facility and integration with Ubuntu boot scripts, analysis of impact on boot time.
     * creating development environment (*done*)
       * Installing Gutsy (*done*) 
       * Compiling custom gutsy kernel (*done*)
@@ -28,15 +28,26 @@ This page will contain information about progress of implementation.
     * evaluation of pagecache as tracing tool (*done*)
     * integration of tracing into boot scripts  (*done*, see TestingBootPrefetching)
     * integration of prefetching into boot scripts  (*done*, see TestingBootPrefetching)
-  * 2nd half of June - 1st half of July: implementation of hooking into application start, analysis of impact and performance of prefetching during application start.
-     * Tracing based on pagecache (*done*)
-     * Prefetching during application startup (_in progress_, see InitialPrefetchingImplementationResults)
-     * Tests of impact of prefetching during application startup (_in progress_, see InitialPrefetchingImplementationResults)
-  * 2nd half of July - improving disk layout tool, intensive testing and analysis of impact.
+    * Tracing based on pagecache (*done*)
+    * Prefetching during application startup (*done*, see InitialPrefetchingImplementationResults)
+    * Tests of impact of prefetching during application startup (*done*, see InitialPrefetchingImplementationResults)
+    * Disk layout tool initial implementation (*done*, initial experimental implementation works)
+    * Creating test suite for disk layout tool (*done*)
+    * Measuring impact of changing disk layout (*done*, see InitialDiskReorderingResults)
   * September and later - writing a paper describing results of analysis for later submission to Linux conferences, improving things which were identified as problems during analysis of implemented solution.
 
+== Conclusions ==
+State at coding deadline for Google Summer of Code (August 20, 2007):
+  * Boot tracing and prefetching is well tested and ready for deployment.
+  * Application tracing and prefetching works and is ready for deployment. Further tuning might improve its performance. Effect of disk reordering on application has not been measured, it should improve results also.
+  * Disk reordering works, but is *highly experimental*, not ready for production use yet. Layout tool is quite well tested, test suite has been created. The problematic part is running it on reboot as unmounting root partition is hard to do. Current solution is to remount partition read-only, cache all necessary files in  memory and change partition underneat. It somewhat works but is fragile. The following problems were identified in reordering implementation:
+     * Copying necessary files into chroot takes long time (>20s).
+     * Reordering files takes quite some time (~15s). Disk layout tool should be improved to allow fitting prefetch data into multiple free areas and disk access should be streamlined. Also it could check if files need reordering at all to save time.
+     * Disk layout tool not always can find area to fit chunk of prefetch data into it. It should be smarter.
+     
+
 == News ==
-  * Sun, 12 Jul 2007
+  * Sun, 12 Aug 2007
      * Fully functional boot prefetching released for testing, for installation instructions see [TestingBootPrefetching this page], for announcement see [https://lists.ubuntu.com/archives/ubuntu-devel-discuss/2007-August/001440.html this mail to ubuntu-devel-discuss]
   * Mon, 16 Jul 2007
      * Debian packages with initial implementation of boot prefetching are available, see [http://groups.google.com/group/prefetch-devel/t/8d959216d14c22d0 this announcement]
