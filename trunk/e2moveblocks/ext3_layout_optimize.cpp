@@ -82,7 +82,8 @@ __u64 ceil_div(__u64 number, __u64 divisor)
 
 int open_filesystem(
     char *file_name,
-    filesystem_info *fs_info
+    filesystem_info *fs_info,
+    bool force
     )
 {
     struct ext2_super_block *sb;
@@ -99,14 +100,28 @@ int open_filesystem(
     
     if (mount_flags & EXT2_MF_MOUNTED) 
     {
-        error_msg("Filesystem is mounted\n");
-        return 0;
+        if (force == true)
+        {
+            error_msg("Warning: forcing changes on mounted filesystem, hope you know what you are doing");
+        }
+        else
+        {
+            error_msg("Filesystem is mounted\n");
+            return 0;
+        }
     }
 
     if (mount_flags & EXT2_MF_BUSY) 
     {
-        error_msg("Filesystem is in use\n");
-        return 0;
+        if (force == true)
+        {
+            error_msg("Warning: forcing changes on busy filesystem, hope you know what you are doing");
+        }
+        else
+        {
+            error_msg("Filesystem is in use\n");
+            return 0;
+        }
     }
     
     retval = ext2fs_open(
@@ -1167,19 +1182,35 @@ void usage()
 
 int main(int argc, char **argv)
 {
-    if (argc != 3)
+    char *devicename = argv[1];
+    char *layoutfile = argv[2];
+    bool force = false;
+    
+    if (argc < 3 || argc > 4)
     {
         usage();
         exit(1);
     }
+    if (argc == 4)
+    {
+        if (strcmp(argv[1], "--force") == 0)
+        {
+            force = true;
+            devicename = argv[2];
+            layoutfile = argv[2];
+        }
+        else
+        {
+            usage();
+            exit(1);
+        }
+    }
     
-    char *devicename = argv[1];
-    char *layoutfile = argv[2];
 
     initialize_ext2_error_table();
     
     filesystem_info fs_info;
-    if (!open_filesystem(devicename, &fs_info))
+    if (!open_filesystem(devicename, &fs_info, force))
     {
         exit(3);
     }
