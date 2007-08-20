@@ -11,10 +11,12 @@ install:
 	install -d $(DESTDIR)/bin
 	install -m 0755 prefetch-process-trace $(DESTDIR)/usr/sbin/
 	install -m 0755 prefetch-print-trace $(DESTDIR)/bin/
+	install -m 0755 split-prefetch-trace $(DESTDIR)/bin/
 	
 uninstall:
 	@rm -f $(DESTDIR)/usr/sbin/prefetch-process-trace
 	@rm -f $(DESTDIR)/bin/prefetch-print-trace
+	@rm -f $(DESTDIR)/bin/split-prefetch-trace
 
 prefetch-print-trace: prefetch-print-trace.cpp prefetch_lib.cpp
 

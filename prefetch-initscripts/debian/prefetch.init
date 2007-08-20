@@ -54,7 +54,7 @@ prepare_disk_layouts()
 			continue
 		fi
 		prefetch-print-trace "$TRACE"
-	done | split-prefetch-trace.py /dev/stdin "$CHUNK_SIZE"
+	done | split-prefetch-trace /dev/stdin "$CHUNK_SIZE"
 }
 
 case "$1" in
