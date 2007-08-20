@@ -102,7 +102,7 @@ int open_filesystem(
     {
         if (force == true)
         {
-            error_msg("Warning: forcing changes on mounted filesystem, hope you know what you are doing");
+            error_msg("Warning: forcing changes on mounted filesystem, hope you know what you are doing\n");
         }
         else
         {
@@ -115,7 +115,7 @@ int open_filesystem(
     {
         if (force == true)
         {
-            error_msg("Warning: forcing changes on busy filesystem, hope you know what you are doing");
+            error_msg("Warning: forcing changes on busy filesystem, hope you know what you are doing\n");
         }
         else
         {
