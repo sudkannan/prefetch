@@ -69,6 +69,13 @@ To do:
   * Measure application startup time and boot time with OpenOffice with disk reordering.
   * Improve tracing as it seems to be missing accesses to some files.
 
+== Thanks and credits ==
+Special thanks go to:
+  * Tollef Fog Heen - for mentoring me during Summer of Code
+  * Jan Kara - for giving guidance on kernel and filesystem issues
+  * Fengguang Wu - for creating pagecache, whose tracing subsystem was adapted for prefetch needs
+  * Behdad Esfahbod - for creating Preload daemon which inspired me to work on prefetch
+
 == News ==
   * Sun, 12 Aug 2007
      * Fully functional boot prefetching released for testing, for installation instructions see [TestingBootPrefetching this page], for announcement see [https://lists.ubuntu.com/archives/ubuntu-devel-discuss/2007-August/001440.html this mail to ubuntu-devel-discuss]
