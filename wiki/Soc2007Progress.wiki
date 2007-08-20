@@ -45,6 +45,15 @@ State at coding deadline for Google Summer of Code (August 20, 2007):
      * Reordering files takes quite some time (~15s). Disk layout tool should be improved to allow fitting prefetch data into multiple free areas and disk access should be streamlined. Also it could check if files need reordering at all to save time.
      * Disk layout tool not always can find area to fit chunk of prefetch data into it. It should be smarter.
 
+Conclusions:
+  * Boot prefetching:
+    * Kernel with boot prefetching boots faster than standard Ubuntu kernel with readahead  by 6.31s (54.91s vs 61.21s). Please note that readahead lists were not updated. See InitialBootPrefetchingResults page for details. 
+    * Prefetch adapts automatically to changing boot sequence - for boot with OpenOffice as part of boot sequence boot time is shorter by 15.48s (65.53s  vs 81.01s).
+  * Application prefetching:
+     * Application prefetching gives some gain to disk-intensive applications like OpenOffice.
+     * Performance of app prefetching is better than built-in OpenOffice prefetching by 1.67s.
+     * Prefetching can cut down OpenOffice startup time (in comparison to no prefetching at all, i.e. disabled pagein) by 3.36s, from 14.38s to 11.01s. See InitialPrefetchingImplementationResults page for details.
+
 Known bugs:
   * 3-aggregation does not work currently for gui and system traces (it works for boot), apparently some bug was introduced in script which processes trace.
 
