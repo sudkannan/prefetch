@@ -189,7 +189,7 @@ int open_filesystem(
         return 0;
     }
 
-    return 1; //KLDEBUG
+    return 1;
 }
 
 void close_filesystem(filesystem_info *fs_info)
