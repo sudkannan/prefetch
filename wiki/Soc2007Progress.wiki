@@ -67,6 +67,7 @@ To do:
   * Improving disk layout tool to find free space areas to fit data.
   * Improvements to reordering on boot (especially copying files).
   * Measure application startup time and boot time with OpenOffice with disk reordering.
+  * Improve tracing as it seems to be missing accesses to some files.
 
 == News ==
   * Sun, 12 Aug 2007
