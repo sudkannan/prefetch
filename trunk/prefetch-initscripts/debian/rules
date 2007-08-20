@@ -76,6 +76,7 @@ binary-arch: build install
 	dh_installinit --name=prefetch-system --no-start -- start 39 S .
 	dh_installinit --name=000-prefetch-gui --no-start -- start 99 2 .
 	dh_installinit --name=stop-prefetch --no-start -- start 99 2 .
+	dh_installinit --name=prefetch-reorder --no-start -- start 89 6 .
 	dh_link
 	dh_strip
 	dh_compress

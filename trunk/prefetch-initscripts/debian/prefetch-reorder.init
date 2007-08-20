@@ -1,0 +1,145 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          prefetch-reorder
+# Required-Start:    umountroot $network
+# Required-Stop:
+# Should-Start:      lvm raid2
+# Default-Start:     6
+# Default-Stop:
+# Short-Description: Reorded files on disk for faster startup.
+# Description:
+### END INIT INFO
+#Author: Krzysztof Lichota
+# Caching files taken from casper init scripts, authors: 
+#  Tollef Fog Heen <tfheen@canonical.com>
+#  Marco Amadori <marco.amadori@gmail.com>
+#
+
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+
+. /lib/lsb/init-functions
+. /etc/default/prefetch
+
+#check if prefetch package is installed
+[ -x /usr/sbin/prefetch-process-trace ] || exit 0
+
+# Try to cache everything we're likely to need after ejecting.  This
+# is fragile and simple-minded, but our options are limited.
+cache_path() {
+    path="$1"
+
+    if [ -d "$path" ]; then
+        find "$path" -type f | xargs cat > /dev/null 2>&1
+    elif [ -f "$path" ]; then
+        if [ -x "$path" ]; then
+            if file "$path" | grep -q 'dynamically linked'; then
+                for lib in $(ldd "$path" | awk '{ print $3 }'); do
+                    cache_path "$lib"
+                done
+            fi
+        fi
+        cat "$path" >/dev/null 2>&1
+    fi
+}
+
+copy_file() {
+    path="$1"
+    destroot="$2"
+    #FIXME: add copying shared libs used by libs
+
+    if [ -d "$path" ]; then
+        #hm, copying dirs might be useful too
+        dummy=1
+    elif [ -h "$path" ]; then
+        copy_file `readlink "$path"`
+    elif [ -x "$path" ]; then
+        if file "$path" | grep -q 'dynamically linked'; then
+            for lib in $(ldd "$path" | awk '{ print $3 }'); do
+                copy_file "$lib" "$destroot"
+            done
+        fi
+    elif file -i -b "$path" | grep -q 'application/x-sharedlib'; then
+            for lib in $(ldd "$path" | awk '{ print $3 }'); do
+                copy_file "$lib" "$destroot"
+            done
+        fi
+    fi
+    destpath=`dirname "$destroot/$path"
+    mkdir -p "$destpath"
+    cp -a "$path" "$destpath/"
+}
+
+
+case "$1" in
+  restart|reload|force-reload)
+	echo "Error: argument '$1' not supported" >&2
+	exit 3
+	;;
+  start|stop)
+  	if [ ${ENABLE_FILE_REORDERING:-0} -ne 1 ] ; then
+  		echo "Prefetch reordering files not enabled "
+  		exit 0
+  	fi
+  	BASE_DIR=/dev/shm
+  	mkdir -p "$BASE_DIR"
+	cd "$BASE_DIR"
+	mkdir bin sbin lib proc sys tmp dev
+	copy_file /bin "$BASE_DIR"
+	copy_file /sbin "$BASE_DIR"
+	copy_file /lib/tls "$BASE_DIR"
+	cp -a /lib/ld-* "$BASE_DIR"/lib/
+	copy_file /sbin/e2moveblocks "$BASE_DIR"
+	mkdir -p "$BASE_DIR/.prefetch"
+	cp -a /.prefetch/*.layout.??? "$BASE_DIR/.prefetch/"
+	copy_file /bin/bash
+	copy_file /usr/bin/cut
+	copy_file /sbin/fsck
+	copy_file /sbin/fsck.ext2
+	copy_file /sbin/fsck.ext3
+	#copy this script
+	copy_file /etc/init.d/prefetch-reorder "$BASE_DIR"
+	copy_file /etc/default/prefetch "$BASE_DIR"
+	#cache paths, so that no disk activity is necessary after we change the partition beneath init
+	cache_path /etc
+	cache_path /bin
+	cache_path /sbin
+	cache_path /sbin/init
+	cache_path /sbin/reboot
+	cache_path /sbin/halt
+	time chroot "$BASE_DIR" /etc/init.d/prefetch-reorder reorder
+	/bin/bash #</dev/console >/dev/console #2>/dev/console
+	log_warning_msg "After running shell"
+	;;
+  reorder)
+  	if [ ${ENABLE_FILE_REORDERING:-0} -ne 1 ] ; then
+  		echo "Prefetch reordering files not enabled "
+  		exit 0
+  	fi
+	ls -1 /.prefetch/*.layout.??? | while read LAYOUT_FILE; do
+		if [ ! -r "$LAYOUT_FILE" ]; then
+			continue
+		fi
+		NAME=`basename "$LAYOUT_FILE"`
+		DEVICE=`echo $NAME | cut -d '.' -f1`
+		MAJOR=`echo $DEVICE | cut -d':' -f1` 
+		MINOR=`echo $DEVICE | cut -d':' -f2`
+		#for now, limit to hda (3) and sda (8) devices
+		if [ $MAJOR -ne 3 -a  $MAJOR -ne 8 ]; then
+			echo "Unsupported device $DEVICE"
+			continue
+		fi
+		DEVICENODE="/dev/$DEVICE"
+		if [ ! -e "$DEVICENODE" ] ; then
+			mknod "$DEVICENODE" b "$MAJOR" "$MINOR"
+		fi
+		#now go to reordering
+		/sbin/e2moveblocks --force "$DEVICENODE"  "$LAYOUT_FILE"
+		#run fsck afterwards
+		/sbin/fsck -f -n "$DEVICENODE"
+	done
+	;;
+  *)
+	echo "Usage: $0 start|stop" >&2
+	exit 3
+	;;
+esac
