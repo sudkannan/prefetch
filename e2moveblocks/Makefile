@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-g -O0 -Wall -Werror -static -DNDEBUG
+CFLAGS=-g -O0 -Wall -Werror -static -DENABLE_HTREE
 LDFLAGS=-L/usr/lib -lext2fs -lcom_err
 
 EXECS=e2blockmap e2moveblocks
