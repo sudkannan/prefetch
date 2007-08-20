@@ -91,6 +91,9 @@ case "$1" in
   		echo "Prefetch reordering files not enabled "
   		exit 0
   	fi
+	if [ -x /sbin/usplash_write ]; then
+		/sbin/usplash_write "TIMEOUT 1"
+	fi
 	#Note: checking "ro" using mount does not work
 	#as it parses mtab, which is not valid at this point
 	#so we have to use trick
@@ -160,11 +163,11 @@ case "$1" in
 		fi
 		#now go to reordering
 		/sbin/e2moveblocks --force "$DEVICENODE"  "$LAYOUT_FILE"
-		#run fsck afterwards
 	done
-	for DEVICENODE in `cat devicenodes`; do
-		/sbin/e2fsck -f -n "$DEVICENODE"
-	done
+	#does not really work, fsck shows that device is busy
+# 	for DEVICENODE in `cat devicenodes`; do
+# 		/sbin/e2fsck -f -n "$DEVICENODE"
+# 	done
 	#rm -f devicenodes
 	;;
   *)
