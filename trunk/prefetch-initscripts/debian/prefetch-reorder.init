@@ -63,7 +63,7 @@ copy_file() {
 	copy_file "$lib" "$destroot"
 	done
     fi
-    destpath=`dirname "$destroot/$path"
+    destpath=`dirname "$destroot/$path"`
     mkdir -p "$destpath"
     cp -a "$path" "$destpath/"
 }
