@@ -11,7 +11,7 @@ install:
 	install -d $(DESTDIR)/bin
 	install -m 0755 prefetch-process-trace $(DESTDIR)/usr/sbin/
 	install -m 0755 prefetch-print-trace $(DESTDIR)/bin/
-	install -m 0755 split-prefetch-trace $(DESTDIR)/bin/
+	install -m 0755 split-prefetch-trace.py $(DESTDIR)/bin/split-prefetch-trace
 	
 uninstall:
 	@rm -f $(DESTDIR)/usr/sbin/prefetch-process-trace
