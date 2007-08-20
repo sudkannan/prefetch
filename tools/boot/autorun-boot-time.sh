@@ -13,6 +13,10 @@ PHASE=$[ $NUM_RESTARTS_LEFT / $NUM_RUNS_IN_TEST ]
 NEXT_PHASE=$[ ( $NUM_RESTARTS_LEFT - 1 ) / $NUM_RUNS_IN_TEST ]
 
 #PHASE is in 0..1
+if [ $PHASE -eq 1 -a $NEXT_PHASE -eq 0 ]; then
+	echo "Removing prefetch traces before next boot" >>"$LOG_FILE"
+	sudo rm -rf /.prefetch*
+fi
 
 if [ $PHASE -eq 0 ]; then
 	#now run openoffice before measuring boot startup time
@@ -25,8 +29,9 @@ fi
 cat /proc/uptime >>"$LOG_FILE"
 
 cat "$LOG_FILE"
+
 while true; do
-	dmesg | grep 'Boot stop marker'
+	dmesg | grep 'Stopping boot tracing and prefetching'
 	if [ $? -eq 0 ]; then
 		break
 	fi
@@ -34,4 +39,4 @@ while true; do
 done
 
 dmesg >~/dmesg.$NUM_RESTARTS_LEFT
-sudo tar zcf ~/.prefetch-boot-traces.$NUM_RESTARTS_LEFT.tgz /.prefetch-boot-trace.*
+sudo tar zcf ~/.prefetch-boot-traces.$NUM_RESTARTS_LEFT.tgz /.prefetch*
