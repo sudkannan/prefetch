@@ -4,7 +4,7 @@ import sys
 import subprocess
 import resource
 import re
-debug_mode = False
+debug_mode = True
 block_size = None
 first_inode = None
 

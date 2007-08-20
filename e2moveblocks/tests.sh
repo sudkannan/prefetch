@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Tests ext3 relayout tool on various dummy filesystem images.
 #(c) 2007 Krzysztof Lichota (lichota@mimuw.edu.pl)
 #Licence: GPL v2
