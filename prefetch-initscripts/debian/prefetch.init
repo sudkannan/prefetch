@@ -57,16 +57,17 @@ prepare_disk_layouts()
 		if [ ! -r "$TRACE" ]; then
 			continue
 		fi
+		rm -f "$TRACE.???"
 		cat "$TRACE" | (COUNT=0; TRACE_NUM=0; TRACE_NAME="$TRACE.000"; while read INODE START LENGTH; do
-			NEW_COUNT=$[ $COUNT + $LENGTH ]
+			NEW_COUNT=`expr $COUNT + $LENGTH `
 			if [ $NEW_COUNT -gt $CHUNK_SIZE ]; then
-				TRACE_NUM=$[ $TRACE_NUM + 1 ]
+				TRACE_NUM=`expr $TRACE_NUM + 1`
 				SUFFIX=`printf "%03d" $TRACE_NUM`
 				TRACE_NAME="$TRACE.$SUFFIX"
 				COUNT=0
 			fi
 			echo "$INODE $START $LENGTH" >> "$TRACE_NAME"
-			COUNT=$[ $COUNT + $LENGTH ]
+			COUNT=`expr $COUNT + $LENGTH `
 		done )
 	done
 }
