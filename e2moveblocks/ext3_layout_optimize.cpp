@@ -1197,7 +1197,7 @@ int main(int argc, char **argv)
         {
             force = true;
             devicename = argv[2];
-            layoutfile = argv[2];
+            layoutfile = argv[3];
         }
         else
         {
