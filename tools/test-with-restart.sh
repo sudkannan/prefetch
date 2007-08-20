@@ -8,6 +8,8 @@ failure()
 RESTARTS_FILE="$HOME/test_restarts"
 AUTORUN_FILE="$HOME/autorun"
 
+date >>~/boot_time
+cat /proc/uptime >>~/boot_time
 
 [ -e "$RESTARTS_FILE" ] || failure "Restarts file does not exist"
 [ -e "$AUTORUN_FILE" ] || failure "Autorun file does not exist"
