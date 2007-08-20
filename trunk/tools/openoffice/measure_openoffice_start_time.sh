@@ -76,8 +76,7 @@ oowriter $OPENOFFICE_OPTIONS ./recordStart.odt &
 while true; do
 	if [ -e "$RESULT_FILE" ]; then
 		if [ "$NO_WAIT_FOR_RESULTS" = "yes" ]; then
-			killall soffice.bin
-			exit 0
+			break
 		fi
 		#sleep a while as a workaround for race condition writing to output file
 		sleep 2
@@ -104,10 +103,18 @@ rm -f "$RESULT_FILE" || failure "Cannot remove $RESULT_FILE, error=$?"
 
 if [ "$KILL_OPENOFFICE" = "yes" ]; then
 	# Wait a bit and kill openoffice.
-	sleep 2
+	if [ "$NO_WAIT_FOR_RESULTS" = "yes" ]; then
+		echoerr "Not waiting before killing openoffice"
+	else
+		sleep 2
+	fi
 	killall soffice.bin
 	if [ "$SAVE_PREFETCH_TRACE" = "yes" ]; then
-		sleep 3
+		if [ "$NO_WAIT_FOR_RESULTS" = "yes" ]; then
+			echoerr "Not waiting before killing openoffice"
+		else
+			sleep 3
+		fi
 		sudo cat /proc/prefetch >>prefetch-trace-$STAMP.txt
 	fi
 
