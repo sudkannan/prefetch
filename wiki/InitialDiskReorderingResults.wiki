@@ -1,0 +1,35 @@
+#summary Results of initial implementation of reordering files on disk.
+#labels tests,results,reordering,layout,boot
+
+== Test 1 ==
+The purpose of this test is to check how reordering files on disk affects boot time.
+
+=== Test description ===
+Test machine: [TestMachineKL1 KL1]
+
+Test environment: 
+  * [KubuntuGutsyKL1 Kubuntu Gutsy KL1] with updates as of 2007-06-10, moved to other partition (hda13).
+  * Standard desktop environment.
+  * Custom compiled Gutsy kernel with automatic application prefetching implementation ([http://prefetch.googlecode.com/svn/trunk/kernel-patches/2.6.22/prefetch-core+boot+app-WIP.diff patch]).
+  * dir_indexes turned off for root partition.
+  * Prefetching was turned on.
+  * 3-aggregation was not used, prefetch always used last trace (side effect of some other change).
+
+Test method:
+  * System boot time was measured by automatically running script when system boots (using ~/.kde/Autostart). The script recorded contents of /proc/uptime (first number is time since boot in seconds).
+  * Two setups were tested: with reordering and without reordering
+
+With reordering setup:
+  * After each boot into tested system, system was manually booted from other partition and root partition of tested system was reordered based on split layouts produced by tested system.
+  * Layout was split into 500-lines chunks as there was no such big contiguous space to hold whole prefetched area.
+
+Without reordering setup:
+  * Image of tested system just before first reordering run was written back to partition and boot times were measure using automatic reboot script, as used in boot time tests.
+
+Measurements repeatability:
+  * Each combination of parameters was tested 10 times.
+  * First run used boot traces from previous runs.
+
+=== Test results ===
+
+=== Conclusions ===
