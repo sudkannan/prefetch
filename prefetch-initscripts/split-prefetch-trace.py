@@ -13,7 +13,7 @@ def parse_trace(filename, chunksize):
         if (len(tokens) != 4):
             print "Invalid line: %s" % line
             continue
-        device = int(tokens[0])
+        device = tokens[0]
         inode = int(tokens[1])
         start = int(tokens[2]) 
         length = int(tokens[3])
@@ -21,20 +21,21 @@ def parse_trace(filename, chunksize):
             if devices[device]["count"] + length > chunksize:
                 #switch file to next one
                 devices[device]["tracenum"] += 1
+                devices[device]["count"] = 0
                 #close file
                 devices[device]["file"].close()
-                devices[device]["file"] = file(device + ".layout." + str(devices[device]["tracenum"]).ljust(suffixsize, "0"), "w+")
+                devices[device]["file"] = file(device + ".layout." + str(devices[device]["tracenum"]).rjust(suffixsize, "0"), "w+")
         else:
             #not yet known device
             devices[device] = dict()
             devices[device]["tracenum"] = 0
             devices[device]["count"] = 0
-            devices[device]["file"] = file(device + ".layout." + str(devices[device]["tracenum"]).ljust(suffixsize, "0"), "w+")
-        print devices[device]["file"], inode, start, length
+            devices[device]["file"] = file(device + ".layout." + str(devices[device]["tracenum"]).rjust(suffixsize, "0"), "w+")
+        devices[device]["file"].write("%s %s %s\n" % (inode, start, length))
         devices[device]["count"] += length
     #close all files
-    for device, data in devices:
-        data["file"].close()
+    for key in devices.keys():
+        devices[key]["file"].close()
     return 0
 
 if __name__ == "__main__":
