@@ -1,8 +1,14 @@
+prefetch (0.2.6) gutsy; urgency=low
+
+  * New trace splitting implementation
+
+ -- Krzysztof Lichota <lichota@mimuw.edu.pl>  Mon, 20 Aug 2007 15:39:34 +0200
+
 prefetch (0.2.5) gutsy; urgency=low
 
   * Added separating disk traces.
 
- -- kkk-gutsy <kkk@gutsy>  Sun, 19 Aug 2007 23:38:24 +0200
+ -- Krzysztof Lichota <lichota@mimuw.edu.pl>  Sun, 19 Aug 2007 23:38:24 +0200
 
 prefetch (0.2.4) gutsy; urgency=low
 
