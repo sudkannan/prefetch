@@ -50,6 +50,25 @@ prepare_disk_layouts()
 		fi
 		separate_disk_traces "$TRACE"
 	done
+	#now prepare chunks
+	#split by length, so that they are at maximum 2000 blocks size
+	CHUNK_SIZE=${CHUNK_SIZE_BLOCKS:-2000}
+	for TRACE in "$PREFETCH_DIR"/*.layout; do
+		if [ ! -r "$TRACE" ]; then
+			continue
+		fi
+		cat "$TRACE" | (COUNT=0; TRACE_NUM=0; TRACE_NAME="$TRACE.000"; while read INODE START LENGTH; do
+			NEW_COUNT=$[ $COUNT + $LENGTH ]
+			if [ $NEW_COUNT -gt $CHUNK_SIZE ]; then
+				TRACE_NUM=$[ $TRACE_NUM + 1 ]
+				SUFFIX=`printf "%03d" $TRACE_NUM`
+				TRACE_NAME="$TRACE.$SUFFIX"
+				COUNT=0
+			fi
+			echo "$INODE $START $LENGTH" >> "$TRACE_NAME"
+			COUNT=$[ $COUNT + $LENGTH ]
+		done )
+	done
 }
 
 case "$1" in
