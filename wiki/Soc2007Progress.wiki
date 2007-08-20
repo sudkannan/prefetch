@@ -54,7 +54,7 @@ Conclusions:
      * Performance of app prefetching is better than built-in OpenOffice prefetching by 1.67s.
      * Prefetching can cut down OpenOffice startup time (in comparison to no prefetching at all, i.e. disabled pagein) by 3.36s, from 14.38s to 11.01s. See InitialPrefetchingImplementationResults page for details.
   * Files reordering on disk:
-    * Files reordering gives even shorter boot time, by 4.93s (47.75s vs 52.68).
+    * Files reordering gives even shorter boot time, by 4.93s (47.75s vs 52.68). See InitialDiskReorderingResults page for details.
     * Impact on application startup or boot with OpenOffice was not measured, but it should help also.
     * Further work on reordering files on disk seems worth the effort.
 
