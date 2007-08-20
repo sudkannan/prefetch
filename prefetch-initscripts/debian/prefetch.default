@@ -21,3 +21,6 @@ ENABLE_APP_PREFETCHING=1
 #And always keep backups
 ENABLE_FILE_REORDERING=0
 
+#Size of chunks (in disk blocks) in which files are reordered
+CHUNK_SIZE_BLOCKS=2000
+
