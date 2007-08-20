@@ -1,3 +1,9 @@
+prefetch (0.3.1) gutsy; urgency=low
+
+  * e2moveblocks added to package.
+
+ -- Krzysztof Lichota <lichota@mimuw.edu.pl>  Mon, 20 Aug 2007 19:47:26 +0200
+
 prefetch (0.2.6) gutsy; urgency=low
 
   * New trace splitting implementation
