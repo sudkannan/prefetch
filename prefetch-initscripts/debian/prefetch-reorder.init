@@ -78,6 +78,7 @@ case "$1" in
 	#KLDEBUG:run shell 
 	/bin/bash
 	log_warning_msg "After running shell"
+	;;
   real-start)
 
   	if [ ${ENABLE_FILE_REORDERING:-0} -ne 1 ] ; then
