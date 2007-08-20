@@ -5,8 +5,10 @@ CXXFLAGS=-g -Wall
 #reboot in the future
 
 all: $(EXECS)
+	make -C e2moveblocks
 
-install:
+install: all
+	make -C e2moveblocks install DESTDIR=$(DESTDIR)
 	install -d $(DESTDIR)/usr/sbin
 	install -d $(DESTDIR)/bin
 	install -m 0755 prefetch-process-trace $(DESTDIR)/usr/sbin/

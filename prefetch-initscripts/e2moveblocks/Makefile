@@ -6,6 +6,8 @@ EXECS=e2blockmap e2moveblocks
 
 all: $(EXECS)
 install: $(EXECS)
+	mkdir -p $(DESTDIR)/sbin
+	mkdir -p $(DESTDIR)/bin
 	install -D -m 755 e2moveblocks $(DESTDIR)/sbin/
 	install -D -m 755 e2blockmap $(DESTDIR)/bin/
 	
