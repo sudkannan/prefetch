@@ -56,6 +56,9 @@ IO ticks:
   * Current chunk splitting technique is not good, it causes some chunks to fail. It also slows down reordering as reordering tool must be run several times. Layout tool should be improved to look for several areas with free space and fit prefetch data into these areas accordingly.
   * Speed of reordering tool should be improved. 20s is rather the upper bound of time which can be used during shutdown for purpose of reordering. Consolidating reordering chunks should help, but also speedups in blocks moving would be useful.
 
+Raw results are at:
+http://prefetch.googlecode.com/svn/trunk/results/reordering/testmachine-kl1/test-1-manual/
+
 == Test 2 ==
 The purpose of this test is to check what is a performance impact of automatic reordering files on disk.
 
@@ -99,6 +102,8 @@ IO ticks:
 ||	Stddev	||	0.28	||	2.33	||	0.33	||	2.05	||	-2	||
 ||	min	||	16.82	||	16.7	||	21.43	||	-0.12	||	4.73	||
 ||	max	||	17.83	||	24.75	||	22.6	||	6.92	||	-2.15	||
+Raw results are at:
+http://prefetch.googlecode.com/svn/trunk/results/reordering/testmachine-kl1/test-2-automatic-reordering/
 
 === Conclusions ===
   * Automatic reordering is slightly worse than manual reordering (0.86s), but still 4.93s better than no reordering.
