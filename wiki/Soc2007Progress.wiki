@@ -53,6 +53,10 @@ Conclusions:
      * Application prefetching gives some gain to disk-intensive applications like OpenOffice.
      * Performance of app prefetching is better than built-in OpenOffice prefetching by 1.67s.
      * Prefetching can cut down OpenOffice startup time (in comparison to no prefetching at all, i.e. disabled pagein) by 3.36s, from 14.38s to 11.01s. See InitialPrefetchingImplementationResults page for details.
+  * Files reordering on disk:
+    * Files reordering gives even shorter boot time, by 4.93s (47.75s vs 52.68).
+    * Impact on application startup or boot with OpenOffice was not measured, but it should help also.
+    * Further work on reordering files on disk seems worth the effort.
 
 Known bugs:
   * 3-aggregation does not work currently for gui and system traces (it works for boot), apparently some bug was introduced in script which processes trace.
@@ -62,6 +66,7 @@ To do:
   * More tests (especially file contents tests) for disk layout tool.
   * Improving disk layout tool to find free space areas to fit data.
   * Improvements to reordering on boot (especially copying files).
+  * Measure application startup time and boot time with OpenOffice with disk reordering.
 
 == News ==
   * Sun, 12 Aug 2007
