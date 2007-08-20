@@ -1,0 +1,94 @@
+#run 1
+/dev/hda:
+ Timing buffered disk reads:   82 MB in  3.13 seconds =  26.16 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  140 MB in  3.02 seconds =  46.41 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  180 MB in  3.01 seconds =  59.81 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  180 MB in  3.00 seconds =  59.92 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  180 MB in  3.02 seconds =  59.53 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  182 MB in  3.03 seconds =  60.14 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  180 MB in  3.01 seconds =  59.76 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  170 MB in  3.03 seconds =  56.02 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  164 MB in  3.03 seconds =  54.10 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  178 MB in  3.03 seconds =  58.81 MB/sec
+
+#run 2
+
+/dev/hda:
+ Timing buffered disk reads:  154 MB in  3.02 seconds =  50.98 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  174 MB in  3.02 seconds =  57.58 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  180 MB in  3.03 seconds =  59.41 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  170 MB in  3.01 seconds =  56.51 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  180 MB in  3.01 seconds =  59.75 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  180 MB in  3.03 seconds =  59.42 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  180 MB in  3.02 seconds =  59.51 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  178 MB in  3.02 seconds =  58.85 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  174 MB in  3.03 seconds =  57.49 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  178 MB in  3.01 seconds =  59.22 MB/sec
+
+#run 3
+
+/dev/hda:
+ Timing buffered disk reads:  154 MB in  3.02 seconds =  50.92 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  178 MB in  3.03 seconds =  58.73 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  178 MB in  3.02 seconds =  58.96 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  180 MB in  3.01 seconds =  59.81 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  178 MB in  3.03 seconds =  58.82 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  180 MB in  3.01 seconds =  59.86 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  180 MB in  3.01 seconds =  59.76 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  178 MB in  3.02 seconds =  58.94 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  176 MB in  3.01 seconds =  58.46 MB/sec
+
+/dev/hda:
+ Timing buffered disk reads:  148 MB in  3.00 seconds =  49.28 MB/sec

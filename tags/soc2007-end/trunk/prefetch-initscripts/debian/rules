@@ -1,0 +1,104 @@
+#!/usr/bin/make -f
+# debian/rules for prefetch, based on readahead-list package
+# Copyright © 2006 Canonical Ltd.
+# Author: Scott James Remnant <scott@ubuntu.com>
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export DH_OPTIONS
+
+# Apply patches to the package
+patch: patch-stamp
+patch-stamp:
+	dh_testdir
+	@if test -f debian/patches/*.patch; then \
+		@patches=debian/patches/*.patch; for patch in $$patches; do \
+			echo "Applying $$patch"; \
+			patch -stuN -p1 < $$patch || exit 1; \
+		done; \
+		touch $@; \
+	fi
+
+# Remove patches from the package
+unpatch:
+	dh_testdir
+	@if test -f patch-stamp; then \
+		patches=debian/patches/*.patch; \
+		for patch in $$patches; do \
+			reversepatches="$$patch $$reversepatches"; \
+		done; \
+		for patch in $$reversepatches; do \
+			echo "Reversing $$patch"; \
+			patch -suRf -p1 < $$patch || exit 1; \
+		done; \
+		rm -f patch-stamp; \
+	fi
+
+
+# Build the package
+build: patch-stamp build-stamp
+build-stamp:
+	dh_testdir
+	$(MAKE)
+
+	touch $@
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/prefetch
+
+binary: binary-arch binary-indep
+
+# Build architecture-independent files here.
+binary-indep: DH_OPTIONS=-i
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+# Build architecture-dependent files here.
+binary-arch: DH_OPTIONS=-a
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_install --sourcedir=debian/prefetch
+	dh_installdocs
+	dh_installinit --no-start -- start 01 S . stop 50 0 6 .
+	dh_installinit --name=prefetch-system --no-start -- start 39 S .
+	dh_installinit --name=000-prefetch-gui --no-start -- start 99 2 .
+	dh_installinit --name=stop-prefetch --no-start -- start 99 2 .
+	dh_installinit --name=prefetch-reorder --no-start -- start 89 6 .
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_makeshlibs
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+
+# Clean up the mess we made
+clean: clean-source unpatch
+clean-source:
+	dh_testdir
+	rm -f build-stamp
+
+	-$(MAKE) clean distclean
+
+	dh_clean
+
+
+.PHONY: patch unpatch build install binary-indep binary-arch binary \
+	clean clean-source

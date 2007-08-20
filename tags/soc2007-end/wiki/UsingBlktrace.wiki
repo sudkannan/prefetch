@@ -1,0 +1,6 @@
+#summary Short guide how to use blktrace with prefetching measurement tools
+#labels guide,blktrace
+
+Setup:
+  # Add line {{{none /sys/kernel/debug debugfs defaults 0 0}}} to /etc/fstab.
+  # mount /sys/kernel/debug

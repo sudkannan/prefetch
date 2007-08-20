@@ -1,0 +1,49 @@
+This file documents two tools: e2block2file and e2remapblocks
+
+BEWARE!!! e2remapblocks is in experimental state and can destroy your filesystem.
+Backup if you value your data!
+
+e2block2file is a tool for reverse mapping disk blocks to inode+offset or
+filename+offset. It expects two parameters: name of a file describing blocks to
+map and a device with ext2 / ext3 filesystem to which the blocks belong.
+  The file with blocks to map has the following format. On each line there are
+two numbers separated by +. For example
+256+8
+  meaning that you'd like to map all blocks in a range 256-263. The size of
+input block is 512 bytes by default and can be changed by -b option. Note that
+intervals can overlap. e2block2file by default substracts from each input block
+number a number of starting block of the partition (i.e. it expects block numbers
+in the input to be absolute). You can set a number to substract via -s option.
+  The tool operates in two modes. Either it outputs a list of filenames (or
+inode numbers if -n was specified) and for each file a list of extents that the
+tool was asked to map. In the output, extent position, length and logical offset
+in a file are in the filesystem blocks. Logical offset for indirect blocks is
+negative, the lowest two bits of the offset denote depth of a block in an
+indirect tree, (-offset)>>2 is a logical offset of the first block that can be
+referenced in the subtree of the indirect block.
+  The second form of output (when -t option is specified) is to append to each
+extent in the input the corresponding inode number and logical offset. Note
+that extents are recomputed to be in filesystem blocks and one input extent
+can be split into several extents in the output if it spans several inodes
+or if logical offsets are not contignuous.
+
+e2remapblocks is a tool for remapping file blocks into desired order. It gets
+two parameters - a file describing the desired ordering of blocks and a device
+with filesystem. The file describing ordering of blocks contains on each line a
+description of a single extents to remap:
+ <extent start>+<extent length> <logical offset> INO <inode number>
+Units of all entries are the block size of the filesystem. The order of extents
+in the file is the desired order of extents in the resulting filesystem. Note
+that this is exactly the format you get from e2blocks2file -t -n. The tool
+first loads the extents into memory (you can tune the size of the hashtable
+used for associating extents with inodes with -i option), then looks for
+suitable chunk of free space and finally remaps blocks into that space.
+e2remapblocks tries to put blocks as close as possible. For example if
+possible, it tries to relocate all blocks into one big chunk of free space. If
+there is not such a chunk, it tries to fit the blocks into several smaller
+chunks. You can set the minimal size for a chunk to be considered in this
+search via -f option. When enough free space is found, data is copied from old
+location into new location. You can set number of blocks to copy at once using
+-r option. After all the data is copied a filesystem scan is performed, block
+pointers are updated and free space information updated.
+

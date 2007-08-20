@@ -1,0 +1,509 @@
+Restarts left: 19
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+60.48 26.01
+Restarts left: 18
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+54.77 20.14
+Restarts left: 17
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+53.88 19.94
+Restarts left: 16
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+55.18 19.98
+Restarts left: 15
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+53.09 19.97
+Restarts left: 14
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+54.91 20.37
+Restarts left: 13
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+55.88 20.64
+Restarts left: 12
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+55.51 20.19
+Restarts left: 11
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+54.40 20.60
+Restarts left: 10
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+Removing prefetch traces before next boot
+56.55 20.34
+Restarts left: 9
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+15.9352200031 788 #stamp: 20070811-22:52:00 #all:  1186865537.717548733 788 stat: 5212 (soffice.bin) S 5169 5090 5090 34817 5090 4202496 18458 245 913 0 316 41 0 0 17 0 7 0 6520 195211264 17013 4294967295 134512640 134851012 3217348272 3217346828 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 788
+77.85 34.78
+Restarts left: 8
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+10.3698384762 77 #stamp: 20070811-22:54:14 #all:  1186865665.136883473 77 stat: 5194 (soffice.bin) R 5169 5120 5120 34821 5120 4202496 19305 244 37 0 304 28 0 0 25 0 7 0 6091 195239936 17011 4294967295 134512640 134851012 3215016640 3215015196 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 77
+66.20 23.95
+Restarts left: 7
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+5.34031176567 50 #stamp: 20070811-22:56:41 #all:  1186865808.474952503 50 stat: 5152 (soffice.bin) R 5140 5059 5059 34821 5059 4202496 19361 245 0 0 304 30 0 0 25 0 7 0 6062 195252224 17011 4294967295 134512640 134851012 3218921088 3218919644 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 50
+65.48 23.49
+Restarts left: 6
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+6.74031710625 54 #stamp: 20070811-22:59:02 #all:  1186865951.773648360 54 stat: 5167 (soffice.bin) R 5143 5065 5065 34820 5065 4202496 19354 245 0 0 295 29 0 0 25 0 7 0 6085 196132864 17019 4294967295 134512640 134851012 3217226976 3217225532 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 54
+65.71 23.61
+Restarts left: 5
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+5.95947670937  #stamp: 20070811-23:01:28 #all:  1186866096.492532837
+65.49 23.40
+cat: /proc/5174/stat: No such file or directory
+Restarts left: 4
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+5.32446241379  #stamp: 20070811-23:03:52 #all:  1186866238.296413887
+65.22 23.17
+cat: /proc/5167/stat: No such file or directory
+Restarts left: 3
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+5.16120576859  #stamp: 20070811-23:06:16 #all:  1186866381.383274186
+65.40 23.70
+Restarts left: 2
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+5.3377301693  #stamp: 20070811-23:08:38 #all:  1186866524.292657542
+65.36 23.49
+Restarts left: 1
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+6.13325548172  #stamp: 20070811-23:11:03 #all:  1186866669.355865781
+cat: /proc/5167/stat: No such process
+65.47 23.36
+Restarts left: 0
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+5.59423613548 52 #stamp: 20070811-23:13:23 #all:  1186866810.451602041 52 stat: 5151 (soffice.bin) S 5139 5045 5045 34820 5045 4202496 19366 244 0 0 306 31 0 0 25 0 7 0 6058 196124672 17020 4294967295 134512640 134851012 3217786208 3217784764 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 52
+65.48 23.36
+
+# Kernel 2.6.22.1-9pf.3 with Ubuntu readahead
+
+Restarts left: 19
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+58.48 23.43
+Restarts left: 18
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+59.60 23.80
+Restarts left: 17
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+54.35 23.25
+Restarts left: 16
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+58.67 23.90
+Restarts left: 15
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+58.93 23.90
+Restarts left: 14
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+59.79 23.15
+Restarts left: 13
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+59.64 23.87
+Restarts left: 12
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+58.75 24.03
+Restarts left: 11
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+58.71 23.38
+Restarts left: 10
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+Removing prefetch traces before next boot
+60.43 24.32
+Restarts left: 9
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+13.7392103672 745 #stamp: 20070812-10:41:35 #all:  1186908110.286716683 745 stat: 5159 (soffice.bin) S 5142 5047 5047 34821 5047 4202496 18456 245 912 0 306 48 0 0 17 0 7 0 6218 195244032 17013 4294967295 134512640 134851012 3215749456 3215748012 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 745
+74.58 31.42
+Restarts left: 8
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+13.0803186893 762 #stamp: 20070812-10:43:37 #all:  1186908231.693359447 762 stat:
+74.87 31.49
+Restarts left: 7
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+14.9807276726 761 #stamp: 20070812-10:45:36 #all:  1186908352.124198696 761 stat: 5174 (soffice.bin) S 5142 5066 5066 34821 5066 4202496 18448 244 905 0 312 46 0 0 17 0 7 0 6257 195248128 17010 4294967295 134512640 134851012 3214618720 3214617276 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 761
+75.05 31.58
+Restarts left: 6
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+13.6199889183  #stamp: 20070812-10:47:36 #all:  1186908472.741220853
+73.93 30.90
+Restarts left: 5
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+14.9168813229 780 #stamp: 20070812-10:49:36 #all:  1186908591.752119797 780 stat: 5171 (soffice.bin) S 5143 5071 5071 34821 5071 4202496 18475 245 903 0 304 48 0 0 17 0 7 0 6168 195248128 17014 4294967295 134512640 134851012 3221199696 3221198252 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 780
+74.39 31.38
+Restarts left: 4
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+13.4254052639 750 #stamp: 20070812-10:51:36 #all:  1186908712.012566180 750 stat: 5191 (soffice.bin) S 5173 5078 5078 34817 5078 4202496 18453 245 907 0 306 50 0 0 17 0 7 0 6194 195244032 17014 4294967295 134512640 134851012 3215421760 3215420316 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 750
+74.24 31.16
+Restarts left: 3
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+12.7630417347 755 #stamp: 20070812-10:53:37 #all:  1186908830.873456316 755 stat: 5183 (soffice.bin) S 5169 5129 5129 34821 5129 4202496 18432 244 907 0 314 45 0 0 17 0 7 0 6164 195248128 17012 4294967295 134512640 134851012 3220009744 3220008300 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 755
+74.13 31.17
+Restarts left: 2
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+12.6278297901 742 #stamp: 20070812-10:55:35 #all:  1186908951.578404969 742 stat: 5160 (soffice.bin) S 5147 5052 5052 34821 5052 4202496 18453 244 905 0 309 46 0 0 17 0 7 0 6149 195145728 17013 4294967295 134512640 134851012 3218504672 3218503228 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 742
+73.81 30.60
+Restarts left: 1
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+12.4414141178 738 #stamp: 20070812-10:57:39 #all:  1186909072.586621386 738 stat: 5186 (soffice.bin) S 5173 5125 5125 34821 5125 4202496 18467 244 902 0 304 48 0 0 17 0 7 0 6247 195248128 17011 4294967295 134512640 134851012 3213541488 3213540044 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 738
+74.74 31.78
+Restarts left: 0
+#restart
+# Linux gutsy 2.6.22.1-9pf.3 #2 SMP Sat Aug 11 19:17:05 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+13.7245740891 784 #stamp: 20070812-10:59:38 #all:  1186909194.468358400 784 stat: 5175 (soffice.bin) S 5155 5078 5078 34821 5078 4202496 18456 244 905 0 312 43 0 0 17 0 7 0 6200 195248128 17012 4294967295 134512640 134851012 3215238784 3215237340 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 784
+74.68 31.67
+
+# Ubuntu generic kernel
+Restarts left: 19
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+59.38 25.52
+Restarts left: 18
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+63.47 25.29
+Restarts left: 17
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+62.28 24.26
+Restarts left: 16
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+63.33 25.17
+Restarts left: 15
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+60.56 24.64
+Restarts left: 14
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+57.84 24.75
+Restarts left: 13
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+60.42 24.88
+Restarts left: 12
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+60.47 24.80
+Restarts left: 11
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+60.18 24.30
+Restarts left: 10
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+Removing prefetch traces before next boot
+62.37 24.65
+Restarts left: 9
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+#running openoffice as part of boot
+17.4357771873  #stamp: 20070812-11:32:52 #all:  1186911190.376399844
+80.47 35.36
+Restarts left: 8
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+#running openoffice as part of boot
+ASYNC_PREFETCH=no
+BASH=/bin/bash
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_LINENO=([0]="0")
+BASH_SOURCE=([0]="./measure_openoffice_start_time.sh")
+BASH_VERSINFO=([0]="3" [1]="2" [2]="17" [3]="1" [4]="release" [5]="i486-pc-linux-gnu")
+BASH_VERSION='3.2.17(1)-release'
+COLORTERM=
+DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-VfTCBYWnBY,guid=41a2fed30166f31fcedf7b0046bed42e
+DESKTOP_SESSION=kde
+DIRSTACK=()
+DISPLAY=:0.0
+DM_CONTROL=/var/run/xdmctl
+DROP_CACHES=no
+EUID=1000
+GROUPS=()
+GS_LIB=/home/kkk/.fonts
+GTK2_RC_FILES=/home/kkk/.gtkrc-2.0-kde:/home/kkk/.kde/share/config/gtkrc-2.0
+GTK_RC_FILES=/etc/gtk/gtkrc:/home/kkk/.gtkrc:/home/kkk/.kde/share/config/gtkrc
+HOME=/home/kkk
+HOSTNAME=gutsy
+HOSTTYPE=i486
+IFS=$' \t\n'
+KDE_FULL_SESSION=true
+KDE_MULTIHEAD=false
+KDE_SESSION_UID=
+KILL_OPENOFFICE=yes
+KONSOLE_DCOP='DCOPRef(konsole-5104,konsole)'
+KONSOLE_DCOP_SESSION='DCOPRef(konsole-5104,session-1)'
+LANG=en_US.UTF-8
+LOGNAME=kkk
+MACHTYPE=i486-pc-linux-gnu
+NO_WAIT_FOR_RESULTS=yes
+OPENOFFICE_OPTIONS=' -norestore'
+OPENOFFICE_STARTUP_HOOK=/home/kkk/prefetch/trunk/tools/openoffice/openoffice_started.sh
+OPENOFFICE_STARTUP_HOOK_PARAMS=/home/kkk/prefetch/trunk/tools/openoffice/start_time.tmp
+OPTERR=1
+OPTIND=1
+OSTYPE=linux-gnu
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+PIPESTATUS=([0]="0")
+PPID=5131
+PS4='+ '
+PWD=/home/kkk/prefetch/trunk/tools/openoffice
+RESULT_FILE=/home/kkk/prefetch/trunk/tools/openoffice/start_time.tmp
+SESSION_MANAGER=local/gutsy:/tmp/.ICE-unix/5070
+SHELL=/bin/bash
+SHELLOPTS=braceexpand:hashall:interactive-comments
+SHLVL=3
+SSH_AGENT_PID=5012
+SSH_AUTH_SOCK=/tmp/ssh-psvYbp4963/agent.4963
+STAMP=20070812-11:34:59
+START_TIME=1186911301.670357640
+TERM=xterm
+THIS_SCRIPT_DIR=.
+TRACE_IO=no
+UID=1000
+USER=kkk
+WINDOWID=35651602
+XCURSOR_THEME=DMZ-White
+XDM_MANAGED=/var/run/xdmctl/xdmctl-:0,maysd,mayfn,sched,rsvd,method=classic,auto
+_=break
+drop_caches () 
+{ 
+    MODE="$1";
+    if [ "$MODE" = "1" -o "$MODE" = "2" -o "$MODE" = "3" ]; then
+        for i in `seq 3`;
+        do
+            sudo sync;
+            sleep 1;
+        done;
+        sudo bash -c "echo $MODE >/proc/sys/vm/drop_caches";
+        sudo hdparm -f /dev/hda > /dev/null 2> /dev/null;
+        return 0;
+    else
+        echo "Invalid drop_caches mode '$MODE'";
+        return 1;
+    fi
+}
+echoerr () 
+{ 
+    echo "$@" 1>&2
+}
+failure () 
+{ 
+    echo "$@";
+    exit 1
+}
+get_time () 
+{ 
+    date --utc +'%s.%N'
+}
+subtract_time () 
+{ 
+    [ -z "$1" ] && failure "subtract_time requires 2 arguments";
+    [ -z "$2" ] && failure "subtract_time requires 2 arguments";
+    python -c "print $1 - $2"
+}
+subtract_time requires 2 arguments  #stamp: 20070812-11:34:59 #all: 
+81.42 36.76
+Restarts left: 7
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+#running openoffice as part of boot
+16.7222235203 0 #stamp: 20070812-11:37:06 #all:  1186911446.551947110 0 stat: 5198 (soffice.bin) S 5182 5093 5093 34821 5093 4202496 18375 244 1011 0 313 51 0 0 15 0 7 0 6472 195244032 17016 4294967295 134512640 134851012 3217473408 3217471964 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 0
+80.76 35.77
+Restarts left: 6
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+#running openoffice as part of boot
+17.0057291985 0 #stamp: 20070812-11:39:18 #all:  1186911575.559998373 0 stat: 5226 (soffice.bin) S 5213 5189 5189 34821 5189 4202496 18366 245 1001 0 314 48 0 0 17 0 7 0 6472 195207168 17012 4294967295 134512640 134851012 3218692448 3218691004 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 0
+81.74 36.65
+Restarts left: 5
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+#running openoffice as part of boot
+18.7373547554  #stamp: 20070812-11:41:22 #all:  1186911702.104346932
+80.54 35.66
+Restarts left: 4
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+#running openoffice as part of boot
+15.9844992161  #stamp: 20070812-11:43:35 #all:  1186911831.695315606
+80.81 36.17
+Restarts left: 3
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+#running openoffice as part of boot
+17.7744252682 0 #stamp: 20070812-11:45:38 #all:  1186911958.414159242 0 stat: 5240 (soffice.bin) S 5225 5139 5139 34821 5139 4202496 18348 245 1013 0 317 50 0 0 17 0 7 0 6436 195145728 17013 4294967295 134512640 134851012 3215945360 3215943916 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 0
+81.03 36.14
+Restarts left: 2
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+#running openoffice as part of boot
+17.4561867714 0 #stamp: 20070812-11:47:47 #all:  1186912085.821454626 0 stat: 5211 (soffice.bin) S 5190 5105 5105 34820 5105 4202496 18364 245 1010 0 311 45 0 0 17 0 7 0 6516 195211264 17012 4294967295 134512640 134851012 3220845216 3220843772 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 0
+80.78 35.50
+Restarts left: 1
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+#running openoffice as part of boot
+ASYNC_PREFETCH=no
+BASH=/bin/bash
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_LINENO=([0]="0")
+BASH_SOURCE=([0]="./measure_openoffice_start_time.sh")
+BASH_VERSINFO=([0]="3" [1]="2" [2]="17" [3]="1" [4]="release" [5]="i486-pc-linux-gnu")
+BASH_VERSION='3.2.17(1)-release'
+COLORTERM=
+DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-MPcjyCYvoa,guid=035bda852af194fb9f0edc0046bed7ae
+DESKTOP_SESSION=kde
+DIRSTACK=()
+DISPLAY=:0.0
+DM_CONTROL=/var/run/xdmctl
+DROP_CACHES=no
+EUID=1000
+GROUPS=()
+GS_LIB=/home/kkk/.fonts
+GTK2_RC_FILES=/home/kkk/.gtkrc-2.0-kde:/home/kkk/.kde/share/config/gtkrc-2.0
+GTK_RC_FILES=/etc/gtk/gtkrc:/home/kkk/.gtkrc:/home/kkk/.kde/share/config/gtkrc
+HOME=/home/kkk
+HOSTNAME=gutsy
+HOSTTYPE=i486
+IFS=$' \t\n'
+KDE_FULL_SESSION=true
+KDE_MULTIHEAD=false
+KDE_SESSION_UID=
+KILL_OPENOFFICE=yes
+KONSOLE_DCOP='DCOPRef(konsole-5111,konsole)'
+KONSOLE_DCOP_SESSION='DCOPRef(konsole-5111,session-1)'
+LANG=en_US.UTF-8
+LOGNAME=kkk
+MACHTYPE=i486-pc-linux-gnu
+NO_WAIT_FOR_RESULTS=yes
+OPENOFFICE_OPTIONS=' -norestore'
+OPENOFFICE_STARTUP_HOOK=/home/kkk/prefetch/trunk/tools/openoffice/openoffice_started.sh
+OPENOFFICE_STARTUP_HOOK_PARAMS=/home/kkk/prefetch/trunk/tools/openoffice/start_time.tmp
+OPTERR=1
+OPTIND=1
+OSTYPE=linux-gnu
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+PIPESTATUS=([0]="0")
+PPID=5132
+PS4='+ '
+PWD=/home/kkk/prefetch/trunk/tools/openoffice
+RESULT_FILE=/home/kkk/prefetch/trunk/tools/openoffice/start_time.tmp
+SESSION_MANAGER=local/gutsy:/tmp/.ICE-unix/5077
+SHELL=/bin/bash
+SHELLOPTS=braceexpand:hashall:interactive-comments
+SHLVL=3
+SSH_AGENT_PID=5019
+SSH_AUTH_SOCK=/tmp/ssh-qxJGtw4970/agent.4970
+STAMP=20070812-11:49:56
+START_TIME=1186912199.361480534
+TERM=xterm
+THIS_SCRIPT_DIR=.
+TRACE_IO=no
+UID=1000
+USER=kkk
+WINDOWID=35651602
+XCURSOR_THEME=DMZ-White
+XDM_MANAGED=/var/run/xdmctl/xdmctl-:0,maysd,mayfn,sched,rsvd,method=classic,auto
+_=break
+drop_caches () 
+{ 
+    MODE="$1";
+    if [ "$MODE" = "1" -o "$MODE" = "2" -o "$MODE" = "3" ]; then
+        for i in `seq 3`;
+        do
+            sudo sync;
+            sleep 1;
+        done;
+        sudo bash -c "echo $MODE >/proc/sys/vm/drop_caches";
+        sudo hdparm -f /dev/hda > /dev/null 2> /dev/null;
+        return 0;
+    else
+        echo "Invalid drop_caches mode '$MODE'";
+        return 1;
+    fi
+}
+echoerr () 
+{ 
+    echo "$@" 1>&2
+}
+failure () 
+{ 
+    echo "$@";
+    exit 1
+}
+get_time () 
+{ 
+    date --utc +'%s.%N'
+}
+subtract_time () 
+{ 
+    [ -z "$1" ] && failure "subtract_time requires 2 arguments";
+    [ -z "$2" ] && failure "subtract_time requires 2 arguments";
+    python -c "print $1 - $2"
+}
+subtract_time requires 2 arguments  #stamp: 20070812-11:49:56 #all: 
+80.29 35.57
+Restarts left: 0
+#restart
+# Linux gutsy 2.6.22-9-generic #1 SMP Fri Aug 3 00:50:37 GMT 2007 i686 GNU/Linux
+#running openoffice as part of boot
+16.5355119705 0 #stamp: 20070812-11:52:08 #all:  1186912345.517948623 0 stat: 5208 (soffice.bin) S 5194 5147 5147 34821 5147 4202496 18395 244 1002 0 309 51 0 0 16 0 7 0 6538 195239936 17015 4294967295 134512640 134851012 3215771776 3215770332 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 0
+81.72 36.31

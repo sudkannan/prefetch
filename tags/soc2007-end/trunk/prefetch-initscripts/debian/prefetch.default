@@ -1,0 +1,26 @@
+# /etc/defaults/prefetch
+# configuration variables for prefetch
+
+#Directory where historical traces are kept
+PREFETCH_DIR=/.prefetch
+
+#Delay (in seconds) after login to wait before stopping tracing
+LOGIN_TRACING_DELAY=60
+
+#Number of last historical traces which are merged together
+#to produce trace used for prefetching during next boot
+TRACE_AGGREGATION_COUNT=3
+
+#Whether to enable application prefetching after boot.
+#Change to 0 to disable
+ENABLE_APP_PREFETCHING=1
+
+#Whether to reorder files during shutdown for faster prefetching
+#WARNING: DANGEROUS, CAN DESTROY DATA ON YOUR DISK
+#Do not enable if you value your data, it is highly EXPERIMENTAL feature
+#And always keep backups
+ENABLE_FILE_REORDERING=0
+
+#Size of chunks (in disk blocks) in which files are reordered
+CHUNK_SIZE_BLOCKS=2000
+

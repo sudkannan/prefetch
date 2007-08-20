@@ -1,0 +1,43 @@
+#!/bin/sh -e
+# init script for prefetch
+# phase: system
+
+# Get LSB functions
+. /lib/lsb/init-functions
+. /etc/default/rcS
+. /etc/default/prefetch
+
+#check if prefetch package is installed
+[ -x /usr/sbin/prefetch-process-trace ] || exit 0
+
+#check if kernel has boot prefetching support
+if [ ! -e /proc/prefetch/boot ]; then
+	log_warning_msg "Kernel does not have prefetching support, skipping boot prefetching"
+	exit 0
+fi
+
+case "$1" in
+    start|restart|force-reload)
+	# This can take a while
+	if type usplash_write >/dev/null 2>&1; then
+	    usplash_write "TIMEOUT 360" || true
+	fi
+	
+	#start boot phase system synchrously
+	echo "start both phase system" >/proc/prefetch/boot
+	#now start prefetching GUI in background
+	nice echo "start prefetch phase gui" >/proc/prefetch/boot &
+
+	if type usplash_write >/dev/null 2>&1; then
+	    usplash_write "TIMEOUT 15" || true
+	fi
+	;;
+    stop)
+	;;
+    *)
+	echo "Usage: /etc/init.d/prefetch-system {start|stop|restart|force-reload}"
+	exit 1
+	;;
+esac
+
+exit 0

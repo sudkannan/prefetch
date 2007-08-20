@@ -1,0 +1,199 @@
+Restarts left: 19
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+53.68 22.43
+Restarts left: 18
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+52.36 21.79
+Restarts left: 17
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+54.38 22.10
+Restarts left: 16
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+53.91 22.01
+Restarts left: 15
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+52.65 22.13
+Restarts left: 14
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+54.68 22.38
+Restarts left: 13
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+52.11 22.43
+Restarts left: 12
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+55.80 22.04
+Restarts left: 11
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+53.32 22.15
+Restarts left: 10
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+Removing prefetch traces before next boot
+55.56 22.00
+Restarts left: 9
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+12.3476111889 620 #stamp: 20070802-15:09:20 #all:  1186060173.000843522 620 stat: 5000 (soffice.bin) S 4977 4908 4908 34821 4908 4202496 19383 244 998 0 292 44 0 0 17 0 7 0 5823 201867264 18074 4294967295 134512640 134860204 3221006592 3221005148 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 620
+69.02 29.44
+Restarts left: 8
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+ASYNC_PREFETCH=no
+BASH=/bin/bash
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_LINENO=([0]="0")
+BASH_SOURCE=([0]="./measure_openoffice_start_time.sh")
+BASH_VERSINFO=([0]="3" [1]="2" [2]="17" [3]="1" [4]="release" [5]="i486-pc-linux-gnu")
+BASH_VERSION='3.2.17(1)-release'
+COLORTERM=
+DESKTOP_SESSION=kde
+DIRSTACK=()
+DISPLAY=:0.0
+DM_CONTROL=/var/run/xdmctl
+DROP_CACHES=no
+EUID=1000
+GROUPS=()
+GS_LIB=/home/kkk/.fonts
+GTK2_RC_FILES=/home/kkk/.gtkrc-2.0-kde:/home/kkk/.kde/share/config/gtkrc-2.0
+GTK_RC_FILES=/etc/gtk/gtkrc:/home/kkk/.gtkrc:/home/kkk/.kde/share/config/gtkrc
+HOME=/home/kkk
+HOSTNAME=gutsy
+HOSTTYPE=i486
+IFS=$' \t\n'
+KDE_FULL_SESSION=true
+KDE_MULTIHEAD=false
+KDE_SESSION_UID=
+KILL_OPENOFFICE=yes
+KONSOLE_DCOP='DCOPRef(konsole-4876,konsole)'
+KONSOLE_DCOP_SESSION='DCOPRef(konsole-4876,session-1)'
+LANG=en_US.UTF-8
+LOGNAME=kkk
+MACHTYPE=i486-pc-linux-gnu
+NO_WAIT_FOR_RESULTS=yes
+OPENOFFICE_OPTIONS=' -norestore'
+OPENOFFICE_STARTUP_HOOK=/home/kkk/prefetch/trunk/tools/openoffice/openoffice_started.sh
+OPENOFFICE_STARTUP_HOOK_PARAMS=/home/kkk/prefetch/trunk/tools/openoffice/start_time.tmp
+OPTERR=1
+OPTIND=1
+OSTYPE=linux-gnu
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+PIPESTATUS=([0]="0")
+PPID=4915
+PS4='+ '
+PWD=/home/kkk/prefetch/trunk/tools/openoffice
+RESULT_FILE=/home/kkk/prefetch/trunk/tools/openoffice/start_time.tmp
+SESSION_MANAGER=local/gutsy:/tmp/.ICE-unix/4842
+SHELL=/bin/bash
+SHELLOPTS=braceexpand:hashall:interactive-comments
+SHLVL=3
+SSH_AGENT_PID=4788
+SSH_AUTH_SOCK=/tmp/ssh-iThVeB4745/agent.4745
+STAMP=20070802-15:11:49
+START_TIME=1186060309.519226570
+TERM=xterm
+THIS_SCRIPT_DIR=.
+TRACE_IO=no
+UID=1000
+USER=kkk
+WINDOWID=33554450
+XCURSOR_THEME=kubuntu
+XDM_MANAGED=/var/run/xdmctl/xdmctl-:0,maysd,mayfn,sched,rsvd,method=classic,auto
+_=break
+drop_caches () 
+{ 
+    MODE="$1";
+    if [ "$MODE" = "1" -o "$MODE" = "2" -o "$MODE" = "3" ]; then
+        for i in `seq 3`;
+        do
+            sudo sync;
+            sleep 1;
+        done;
+        sudo bash -c "echo $MODE >/proc/sys/vm/drop_caches";
+        sudo hdparm -f /dev/hda > /dev/null 2> /dev/null;
+        return 0;
+    else
+        echo "Invalid drop_caches mode '$MODE'";
+        return 1;
+    fi
+}
+echoerr () 
+{ 
+    echo "$@" 1>&2
+}
+failure () 
+{ 
+    echo "$@";
+    exit 1
+}
+get_time () 
+{ 
+    date --utc +'%s.%N'
+}
+subtract_time () 
+{ 
+    [ -z "$1" ] && failure "subtract_time requires 2 arguments";
+    [ -z "$2" ] && failure "subtract_time requires 2 arguments";
+    python -c "print $1 - $2"
+}
+subtract_time requires 2 arguments  #stamp: 20070802-15:11:49 #all: 
+64.88 25.58
+Restarts left: 7
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+5.60171532631 54 #stamp: 20070802-15:14:18 #all:  1186060465.705912190 54 stat: 5023 (soffice.bin) S 5009 4926 4926 34821 4926 4202496 20388 245 0 0 295 31 0 0 25 0 7 0 6005 193486848 18074 4294967295 134512640 134860204 3217679792 3217678348 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 54
+64.85 25.56
+Restarts left: 6
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+5.34343624115 54 #stamp: 20070802-15:16:48 #all:  1186060613.768559232 54 stat: 5005 (soffice.bin) S 4992 4914 4914 34821 4914 4202496 20371 244 0 0 299 30 0 0 25 0 7 0 6023 193478656 18073 4294967295 134512640 134860204 3217720768 3217719324 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 54
+65.15 25.63
+Restarts left: 5
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+6.8102452755 55 #stamp: 20070802-15:19:15 #all:  1186060762.285669424 55 stat: 4993 (soffice.bin) S 4981 4879 4879 34821 4879 4202496 20398 244 0 0 298 30 0 0 25 0 7 0 5961 193486848 18075 4294967295 134512640 134860204 3219822528 3219821084 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 55
+64.44 25.05
+Restarts left: 4
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+5.29812335968 52 #stamp: 20070802-15:21:43 #all:  1186060909.447362400 52 stat: 4989 (soffice.bin) S 4976 4891 4891 34821 4891 4202496 20370 245 0 0 298 27 0 0 25 0 7 0 5970 193478656 18071 4294967295 134512640 134860204 3218624160 3218622716 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 52
+64.42 24.95
+Restarts left: 3
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+7.43819737434 56 #stamp: 20070802-15:24:10 #all:  1186061058.260219221 56 stat: 5023 (soffice.bin) S 5007 4910 4910 34821 4910 4202496 20389 245 0 0 296 35 0 0 25 0 7 0 5954 193486848 18074 4294967295 134512640 134860204 3214742240 3214740796 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 56
+64.41 25.17
+Restarts left: 2
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+5.68892669678 52 #stamp: 20070802-15:26:37 #all:  1186061205.477342187 52 stat: 4992 (soffice.bin) S 4974 4879 4879 34819 4879 4202496 20406 244 0 0 299 25 0 0 25 0 7 0 5980 193482752 18072 4294967295 134512640 134860204 3220777120 3220775676 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 52
+64.60 25.35
+Restarts left: 1
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+6.134953022 57 #stamp: 20070802-15:29:09 #all:  1186061355.458331195 57 stat: 5029 (soffice.bin) S 5011 4910 4910 34819 4910 4202496 20378 245 0 0 305 25 0 0 25 0 7 0 5976 193486848 18073 4294967295 134512640 134860204 3216311392 3216309948 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 57
+64.58 25.17
+Restarts left: 0
+#restart
+# Linux gutsy 2.6.22-rc3-pgcache-delays #60 SMP Mon Jul 23 17:33:51 CEST 2007 i686 GNU/Linux
+#running openoffice as part of boot
+5.62310123444 55 #stamp: 20070802-15:31:35 #all:  1186061503.400957410 55 stat: 4993 (soffice.bin) S 4979 4905 4905 34821 4905 4202496 20395 245 0 0 294 28 0 0 25 0 7 0 5963 193486848 18073 4294967295 134512640 134860204 3220105216 3220103772 4294960144 0 0 4096 2076271871 4294967295 0 0 17 0 0 0 55
+64.52 25.10
