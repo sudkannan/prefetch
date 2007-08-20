@@ -31,14 +31,17 @@ Measurements repeatability:
   * First run used boot traces from previous runs.
 
 === Test results ===
-Note: During reordering tests, some of 500-lines chunks failed to be reordered due to lack of free area big enough to hold it.
+Notes: 
+  # During reordering tests, some of 500-lines chunks (from 0 to 3 max) failed to be reordered due to lack of free area big enough to hold it.
+  # Reordering time for this setup was 14s - 20s.
 
 ||	Startup time	||	With reordering	||	Without reordering	||	Without reordering - With reordering	||
 ||	Average	||	46.89	||	52.68	||	5.79	||
 ||	Stddev	||	2.19	||	2.26	||	0.07	||
 ||	min	||	44	||	49.13	||	5.13	||
 ||	max	||	50.28	||	57.2	||	6.92	||
-								
+
+IO ticks:								
 ||	IO ticks	||	With reordering	||	Without reordering	||	Without reordering - With reordering	||
 ||	Average	||	17.38	||	21.84	||	4.47	||
 ||	Stddev	||	0.28	||	0.33	||	0.05	||
@@ -47,3 +50,8 @@ Note: During reordering tests, some of 500-lines chunks failed to be reordered d
 
 
 === Conclusions ===
+  * Reordering can save quite significant amount of time (5.79s). Please note that this can be further improved as some chunks failed to be reordered.
+  * The speedup is caused almost completely by savings in IO ticks (4.47s difference in IO ticks while boot time difference is 5.79s).
+  * Disk with ~4.7 GB does not have large free areas for relocation, splitting prefetched area into chunks is necessary.
+  * Current chunk splitting technique is not good, it causes some chunks to fail. It also slows down reordering as reordering tool must be run several times. Layout tool should be improved to look for several areas with free space and fit prefetch data into these areas accordingly.
+  * Speed of reordering tool should be improved. 20s is rather the upper bound of time which can be used during shutdown for purpose of reordering. Consolidating reordering chunks should help, but also speedups in blocks moving would be useful.
