@@ -77,7 +77,7 @@ trap cleanup TERM
 LC_ALL=C dd if=/dev/zero of="$FS_IMAGE" bs=1M count="$SIZE_MB" || failure "Failed to create filesystem image file, error=$?"
 
 mkfs.ext3 -F -q "$FS_IMAGE" || failure "Failed to create filesystem, error=$?"
-tune2fs -O ^dir_index "$FS_IMAGE" || failure "Failed to turn off directory indexes, error=$?"
+#tune2fs -O ^dir_index "$FS_IMAGE" || failure "Failed to turn off directory indexes, error=$?"
 
 mkdir "$MNT_DIR"
 
