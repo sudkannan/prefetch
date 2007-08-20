@@ -48,6 +48,12 @@ State at coding deadline for Google Summer of Code (August 20, 2007):
 Known bugs:
   * 3-aggregation does not work currently for gui and system traces (it works for boot), apparently some bug was introduced in script which processes trace.
 
+To do:
+  * Clean up kernel patch for submission to Ubuntu kernel-team and upstream.
+  * More tests (especially file contents tests) for disk layout tool.
+  * Improving disk layout tool to find free space areas to fit data.
+  * Improvements to reordering on boot (especially copying files).
+
 == News ==
   * Sun, 12 Aug 2007
      * Fully functional boot prefetching released for testing, for installation instructions see [TestingBootPrefetching this page], for announcement see [https://lists.ubuntu.com/archives/ubuntu-devel-discuss/2007-August/001440.html this mail to ubuntu-devel-discuss]
