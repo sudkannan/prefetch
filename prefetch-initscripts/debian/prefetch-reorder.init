@@ -59,10 +59,9 @@ copy_file() {
             done
         fi
     elif file -i -b "$path" | grep -q 'application/x-sharedlib'; then
-            for lib in $(ldd "$path" | awk '{ print $3 }'); do
-                copy_file "$lib" "$destroot"
-            done
-        fi
+	for lib in $(ldd "$path" | awk '{ print $3 }'); do
+	copy_file "$lib" "$destroot"
+	done
     fi
     destpath=`dirname "$destroot/$path"
     mkdir -p "$destpath"
@@ -76,6 +75,11 @@ case "$1" in
 	exit 3
 	;;
   start|stop)
+	#KLDEBUG:run shell 
+	/bin/bash
+	log_warning_msg "After running shell"
+  real-start)
+
   	if [ ${ENABLE_FILE_REORDERING:-0} -ne 1 ] ; then
   		echo "Prefetch reordering files not enabled "
   		exit 0
@@ -113,8 +117,6 @@ case "$1" in
 	cache_path /sbin/reboot
 	cache_path /sbin/halt
 	time chroot "$BASE_DIR" /etc/init.d/prefetch-reorder reorder
-	/bin/bash #</dev/console >/dev/console #2>/dev/console
-	log_warning_msg "After running shell"
 	;;
   reorder)
   	if [ ${ENABLE_FILE_REORDERING:-0} -ne 1 ] ; then
