@@ -20,7 +20,7 @@ Test method:
   * Two setups were tested: with reordering and without reordering
 
 With reordering setup:
-  * After each boot into tested system, system was manually booted from other partition and root partition of tested system was reordered based on split layouts produced by tested system.
+  * After each boot into tested system, system was manually booted from other partition and root partition of tested system was reordered based on split layouts produced by tested system using [http://prefetch.googlecode.com/svn/trunk/results/reordering/testmachine-kl1/test-1-manual/reorder-hda13.sh this script].
   * Layout was split into 500-lines chunks as there was no such big contiguous space to hold whole prefetched area.
 
 Without reordering setup:
@@ -31,5 +31,19 @@ Measurements repeatability:
   * First run used boot traces from previous runs.
 
 === Test results ===
+Note: During reordering tests, some of 500-lines chunks failed to be reordered due to lack of free area big enough to hold it.
+
+||	Startup time	||	With reordering	||	Without reordering	||	Without reordering - With reordering	||
+||	Average	||	46.89	||	52.68	||	5.79	||
+||	Stddev	||	2.19	||	2.26	||	0.07	||
+||	min	||	44	||	49.13	||	5.13	||
+||	max	||	50.28	||	57.2	||	6.92	||
+								
+||	IO ticks	||	With reordering	||	Without reordering	||	Without reordering - With reordering	||
+||	Average	||	17.38	||	21.84	||	4.47	||
+||	Stddev	||	0.28	||	0.33	||	0.05	||
+||	min	||	16.82	||	21.43	||	4.61	||
+||	max	||	17.83	||	22.6	||	4.77	||
+
 
 === Conclusions ===
