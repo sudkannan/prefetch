@@ -1,0 +1,1185 @@
+Subject: [PATCH 3/3] Application tracing and prefetching support.
+
+Signed-off-by: Krzysztof Lichota <lichota@mimuw.edu.pl>
+
+
+---
+
+ fs/exec.c                     |    3 
+ include/linux/prefetch_core.h |    9 
+ init/Kconfig                  |    9 
+ kernel/exit.c                 |    3 
+ mm/Makefile                   |    1 
+ mm/prefetch_app.c             | 1071 +++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 1096 insertions(+), 0 deletions(-)
+ create mode 100644 mm/prefetch_app.c
+
+389ff22eff18911eeed4ad41515da8677f4463b6
+diff --git a/fs/exec.c b/fs/exec.c
+index f9e8f6f..b060dce 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -51,6 +51,7 @@
+ #include <linux/cn_proc.h>
+ #include <linux/audit.h>
+ #include <linux/signalfd.h>
++#include <linux/prefetch_core.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -1167,6 +1168,8 @@ int do_execve(char * filename,
+ 	if (IS_ERR(file))
+ 		goto out_kfree;
+ 
++	prefetch_exec_hook(filename);
++
+ 	sched_exec();
+ 
+ 	bprm->p = PAGE_SIZE*MAX_ARG_PAGES-sizeof(void *);
+diff --git a/include/linux/prefetch_core.h b/include/linux/prefetch_core.h
+index 9254e2b..a5fbd56 100644
+--- a/include/linux/prefetch_core.h
++++ b/include/linux/prefetch_core.h
+@@ -98,4 +98,13 @@ int kernel_write(struct file *file, unsi
+ /*NOTE: kernel_read is already available in kernel*/
+ int kernel_close(struct file *file);
+ 
++/* App prefetching hooks */
++#ifdef CONFIG_PREFETCH_APP
++void prefetch_exec_hook(char *filename);
++void prefetch_exit_hook(pid_t pid);
++#else
++#define prefetch_exec_hook(param) do {} while (0)
++#define prefetch_exit_hook(param) do {} while (0)
++#endif
++
+ #endif /*_LINUX_PREFETCH_CORE_H*/
+diff --git a/init/Kconfig b/init/Kconfig
+index 4cf8c4f..070bfd2 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -120,6 +120,15 @@ config PREFETCH_BOOT
+        help
+          This option enables facility for tracing and prefetching during system boot.
+          In order to use it you have to install appropriate prefetch init scripts.
++config PREFETCH_APP
++       bool "Application prefetching support"
++       default n
++       depends on PREFETCH_CORE && PROC_FS && EXPERIMENTAL
++       help
++         This option enables facility for tracing and prefetching during application start.
++         Upon application start tracing is started and after some, configurable time,
++         tracing is stopped and written to file. Upon next start the files in saved
++         file are prefetched.
+ config PREFETCH_DEBUG
+        bool "Prefetching debug interface and debugging facilities"
+        default n
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 5b888c2..c136765 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -44,6 +44,7 @@
+ #include <linux/resource.h>
+ #include <linux/blkdev.h>
+ #include <linux/task_io_accounting_ops.h>
++#include <linux/prefetch_core.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/unistd.h>
+@@ -864,6 +865,8 @@ fastcall NORET_TYPE void do_exit(long co
+ 	struct task_struct *tsk = current;
+ 	int group_dead;
+ 
++	prefetch_exit_hook(tsk->pid);
++
+ 	profile_task_exit(tsk);
+ 
+ 	WARN_ON(atomic_read(&tsk->fs_excl));
+diff --git a/mm/Makefile b/mm/Makefile
+index 8f731d0..8ff62af 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -33,3 +33,4 @@ obj-$(CONFIG_SMP) += allocpercpu.o
+ obj-$(CONFIG_QUICKLIST) += quicklist.o
+ obj-$(CONFIG_PREFETCH_CORE)	+= prefetch_core.o
+ obj-$(CONFIG_PREFETCH_BOOT)	+= prefetch_boot.o
++obj-$(CONFIG_PREFETCH_APP)	+= prefetch_app.o
+diff --git a/mm/prefetch_app.c b/mm/prefetch_app.c
+new file mode 100644
+index 0000000..d90126b
+--- /dev/null
++++ b/mm/prefetch_app.c
+@@ -0,0 +1,1071 @@
++/*
++ * linux/mm/prefetch_app.c
++ *
++ * Copyright (C) 2007 Krzysztof Lichota <lichota@mimuw.edu.pl>
++ *
++ * This is application tracing and prefetching module. It traces application start
++ * for specified time, then upon next start it prefetches these files.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/prefetch_core.h>
++#include <asm/uaccess.h>
++#include <linux/proc_fs.h>
++#include <linux/workqueue.h>
++#include <asm/current.h>
++#include <linux/sched.h>
++#include <linux/module.h>
++#include <linux/crc32.h>
++#include <linux/sched.h>
++#include <linux/delayacct.h>
++#include <linux/seq_file.h>
++
++/*Enables/disables whole functionality of the module*/
++static int enabled = 1;
++module_param(enabled, bool, 0);
++MODULE_PARM_DESC(enabled,
++		 "Enables or disables whole app prefetching module functionality (tracing and prefetching)");
++
++static int initialized = 0;
++
++/*Controls whether prefetching should be done along with tracing.*/
++static int prefetch_enabled = 1;
++module_param(prefetch_enabled, bool, 0);
++MODULE_PARM_DESC(prefetch_enabled,
++		 "Enables or disables prefetching during app start. If disabled, only tracing will be done");
++
++/*Size of shortened name, together with hash it should be <=DNAME_INLINE_LEN_MIN*/
++static int short_name_len = 10;
++module_param(short_name_len, bool, 0);
++MODULE_PARM_DESC(short_name_len,
++		 "Length of shortened file name, used to name prefetch file together with hash of whole name");
++
++#define DEFAULT_APP_TRACE_FILENAME_TEMPLATE "/.prefetch/%s"
++static char *filename_template = DEFAULT_APP_TRACE_FILENAME_TEMPLATE;
++module_param(filename_template, charp, 0);
++MODULE_PARM_DESC(filename_template,
++		 "Template for application trace name, where trace will be saved and read from. %s will be replaced with name of application and hash. The default is: "
++		 DEFAULT_APP_TRACE_FILENAME_TEMPLATE);
++
++/*Size of hashtable for filenames*/
++static int filename_hashtable_size = 128;
++module_param(filename_hashtable_size, uint, 0);
++MODULE_PARM_DESC(filename_hashtable_size, "Size of hashtable for filenames");
++
++/**
++ * Time (in seconds) after which app tracing is stopped.
++*/
++static int tracing_timeout = 10;
++module_param(tracing_timeout, uint, 0);
++MODULE_PARM_DESC(tracing_timeout,
++		 "Time (in seconds) after which app tracing is stopped");
++
++/**
++ * IO ticks (in centisecs) threshold above which application will be traced and prefetching done.
++*/
++static int tracing_ticks_threshold = 200;
++module_param(tracing_ticks_threshold, uint, 0);
++MODULE_PARM_DESC(tracing_ticks_threshold,
++		 "IO ticks (in centisecs) threshold above which application will be traced and prefetching done");
++
++/**
++ * Hashtable of apps names blacklisted from tracing/prefetching.
++ * If filename is on this list, it will not be traced.
++ * Protected by prefetch_apps_blacklist_mutex.
++*/
++struct hlist_head *prefetch_apps_blacklist;
++DEFINE_MUTEX(prefetch_apps_blacklist_mutex);
++
++/**
++ * Hashtable of apps names which should be traced/prefetched.
++ * If filename is on this list, it means it has been decided that tracing/prefetching
++ * should be done for it.
++ * This list is protected by prefetch_apps_list_mutex.
++*/
++struct hlist_head *prefetch_apps_list;
++DEFINE_MUTEX(prefetch_apps_list_mutex);
++
++/**
++ * Entry in filename hashtable list.
++*/
++struct filename_entry {
++	struct hlist_node entries_list;
++	char *filename;
++};
++
++struct trace_job;
++
++/**
++ * Entry in traced pids hashtable list.
++*/
++struct traced_pid_entry {
++	struct hlist_node entries_list;
++	pid_t pid;
++	struct trace_job *trace_job;
++};
++
++#define TRACED_HASH_SIZE 16
++/**
++ * Hashtable of concurrently traced applications.
++ * The key is pid.
++ * Protected by traced_pids_mutex.
++*/
++struct hlist_head *traced_pids;
++
++DEFINE_MUTEX(traced_pids_mutex);
++
++/**
++ * Frees filename entry contents and entry itself.
++*/
++void free_filename_entry(struct filename_entry *entry)
++{
++	kfree(entry->filename);
++	kfree(entry);
++}
++
++void __clear_hashtable(struct hlist_head *list, int hashtable_size)
++{
++	struct filename_entry *entry;
++	struct hlist_node *cursor;
++	struct hlist_node *tmp;
++	int i;
++
++	for (i = 0; i < hashtable_size; ++i) {
++		hlist_for_each_entry_safe(entry, cursor, tmp, &list[i],
++					  entries_list) {
++			free_filename_entry(entry);
++		}
++		/* clear whole list at once */
++		INIT_HLIST_HEAD(&list[i]);
++	}
++}
++
++void clear_hashtable(struct hlist_head *list, int hashtable_size,
++		     struct mutex *mutex)
++{
++	mutex_lock(mutex);
++	__clear_hashtable(list, hashtable_size);
++	mutex_unlock(mutex);
++}
++
++int initialize_hashtable(struct hlist_head **list, int hashtable_size)
++{
++	struct hlist_head *h;
++	int i;
++
++	h = kmalloc(sizeof(struct hlist_head) * hashtable_size, GFP_KERNEL);
++	if (h == NULL)
++		return -ENOMEM;
++
++	for (i = 0; i < hashtable_size; ++i) {
++		INIT_HLIST_HEAD(&h[i]);
++	}
++
++	*list = h;
++	return 0;
++}
++
++u32 filename_hash(char *s)
++{
++	return crc32_le(0, s, strlen(s));
++}
++
++static inline unsigned filename_hashtable_index(char *filename)
++{
++	return filename_hash(filename) % filename_hashtable_size;
++}
++
++/**
++ * Checks if filename @filename is in hashtable @list
++ */
++int filename_on_list(char *filename, struct hlist_head *list)
++{
++	struct filename_entry *entry;
++	struct hlist_node *cursor;
++	unsigned hashtable_index = filename_hashtable_index(filename);
++
++	hlist_for_each_entry(entry, cursor, &list[hashtable_index],
++			     entries_list) {
++		if (strcmp(entry->filename, filename) == 0)
++			return 1;
++	}
++	return 0;
++}
++
++/**
++ * Adds filename @filename to hashtable @list
++ * Filename contents is copied.
++ * Proper mutex must be held.
++ */
++static int __add_filename_to_list(char *filename, struct hlist_head *list)
++{
++	int ret = 0;
++	struct filename_entry *entry = NULL;
++	unsigned hashtable_index = filename_hashtable_index(filename);
++
++	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
++	if (entry == NULL) {
++		ret = -ENOMEM;
++		goto out_error;
++	}
++	INIT_HLIST_NODE(&entry->entries_list);
++
++	entry->filename = kstrdup(filename, GFP_KERNEL);
++	if (entry->filename == NULL) {
++		ret = -ENOMEM;
++		goto out_error;
++	}
++
++	hlist_add_head(&entry->entries_list, &list[hashtable_index]);
++
++	return ret;
++
++      out_error:
++	if (entry != NULL) {
++		if (entry->filename != NULL)
++			kfree(entry->filename);
++		kfree(entry);
++	}
++	return ret;
++}
++
++static int add_filename_to_list_unique(char *filename, struct hlist_head *list,
++				       struct mutex *mutex)
++{
++	int ret = 0;
++
++	mutex_lock(mutex);
++	if (!filename_on_list(filename, list))
++		ret = __add_filename_to_list(filename, list);
++	mutex_unlock(mutex);
++
++	return ret;
++}
++
++/**
++ * Removes filename @filename from hashtable @list
++ * Frees filename entry and its contents.
++ * Returns true (non-zero) if entry was found and removed.
++ */
++int remove_filename_from_list(char *filename, struct hlist_head *list)
++{
++	struct filename_entry *entry;
++	struct hlist_node *cursor;
++	unsigned hashtable_index = filename_hashtable_index(filename);
++
++	hlist_for_each_entry(entry, cursor, &list[hashtable_index],
++			     entries_list) {
++		if (strcmp(entry->filename, filename) == 0) {
++			hlist_del(&entry->entries_list);
++			free_filename_entry(entry);
++			return 1;
++		}
++	}
++	return 0;
++}
++
++static inline unsigned traced_pid_hash(pid_t pid)
++{
++	return pid % TRACED_HASH_SIZE;
++}
++
++/**
++ * Adds pid @pid to traced pids with trace job @job.
++ */
++int add_traced_pid(pid_t pid, struct trace_job *job,
++		   struct hlist_head *hashtable)
++{
++	int ret = 0;
++	struct traced_pid_entry *entry = NULL;
++	unsigned hashtable_index = traced_pid_hash(pid);
++
++	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
++	if (entry == NULL) {
++		ret = -ENOMEM;
++		goto out_error;
++	}
++	INIT_HLIST_NODE(&entry->entries_list);
++	entry->trace_job = job;
++	entry->pid = pid;
++
++	hlist_add_head(&entry->entries_list, &hashtable[hashtable_index]);
++
++	return ret;
++
++      out_error:
++	kfree(entry);
++	return ret;
++}
++
++/**
++ * Removes trace job for pid @pid.
++ * Frees entry and its contents.
++ * Does not free job.
++ */
++int remove_traced_pid(pid_t pid, struct hlist_head *hashtable)
++{
++	struct traced_pid_entry *entry = NULL;
++	unsigned hashtable_index = traced_pid_hash(pid);
++	struct hlist_node *cursor;
++
++	hlist_for_each_entry(entry, cursor, &hashtable[hashtable_index],
++			     entries_list) {
++		if (entry->pid == pid) {
++			hlist_del(&entry->entries_list);
++			kfree(entry);
++			return 1;
++		}
++	}
++	return 0;
++}
++
++struct traced_pid_entry *find_traced_pid(pid_t pid,
++					 struct hlist_head *hashtable)
++{
++	struct traced_pid_entry *entry = NULL;
++	unsigned hashtable_index = traced_pid_hash(pid);
++	struct hlist_node *cursor;
++
++	hlist_for_each_entry(entry, cursor, &hashtable[hashtable_index],
++			     entries_list) {
++		if (entry->pid == pid)
++			return entry;
++	}
++	return NULL;
++}
++
++/**
++	Structure describing tracing or monitoring job.
++*/
++struct trace_job {
++	struct delayed_work work;
++	char *filename;
++	pid_t pid;
++	struct trace_marker start_marker;
++};
++
++char *create_trace_filename(char *filename)
++{
++	char *basename = NULL;
++	u32 hash;
++	int filename_len = strlen(filename);
++	char *file_name = NULL;
++	char *short_name = NULL;
++	char *slash_pos;
++
++	hash = crc32_le(0, filename, filename_len);
++
++	slash_pos = strrchr(filename, '/');
++	if (slash_pos == NULL) {
++		printk(KERN_WARNING "File name does not contain slash\n");
++		goto out;
++	}
++
++	basename = kmalloc(short_name_len + 1, GFP_KERNEL);
++
++	if (basename == NULL) {
++		printk(KERN_WARNING "Cannot allocate memory for basename\n");
++		goto out;
++	}
++	strncpy(basename, slash_pos + 1, short_name_len);
++	basename[short_name_len] = '\0';
++
++	file_name = kasprintf(GFP_KERNEL, "%s-%x", basename, hash);
++	if (file_name == NULL) {
++		printk(KERN_WARNING "Cannot allocate memory for file name\n");
++		goto out;
++	}
++
++	short_name = kasprintf(GFP_KERNEL, filename_template, file_name);
++	if (short_name == NULL) {
++		printk(KERN_WARNING "Cannot allocate memory for short name\n");
++		goto out;
++	}
++
++      out:
++	if (file_name != NULL)
++		kfree(file_name);
++	if (basename != NULL)
++		kfree(basename);
++	return short_name;
++}
++
++static void do_finish_monitoring(struct trace_job *trace_job)
++{
++	struct task_struct *process = NULL;
++	int ticks = -1;
++
++	read_lock(&tasklist_lock);
++	process = find_task_by_pid(trace_job->pid);
++	if (process != NULL)
++		ticks = delayacct_blkio_ticks(process);
++	read_unlock(&tasklist_lock);
++
++	if (ticks == -1) {
++		/* Process was terminated earlier than our timeout, stopping monitoring was handled by exit hook */
++		goto out;
++	}
++
++	if (ticks > tracing_ticks_threshold) {
++		/* Add app to tracing list if it does not appear there yet */
++#ifdef CONFIG_PREFETCH_DEBUG
++		printk(KERN_INFO
++		       "Application %s qualifies for prefetching, ticks=%d\n",
++		       trace_job->filename, ticks);
++#endif
++		mutex_lock(&prefetch_apps_list_mutex);
++		if (!filename_on_list(trace_job->filename, prefetch_apps_list)) {
++			__add_filename_to_list(trace_job->filename,
++					       prefetch_apps_list);
++#ifdef CONFIG_PREFETCH_DEBUG
++			printk(KERN_INFO
++			       "Added application %s to prefetching list\n",
++			       trace_job->filename);
++#endif
++		}
++		mutex_unlock(&prefetch_apps_list_mutex);
++	} else {
++		/* App does not require prefetching, remove app from tracing list if it there */
++		mutex_lock(&prefetch_apps_list_mutex);
++		remove_filename_from_list(trace_job->filename,
++					  prefetch_apps_list);
++		mutex_unlock(&prefetch_apps_list_mutex);
++	}
++      out:
++	return;
++}
++
++static void finish_trace_job(struct trace_job *trace_job)
++{
++	mutex_lock(&traced_pids_mutex);
++	if (!remove_traced_pid(trace_job->pid, traced_pids))
++		printk(KERN_WARNING
++		       "Did not remove pid %d from traced pids, inconsistency in pids handling, filename for job=%s\n",
++		       trace_job->pid, trace_job->filename);
++	mutex_unlock(&traced_pids_mutex);
++
++	kfree(trace_job->filename);
++	kfree(trace_job);
++}
++
++static void finish_monitoring(struct work_struct *work)
++{
++	struct trace_job *trace_job =
++	    container_of(container_of(work, struct delayed_work, work),
++			 struct trace_job, work);
++	do_finish_monitoring(trace_job);
++	finish_trace_job(trace_job);
++}
++
++static void finish_tracing(struct work_struct *work)
++{
++	struct trace_marker end_marker;
++	void *trace_fragment = NULL;
++	int trace_fragment_size = 0;
++	int ret;
++	struct trace_job *trace_job =
++	    container_of(container_of(work, struct delayed_work, work),
++			 struct trace_job, work);
++	char *trace_filename = NULL;
++
++	do_finish_monitoring(trace_job);
++
++	ret = prefetch_stop_trace(&end_marker);
++
++	if (ret < 0) {
++		printk(KERN_WARNING "Failed to stop trace for application %s\n",
++		       trace_job->filename);
++		end_marker = trace_job->start_marker;	/*at least this we can do to release as much as possible */
++		goto out_release;
++	}
++
++	ret = get_prefetch_trace_fragment(trace_job->start_marker,
++					  end_marker,
++					  &trace_fragment,
++					  &trace_fragment_size);
++	if (ret < 0) {
++		printk(KERN_WARNING
++		       "Failed to fetch trace fragment for application %s, error=%d\n",
++		       trace_job->filename, ret);
++		goto out_release;
++	}
++
++	if (trace_fragment_size <= 0) {
++		printk(KERN_WARNING "Empty trace for application %s\n",
++		       trace_job->filename);
++		goto out_release;
++	}
++
++	trace_filename = create_trace_filename(trace_job->filename);
++	if (trace_filename == NULL) {
++		printk(KERN_WARNING
++		       "Cannot allocate memory for short filename, trace for application %s not saved\n",
++		       trace_job->filename);
++		goto out_free_release;
++	}
++
++	sort_trace_fragment(trace_fragment, trace_fragment_size);
++	/*
++	 * NOTE: the race between saving and loading trace is possible, but it should only
++	 * result in reading prefetch file failing or prefetch not done very efficiently.
++	 */
++	ret =
++	    prefetch_save_trace_fragment(trace_filename, trace_fragment,
++					 trace_fragment_size);
++	if (ret < 0) {
++		printk(KERN_WARNING
++		       "Failed to save trace for application %s to file %s, error=%d\n",
++		       trace_job->filename, trace_filename, ret);
++		goto out_free_release;
++	}
++
++      out_free_release:
++	free_trace_buffer(trace_fragment, trace_fragment_size);
++
++      out_release:
++	ret = prefetch_release_trace(end_marker);
++	if (ret < 0)
++		printk(KERN_WARNING
++		       "Releasing trace for app tracing returned error, error=%d\n",
++		       ret);
++	if (trace_filename != NULL)
++		kfree(trace_filename);
++	finish_trace_job(trace_job);
++}
++
++static int start_tracing_job(char *filename)
++{
++	int ret = 0;
++	struct trace_job *trace_job;
++
++	trace_job = kzalloc(sizeof(*trace_job), GFP_KERNEL);
++
++	if (trace_job == NULL) {
++		printk(KERN_WARNING
++		       "Cannot allocate memory to start tracing for app %s\n",
++		       filename);
++		ret = -ENOMEM;
++		goto out_error;
++	}
++
++	trace_job->filename = kstrdup(filename, GFP_KERNEL);
++
++	if (trace_job->filename == NULL) {
++		printk(KERN_WARNING
++		       "Cannot allocate memory for filename to start tracing for app %s\n",
++		       filename);
++		ret = -ENOMEM;
++		goto out_free;
++	}
++
++	ret = prefetch_start_trace(&trace_job->start_marker);
++	if (ret < 0) {
++		printk(KERN_WARNING "Failed to start tracing for app %s\n",
++		       filename);
++		goto out_free;
++	}
++
++	trace_job->pid = current->pid;
++
++	mutex_lock(&traced_pids_mutex);
++	add_traced_pid(trace_job->pid, trace_job, traced_pids);
++	mutex_unlock(&traced_pids_mutex);
++
++	INIT_DELAYED_WORK(&trace_job->work, finish_tracing);
++	schedule_delayed_work(&trace_job->work, HZ * tracing_timeout);
++
++#ifdef CONFIG_PREFETCH_DEBUG
++	printk(KERN_INFO "Successfully started tracing for application %s\n",
++	       filename);
++#endif
++
++	return 0;
++
++      out_free:
++	if (trace_job != NULL) {
++		if (trace_job->filename != NULL)
++			kfree(trace_job->filename);
++		kfree(trace_job);
++	}
++      out_error:
++	return ret;
++}
++
++static int start_monitoring_job(char *filename)
++{
++	int ret = 0;
++	struct trace_job *trace_job;
++
++	trace_job = kzalloc(sizeof(*trace_job), GFP_KERNEL);
++
++	if (trace_job == NULL) {
++		printk(KERN_WARNING
++		       "Cannot allocate memory to start monitoring for app %s\n",
++		       filename);
++		ret = -ENOMEM;
++		goto out_error;
++	}
++
++	trace_job->filename = kstrdup(filename, GFP_KERNEL);
++
++	if (trace_job->filename == NULL) {
++		printk(KERN_WARNING
++		       "Cannot allocate memory for filename to start monitoring for app %s\n",
++		       filename);
++		ret = -ENOMEM;
++		goto out_free;
++	}
++
++	trace_job->pid = current->pid;
++
++	mutex_lock(&traced_pids_mutex);
++	add_traced_pid(trace_job->pid, trace_job, traced_pids);
++	mutex_unlock(&traced_pids_mutex);
++
++	INIT_DELAYED_WORK(&trace_job->work, finish_monitoring);
++	schedule_delayed_work(&trace_job->work, HZ * tracing_timeout);
++
++	return 0;
++
++      out_free:
++	if (trace_job != NULL) {
++		if (trace_job->filename != NULL)
++			kfree(trace_job->filename);
++		kfree(trace_job);
++	}
++      out_error:
++	return ret;
++}
++
++int start_app_prefetch(char *filename)
++{
++	char *trace_filename = NULL;
++	int ret = 0;
++
++	trace_filename = create_trace_filename(filename);
++	if (trace_filename == NULL) {
++		printk(KERN_WARNING
++		       "Cannot allocate memory for short filename, cannot start prefetetching for application %s\n",
++		       filename);
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	ret = do_prefetch_from_file(trace_filename);
++	if (ret < 0) {
++		printk(KERN_WARNING
++		       "Failed to start prefetching for application %s, error=%d\n",
++		       filename, ret);
++		goto out_free;
++	}
++
++      out_free:
++	kfree(trace_filename);
++
++      out:
++	return ret;
++}
++
++void try_app_prefetch(char *filename)
++{
++	int app_on_list;
++
++	if (!enabled)
++		return;
++
++	mutex_lock(&prefetch_apps_blacklist_mutex);
++	if (filename_on_list(filename, prefetch_apps_blacklist)) {
++#ifdef CONFIG_PREFETCH_DEBUG
++		printk(KERN_INFO
++		       "Not doing tracing nor prefetching for blacklisted file %s\n",
++		       filename);
++#endif
++		mutex_unlock(&prefetch_apps_blacklist_mutex);
++		return;
++	}
++	mutex_unlock(&prefetch_apps_blacklist_mutex);
++
++	mutex_lock(&prefetch_apps_list_mutex);
++	app_on_list = filename_on_list(filename, prefetch_apps_list);
++	mutex_unlock(&prefetch_apps_list_mutex);
++
++	if (app_on_list) {
++		/* Start tracing  and schedule end tracing work */
++		start_tracing_job(filename);
++
++		if (prefetch_enabled) {
++			start_app_prefetch(filename);
++		}
++	} else {
++		start_monitoring_job(filename);
++	}
++}
++
++void prefetch_exec_hook(char *filename)
++{
++	try_app_prefetch(filename);
++}
++
++/**
++	Prefetch hook for intercepting exit() of process.
++*/
++void prefetch_exit_hook(pid_t pid)
++{
++	struct traced_pid_entry *entry = NULL;
++	if (!initialized || !enabled)
++		return;
++
++	mutex_lock(&traced_pids_mutex);
++	entry = find_traced_pid(pid, traced_pids);
++	if (entry != NULL)
++		do_finish_monitoring(entry->trace_job);
++	mutex_unlock(&traced_pids_mutex);
++	/*NOTE: job is not cancelled, it will wake up and clean up after itself */
++}
++
++#define PREFETCH_PATH_MAX 512
++#define PREFETCH_PATH_MAX_S "512"
++
++ssize_t app_prefetch_proc_write(struct file *proc_file,
++				const char __user * buffer, size_t count,
++				loff_t * ppos)
++{
++	char *name;
++	int e = 0;
++	int tmp;
++	int r;
++	char *s = NULL;
++
++	if (count >= PATH_MAX)
++		return -ENAMETOOLONG;
++
++	name = kmalloc(count + 1, GFP_KERNEL);
++	if (!name)
++		return -ENOMEM;
++
++	if (copy_from_user(name, buffer, count)) {
++		e = -EFAULT;
++		goto out;
++	}
++
++	/* strip the optional newline */
++	if (count && name[count - 1] == '\n')
++		name[count - 1] = '\0';
++	else
++		name[count] = '\0';
++
++	if (param_match(name, "prefetch enable")) {
++		printk(KERN_INFO "Prefetching for apps enabled\n");
++		prefetch_enabled = 1;
++		goto out;
++	}
++
++	if (param_match(name, "prefetch disable")) {
++		printk(KERN_INFO "Prefetching for apps disabled\n");
++		prefetch_enabled = 0;
++		goto out;
++	}
++
++	if (param_match(name, "enable")) {
++		printk(KERN_INFO "App prefetching module enabled\n");
++		enabled = 1;
++		goto out;
++	}
++
++	if (param_match(name, "disable")) {
++		printk(KERN_INFO "App prefetching module disabled\n");
++		enabled = 0;
++		goto out;
++	}
++
++	if (param_match_prefix(name, "set tracing timeout")) {
++		r = sscanf(name, "set tracing timeout %d", &tmp);
++		if (r != 1) {
++			e = -EINVAL;
++			printk(KERN_WARNING
++			       "Wrong parameter to set tracing timeout command, command was: %s\n",
++			       name);
++			goto out;
++		}
++		if (tmp <= 0) {
++			e = -EINVAL;
++			printk(KERN_WARNING
++			       "Wrong timeout specified, must be >0, timeout was: %d\n",
++			       tmp);
++			goto out;
++		}
++		tracing_timeout = tmp;
++		printk(KERN_INFO "Set tracing timeout to %d seconds\n",
++		       tracing_timeout);
++		goto out;
++	}
++
++	if (param_match(name, "clear app-list")) {
++		clear_hashtable(prefetch_apps_list, filename_hashtable_size,
++				&prefetch_apps_list_mutex);
++		printk(KERN_INFO "List of traced applications cleared\n");
++		goto out;
++	}
++
++	if (param_match_prefix(name, "add app-list")) {
++		s = kzalloc(PREFETCH_PATH_MAX + 1, GFP_KERNEL);
++		if (s == NULL) {
++			printk(KERN_WARNING
++			       "Cannot allocate memory for path\n");
++			e = -ENOMEM;
++			goto out;
++		}
++		r = sscanf(name, "add app-list %" PREFETCH_PATH_MAX_S "s", s);
++		if (r != 1) {
++			e = -EINVAL;
++			printk(KERN_WARNING
++			       "Wrong parameter to add app-list command, command was: %s\n",
++			       name);
++		} else {
++			e = add_filename_to_list_unique(s, prefetch_apps_list,
++							&prefetch_apps_list_mutex);
++			if (e < 0)
++				printk(KERN_WARNING
++				       "Failed to add application %s to prefetched applications list, error=%d\n",
++				       s, e);
++		}
++		kfree(s);
++		goto out;
++	}
++
++	if (param_match(name, "clear app-blacklist")) {
++		clear_hashtable(prefetch_apps_blacklist,
++				filename_hashtable_size,
++				&prefetch_apps_blacklist_mutex);
++		printk(KERN_INFO "Blacklist of traced applications cleared\n");
++		goto out;
++	}
++
++	if (param_match_prefix(name, "add app-blacklist")) {
++		s = kzalloc(PREFETCH_PATH_MAX + 1, GFP_KERNEL);
++		if (s == NULL) {
++			printk(KERN_WARNING
++			       "Cannot allocate memory for path\n");
++			e = -ENOMEM;
++			goto out;
++		}
++
++		r = sscanf(name, "add app-blacklist %s", s);
++		if (r != 1) {
++			e = -EINVAL;
++			printk(KERN_WARNING
++			       "Wrong parameter to add app-blacklist command, command was: %s\n",
++			       name);
++		} else {
++			e = add_filename_to_list_unique(s,
++							prefetch_apps_blacklist,
++							&prefetch_apps_blacklist_mutex);
++			if (e < 0)
++				printk(KERN_WARNING
++				       "Failed to add application %s to blacklisted applications list, error=%d\n",
++				       s, e);
++		}
++		kfree(s);
++		goto out;
++	}
++      out:
++	kfree(name);
++
++	return e ? e : count;
++}
++
++void seq_print_filename_list(struct seq_file *m, struct hlist_head *list)
++{
++	struct filename_entry *entry;
++	struct hlist_node *cursor;
++	int i;
++
++	for (i = 0; i < filename_hashtable_size; ++i) {
++		hlist_for_each_entry(entry, cursor, &list[i], entries_list) {
++			seq_printf(m, "%s\n", entry->filename);
++		}
++	}
++}
++
++static void *app_prefetch_proc_start(struct seq_file *m, loff_t * pos)
++{
++	if (*pos != 0)
++		return NULL;
++
++	return &tracing_ticks_threshold;	/*whatever pointer, must not be NULL */
++}
++
++static void *app_prefetch_proc_next(struct seq_file *m, void *v, loff_t * pos)
++{
++	return NULL;
++}
++
++static int app_prefetch_proc_show(struct seq_file *m, void *v)
++{
++	seq_printf(m, "### Traced applications: ###\n");
++	mutex_lock(&prefetch_apps_list_mutex);
++	seq_print_filename_list(m, prefetch_apps_list);
++	mutex_unlock(&prefetch_apps_list_mutex);
++
++	seq_printf(m, "### Blacklisted applications: ###\n");
++	mutex_lock(&prefetch_apps_blacklist_mutex);
++	seq_print_filename_list(m, prefetch_apps_blacklist);
++	mutex_unlock(&prefetch_apps_blacklist_mutex);
++
++	return 0;
++}
++
++static void app_prefetch_proc_stop(struct seq_file *m, void *v)
++{
++}
++
++struct seq_operations seq_app_prefetch_op = {
++	.start = app_prefetch_proc_start,
++	.next = app_prefetch_proc_next,
++	.stop = app_prefetch_proc_stop,
++	.show = app_prefetch_proc_show,
++};
++
++static int app_prefetch_proc_open(struct inode *inode, struct file *proc_file)
++{
++	return seq_open(proc_file, &seq_app_prefetch_op);
++}
++
++static int app_prefetch_proc_release(struct inode *inode,
++				     struct file *proc_file)
++{
++	return seq_release(inode, proc_file);
++}
++
++static struct file_operations proc_app_prefetch_fops = {
++	.owner = THIS_MODULE,
++	.open = app_prefetch_proc_open,
++	.release = app_prefetch_proc_release,
++	.write = app_prefetch_proc_write,
++	.read = seq_read,
++	.llseek = seq_lseek,
++};
++
++static int app_list_show(struct seq_file *m, void *v)
++{
++	mutex_lock(&prefetch_apps_list_mutex);
++	seq_print_filename_list(m, prefetch_apps_list);
++	mutex_unlock(&prefetch_apps_list_mutex);
++
++	return 0;
++}
++
++static int app_list_open(struct inode *inode, struct file *proc_file)
++{
++	return single_open(proc_file, app_list_show, NULL);
++}
++
++static int app_list_release_generic(struct inode *inode, struct file *proc_file)
++{
++	return single_release(inode, proc_file);
++}
++
++static struct file_operations proc_app_list_fops = {
++	.owner = THIS_MODULE,
++	.open = app_list_open,
++	.release = app_list_release_generic,
++	.read = seq_read,
++	.llseek = seq_lseek,
++};
++
++static int app_blacklist_show(struct seq_file *m, void *v)
++{
++	mutex_lock(&prefetch_apps_blacklist_mutex);
++	seq_print_filename_list(m, prefetch_apps_blacklist);
++	mutex_unlock(&prefetch_apps_blacklist_mutex);
++
++	return 0;
++}
++
++static int app_blacklist_open(struct inode *inode, struct file *proc_file)
++{
++	return single_open(proc_file, app_blacklist_show, NULL);
++}
++
++static struct file_operations proc_app_blacklist_fops = {
++	.owner = THIS_MODULE,
++	.open = app_blacklist_open,
++	.release = app_list_release_generic,
++	.read = seq_read,
++	.llseek = seq_lseek,
++};
++
++static __init int app_prefetch_init(void)
++{
++	struct proc_dir_entry *entry;
++	int ret;
++
++	/* Initialize hashtables */
++	ret =
++	    initialize_hashtable(&prefetch_apps_blacklist,
++				 filename_hashtable_size);
++	if (ret < 0) {
++		printk(KERN_WARNING
++		       "Cannot initialize app blacklist hashtable, error=%d\n",
++		       ret);
++		goto out_error;
++	}
++
++	ret =
++	    initialize_hashtable(&prefetch_apps_list, filename_hashtable_size);
++	if (ret < 0) {
++		printk(KERN_WARNING
++		       "Cannot initialize app hashtable, error=%d\n", ret);
++		goto out_error;
++	}
++
++	ret = initialize_hashtable(&traced_pids, TRACED_HASH_SIZE);
++	if (ret < 0) {
++		printk(KERN_WARNING
++		       "Cannot initialize traced pids hashtable, error=%d\n",
++		       ret);
++		goto out_error;
++	}
++
++	if (prefetch_proc_dir == NULL) {
++		printk(KERN_WARNING
++		       "Prefetch proc directory not present, proc interface  for app prefetching will not be available\n");
++	} else {
++		entry = create_proc_entry("app", 0600, prefetch_proc_dir);
++		if (entry)
++			entry->proc_fops = &proc_app_prefetch_fops;
++		entry = create_proc_entry("app-list", 0600, prefetch_proc_dir);
++		if (entry)
++			entry->proc_fops = &proc_app_list_fops;
++		entry =
++		    create_proc_entry("app-blacklist", 0600, prefetch_proc_dir);
++		if (entry)
++			entry->proc_fops = &proc_app_blacklist_fops;
++	}
++
++	printk(KERN_INFO
++	       "App prefetching module started, enabled=%d, prefetching=%d\n",
++	       enabled, prefetch_enabled);
++
++	initialized = 1;
++
++	return 0;
++
++      out_error:
++	return ret;
++}
++
++static void app_prefetch_exit(void)
++{
++	remove_proc_entry("app", prefetch_proc_dir);
++}
++
++MODULE_AUTHOR("Krzysztof Lichota <lichota@mimuw.edu.pl>");
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Application tracing and prefetching during startup");
++
++module_init(app_prefetch_init);
++module_exit(app_prefetch_exit);
+-- 
+1.1.3

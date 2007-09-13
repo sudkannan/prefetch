@@ -1,0 +1,1717 @@
+Subject: [PATCH 1/3] Implementation of prefetch core functionality (tracing and prefetching).
+
+Signed-off-by: Krzysztof Lichota <lichota@mimuw.edu.pl>
+
+
+---
+
+ include/linux/prefetch_core.h |  101 +++
+ init/Kconfig                  |   16 
+ mm/Makefile                   |    2 
+ mm/filemap.c                  |    3 
+ mm/prefetch_core.c            | 1527 +++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 1648 insertions(+), 1 deletions(-)
+ create mode 100644 include/linux/prefetch_core.h
+ create mode 100644 mm/prefetch_core.c
+
+62ea60973d2cf0a8273ba40c58cc363d657b9d5a
+diff --git a/include/linux/prefetch_core.h b/include/linux/prefetch_core.h
+new file mode 100644
+index 0000000..9254e2b
+--- /dev/null
++++ b/include/linux/prefetch_core.h
+@@ -0,0 +1,101 @@
++/*
++ * Copyright (C) 2007 Krzysztof Lichota <lichota@mimuw.edu.pl>
++ *
++ * This is prefetch core - common code used for tracing and saving trace files.
++ * It is used by prefetching modules, such as boot and app.
++ */
++
++#ifndef _LINUX_PREFETCH_CORE_H
++#define _LINUX_PREFETCH_CORE_H
++
++#include <linux/types.h>
++#include <linux/mm_types.h>
++
++/**
++ * Trace record, records one range of pages for inode put into trace.
++*/
++struct prefetch_trace_record {
++	dev_t device;
++	unsigned long inode_no;
++	pgoff_t range_start;
++	pgoff_t range_length;
++};
++
++extern char trace_file_magic[4];
++
++enum {
++	PREFETCH_FORMAT_VERSION_MAJOR = 1,
++	PREFETCH_FORMAT_VERSION_MINOR = 0
++};
++
++/**
++ * Trace on-disk header.
++ * Major version is increased with major changes of format.
++ * If you do not support this format explicitely, do not read other fields.
++ * Minor version is increased with backward compatible changes and
++ * you can read other fields and raw data, provided that you read
++ * trace data from @data_start offset in file.
++*/
++struct prefetch_trace_header {
++	char magic[4];		/*Trace file signature - should contain trace_file_magic */
++	u16 version_major;	/*Major version of trace file format */
++	u16 version_minor;	/*Minor version of trace file format */
++	u16 data_start;		/*Trace raw data start */
++};
++
++struct trace_marker {
++	unsigned position;
++	unsigned generation;
++};
++
++int prefetch_start_trace(struct trace_marker *marker);
++int prefetch_continue_trace(struct trace_marker *marker);
++int prefetch_stop_trace(struct trace_marker *marker);
++int prefetch_release_trace(struct trace_marker end_marker);
++
++int prefetch_trace_fragment_size(struct trace_marker start_marker,
++				 struct trace_marker end_marker);
++
++int get_prefetch_trace_fragment(struct trace_marker start_marker,
++				struct trace_marker end_marker,
++				void **fragment_result,
++				int *fragment_size_result);
++
++void *alloc_trace_buffer(int len);
++void free_trace_buffer(void *buffer, int len);
++void sort_trace_fragment(void *trace, int trace_size);
++
++int prefetch_save_trace_between_markers(char *filename,
++					struct trace_marker start_marker,
++					struct trace_marker end_marker);
++int prefetch_save_trace_fragment(char *filename,
++				 void *trace_buffer, int trace_size);
++int prefetch_load_trace_fragment(char *filename,
++				 void **trace_buffer, int *trace_size);
++
++int prefetch_start_prefetch(void *trace, int trace_size, int async);
++int do_prefetch_from_file(char *filename);
++
++void print_marker(char *msg, struct trace_marker marker);
++
++/* Hook for mm page release code */
++#ifdef CONFIG_PREFETCH_CORE
++void prefetch_page_release_hook(struct page *page);
++#else
++#define prefetch_page_release_hook(param) do {} while (0)
++#endif
++
++struct proc_dir_entry;
++extern struct proc_dir_entry *prefetch_proc_dir;
++
++int param_match(char *line, char *param_name);
++int param_match_prefix(char *line, char *param_name);
++
++/*Auxiliary functions for reading and writing in kernel*/
++struct file *kernel_open(char const *file_name, int flags, int mode);
++int kernel_write(struct file *file, unsigned long offset, const char *addr,
++		 unsigned long count);
++/*NOTE: kernel_read is already available in kernel*/
++int kernel_close(struct file *file);
++
++#endif /*_LINUX_PREFETCH_CORE_H*/
+diff --git a/init/Kconfig b/init/Kconfig
+index a9e99f8..565b15e 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -104,6 +104,22 @@ config SWAP
+ 	  for so called swap devices or swap files in your kernel that are
+ 	  used to provide more virtual memory than the actual RAM present
+ 	  in your computer.  If unsure say Y.
++config PREFETCH_CORE
++       bool "Prefetching support (core)"
++       default n
++       depends on MMU && BLOCK && EXPERIMENTAL
++       select TASK_DELAY_ACCT
++       help
++         This option enables core of tracing and prefetching facility
++         The core provides functions used by real prefetching modules,
++         so you have to enable one of them as well.
++config PREFETCH_DEBUG
++       bool "Prefetching debug interface and debugging facilities"
++       default n
++       depends on PREFETCH_CORE && PROC_FS
++       help
++         This option enables facilities for testing and debugging tracing and prefetching.
++         Do not enable on production systems.
+ 
+ config SYSVIPC
+ 	bool "System V IPC"
+diff --git a/mm/Makefile b/mm/Makefile
+index a9148ea..60f11f1 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -31,4 +31,4 @@ obj-$(CONFIG_FS_XIP) += filemap_xip.o
+ obj-$(CONFIG_MIGRATION) += migrate.o
+ obj-$(CONFIG_SMP) += allocpercpu.o
+ obj-$(CONFIG_QUICKLIST) += quicklist.o
+-
++obj-$(CONFIG_PREFETCH_CORE)	+= prefetch_core.o
+diff --git a/mm/filemap.c b/mm/filemap.c
+index edb1b0b..d6e2b30 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -30,6 +30,7 @@
+ #include <linux/security.h>
+ #include <linux/syscalls.h>
+ #include <linux/cpuset.h>
++#include <linux/prefetch_core.h>
+ #include "filemap.h"
+ #include "internal.h"
+ 
+@@ -116,6 +117,8 @@ void __remove_from_page_cache(struct pag
+ {
+ 	struct address_space *mapping = page->mapping;
+ 
++	prefetch_page_release_hook(page);
++
+ 	radix_tree_delete(&mapping->page_tree, page->index);
+ 	page->mapping = NULL;
+ 	mapping->nrpages--;
+diff --git a/mm/prefetch_core.c b/mm/prefetch_core.c
+new file mode 100644
+index 0000000..001470b
+--- /dev/null
++++ b/mm/prefetch_core.c
+@@ -0,0 +1,1527 @@
++/*
++ * linux/mm/prefetch_core.c
++ *
++ * Copyright (C) 2006 Fengguang Wu <wfg@ustc.edu>
++ * Copyright (C) 2007 Krzysztof Lichota <lichota@mimuw.edu.pl>
++ *
++ * This is prefetch core - common code used for tracing and saving trace files.
++ * It is used by prefetching modules, such as boot and app.
++ *
++ * Based on filecache code by Fengguang Wu.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/prefetch_core.h>
++#include <linux/fs.h>
++#include <linux/mm.h>
++#include <linux/radix-tree.h>
++#include <linux/page-flags.h>
++#include <linux/pagevec.h>
++#include <linux/pagemap.h>
++#include <linux/vmalloc.h>
++#include <linux/writeback.h>
++#include <linux/proc_fs.h>
++#include <linux/module.h>
++#include <asm/uaccess.h>
++#include <linux/spinlock.h>
++#include <linux/time.h>
++#include <linux/file.h>
++#include <linux/delayacct.h>
++#include <linux/file.h>
++#include <linux/sort.h>
++
++char trace_file_magic[4] = { 'P', 'F', 'C', 'H' };
++
++/*Inode walk session*/
++struct inode_walk_session {
++	int private_session;
++	pgoff_t next_offset;
++	struct {
++		unsigned long cursor;
++		unsigned long origin;
++		unsigned long size;
++		struct inode **inodes;
++	} ivec;
++	struct {
++		unsigned long pos;
++		unsigned long i_state;
++		struct inode *inode;
++		struct inode *pinned_inode;
++	} icur;
++	int inodes_walked;
++	int pages_walked;
++	int pages_referenced;
++	int page_blocks;
++};
++
++/*Disables/enables the whole module functionality*/
++static int enabled = 1;
++module_param(enabled, bool, 0);
++MODULE_PARM_DESC(enabled,
++		 "Enables or disables whole prefetching module functionality (tracing and prefetching)");
++
++#define DEFAULT_TRACE_SIZE_KB 256
++
++/*NOTE: changing trace size in runtime is not supported - do not do it.*/
++unsigned trace_size_kb = DEFAULT_TRACE_SIZE_KB;	/*in kilobytes */
++module_param(trace_size_kb, uint, 0);
++MODULE_PARM_DESC(trace_size_kb,
++		 "Size of memory allocated for trace (in KB), set to 0 to use default");
++
++static inline unsigned prefetch_trace_size(void)
++{
++	if (likely(trace_size_kb > 0))
++		return trace_size_kb << 10;
++
++	/*if set to 0, then use default */
++	return DEFAULT_TRACE_SIZE_KB * 1024;
++}
++
++enum tracing_command {
++	START_TRACING,
++	STOP_TRACING,
++	CONTINUE_TRACING
++};
++
++/*Structure holding all information needed for trace*/
++struct prefetch_trace_t {
++	spinlock_t prefetch_trace_lock;
++	unsigned int buffer_used;
++	unsigned int buffer_size;
++	void *buffer;
++	int generation;
++	int overflow;
++	int overflow_reported;
++	/*fields above protected by prefetch_trace_lock */
++	int page_release_traced;
++	/**
++	 * Number of traces started and not finished.
++	 * Used to check if it is necessary to add entries to trace.
++	*/
++	atomic_t tracers_count;
++	int trace_users;	/*number of trace users, protected by prefetch_trace_mutex */
++	struct mutex prefetch_trace_mutex;
++};
++
++struct prefetch_trace_t prefetch_trace = {
++	SPIN_LOCK_UNLOCKED,	/*prefetch_trace_lock */
++	0,			/*buffer_used */
++	0,			/*buffer_size */
++	NULL,			/*buffer */
++	0,			/*generation */
++	0,			/*overflow */
++	0,			/*overflow_reported */
++	0,			/*page_release_traced */
++	ATOMIC_INIT(0),		/*tracers_count */
++	0,			/*trace_users */
++	__MUTEX_INITIALIZER(prefetch_trace.prefetch_trace_mutex)	/*prefetch_trace_mutex */
++};
++
++/**
++	Set if walk_pages() decided that it is the start of tracing
++	and bits should be cleared, not recorded.
++	Using it is protected by inode_lock.
++	If lock breaking is enabled, this variable makes sure that
++	second caller of walk_pages(START_TRACING) will not
++	race with first caller and will not start recording changes.
++*/
++static int clearing_in_progress = 0;
++
++/**
++ * Timer used for measuring tracing and prefetching time.
++*/
++struct prefetch_timer {
++	struct timespec ts_start;
++	struct timespec ts_end;
++	char *name;
++};
++
++static void clear_trace(void);
++
++/**
++ * Starts timer.
++*/
++void prefetch_start_timing(struct prefetch_timer *timer, char *name)
++{
++	timer->name = name;
++	do_posix_clock_monotonic_gettime(&timer->ts_start);
++}
++
++/**
++ * Stops timer.
++*/
++void prefetch_end_timing(struct prefetch_timer *timer)
++{
++	do_posix_clock_monotonic_gettime(&timer->ts_end);
++}
++
++/**
++ * Prints timer name and time duration into kernel log.
++*/
++void prefetch_print_timing(struct prefetch_timer *timer)
++{
++	struct timespec ts = timespec_sub(timer->ts_end, timer->ts_start);
++	s64 ns = timespec_to_ns(&ts);
++
++	printk(KERN_INFO "Prefetch timing (%s): %lld ns, %ld.%.9ld\n",
++	       timer->name, ns, ts.tv_sec, ts.tv_nsec);
++}
++
++struct async_prefetch_params {
++	void *trace;
++	int trace_size;
++};
++
++static int prefetch_do_prefetch(void *trace, int trace_size);
++
++static int async_prefetch_thread(void *p)
++{
++	int ret;
++	struct async_prefetch_params *params =
++	    (struct async_prefetch_params *)p;
++#ifdef PREFETCH_DEBUG
++	printk(KERN_INFO "Started async prefetch thread\n");
++#endif
++	ret = prefetch_do_prefetch(params->trace, params->trace_size);
++	kfree(params);
++	return ret;
++}
++
++static int prefetch_start_prefetch_async(void *trace, int trace_size)
++{
++	struct async_prefetch_params *params =
++	    kmalloc(sizeof(struct async_prefetch_params), GFP_KERNEL);
++	if (params == NULL)
++		return -ENOMEM;
++	params->trace = trace;
++	params->trace_size = trace_size;
++
++	if (kernel_thread(async_prefetch_thread, params, 0) < 0) {
++		printk(KERN_WARNING "Cannot start async prefetch thread\n");
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static int prefetch_start_prefetch_sync(void *trace, int trace_size)
++{
++	return prefetch_do_prefetch(trace, trace_size);
++}
++
++/**
++ * Starts prefetch based on given @trace, whose length (in bytes) is @trace_size.
++ * If async is false, the function will return only after prefetching is finished.
++ * Otherwise, prefetching will be started in separate thread and function will
++ * return immediately.
++*/
++int prefetch_start_prefetch(void *trace, int trace_size, int async)
++{
++	if (async)
++		return prefetch_start_prefetch_async(trace, trace_size);
++	else
++		return prefetch_start_prefetch_sync(trace, trace_size);
++}
++
++EXPORT_SYMBOL(prefetch_start_prefetch);
++
++static int prefetch_do_prefetch(void *trace, int trace_size)
++{
++	struct prefetch_trace_record *record = trace;
++	struct prefetch_trace_record *prev_record = NULL;
++#ifdef PREFETCH_DEBUG
++	struct prefetch_timer timer;
++#endif
++	struct super_block *sb = NULL;
++	struct file *file = NULL;
++	struct inode *inode = NULL;
++	int ret = 0;
++	int readaheads_failed = 0;
++	int readahead_ret;
++
++	if (!enabled)
++		return -ENODEV;	/*module disabled */
++
++#ifdef PREFETCH_DEBUG
++	printk(KERN_INFO "Delay io ticks before prefetching: %d\n",
++	       (int)delayacct_blkio_ticks(current));
++	prefetch_start_timing(&timer, "Prefetching");
++#endif
++
++	for (;
++	     (void *)(record + sizeof(struct prefetch_trace_record)) <=
++	     trace + trace_size; prev_record = record, ++record) {
++		if (prev_record == NULL
++		    || prev_record->device != record->device) {
++			/*open next device */
++			if (sb)
++				drop_super(sb);
++			sb = user_get_super(record->device);
++		}
++		if (sb == NULL)
++			continue;	/*no such device or error getting device */
++
++		if (prev_record == NULL || prev_record->device != record->device
++		    || prev_record->inode_no != record->inode_no) {
++			/*open next file */
++			if (inode)
++				iput(inode);
++
++			inode = iget(sb, record->inode_no);
++			if (IS_ERR(inode)) {
++				/*no such inode or other error */
++				inode = NULL;
++				continue;
++			}
++
++			if (file)
++				put_filp(file);
++
++			file = get_empty_filp();
++			if (file == NULL) {
++				ret = -ENFILE;
++				goto out;
++			}
++			/*only most important file fields filled, ext3_readpages doesn't use it anyway. */
++			file->f_op = inode->i_fop;
++			file->f_mapping = inode->i_mapping;
++			file->f_mode = FMODE_READ;
++			file->f_flags = O_RDONLY;
++		}
++		if (inode == NULL)
++			continue;
++
++		readahead_ret =
++		    force_page_cache_readahead(inode->i_mapping, file,
++					       record->range_start,
++					       record->range_length);
++		if (readahead_ret < 0) {
++			readaheads_failed++;
++#ifdef PREFETCH_DEBUG
++			if (readaheads_failed < 10) {
++				printk(KERN_WARNING
++				       "Readahead failed, device=%d:%d, inode=%ld, start=%ld, length=%ld, error=%d\n",
++				       MAJOR(record->device),
++				       MINOR(record->device), record->inode_no,
++				       record->range_start,
++				       record->range_length, readahead_ret);
++			}
++			if (readaheads_failed == 10)
++				printk(KERN_WARNING
++				       "Readaheads failed reached limit, not printing next failures\n");
++#endif
++		}
++	}
++
++      out:
++	if (readaheads_failed > 0)
++		printk(KERN_INFO "Readaheads  not performed: %d\n",
++		       readaheads_failed);
++
++	if (sb)
++		drop_super(sb);
++	if (inode)
++		iput(inode);
++	if (file)
++		put_filp(file);
++
++#ifdef PREFETCH_DEBUG
++	printk(KERN_INFO "Delay io ticks after prefetching: %d\n",
++	       (int)delayacct_blkio_ticks(current));
++	prefetch_end_timing(&timer);
++	prefetch_print_timing(&timer);
++#endif
++	return ret;
++}
++
++/**
++ * Adds trace record. Does not sleep.
++*/
++void prefetch_trace_add(dev_t device,
++			unsigned long inode_no,
++			pgoff_t range_start, pgoff_t range_length)
++{
++	struct prefetch_trace_record *record;
++
++	spin_lock(&prefetch_trace.prefetch_trace_lock);
++
++	if (prefetch_trace.buffer_used + sizeof(struct prefetch_trace_record) >=
++	    prefetch_trace.buffer_size) {
++		prefetch_trace.overflow = 1;
++		spin_unlock(&prefetch_trace.prefetch_trace_lock);
++		return;
++	}
++
++	record =
++	    (struct prefetch_trace_record *)(prefetch_trace.buffer +
++					     prefetch_trace.buffer_used);
++	prefetch_trace.buffer_used += sizeof(struct prefetch_trace_record);
++
++	record->device = device;
++	record->inode_no = inode_no;
++	record->range_start = range_start;
++	record->range_length = range_length;
++	spin_unlock(&prefetch_trace.prefetch_trace_lock);
++}
++
++#define IVEC_SIZE	(PAGE_SIZE / sizeof(struct inode *))
++
++/*
++ * Full: there are more data following.
++ */
++static int ivec_full(struct inode_walk_session *s)
++{
++	return !s->ivec.cursor ||
++	    s->ivec.cursor > s->ivec.origin + s->ivec.size;
++}
++
++static int ivec_push(struct inode_walk_session *s, struct inode *inode)
++{
++	if (!atomic_read(&inode->i_count))
++		return 0;
++	if (!inode->i_mapping)
++		return 0;
++
++	s->ivec.cursor++;
++
++	if (s->ivec.size >= IVEC_SIZE)
++		return 1;
++
++	if (s->ivec.cursor > s->ivec.origin)
++		s->ivec.inodes[s->ivec.size++] = inode;
++	return 0;
++}
++
++/*
++ * Travease the inode lists in order - newest first.
++ * And fill @s->ivec.inodes with inodes positioned in [@pos, @pos+IVEC_SIZE).
++ */
++static int ivec_fill(struct inode_walk_session *s, unsigned long pos)
++{
++	struct inode *inode;
++	struct super_block *sb;
++
++	s->ivec.origin = pos;
++	s->ivec.cursor = 0;
++	s->ivec.size = 0;
++
++	/*
++	 * We have a cursor inode, clean and expected to be unchanged.
++	 */
++	if (s->icur.inode && pos >= s->icur.pos &&
++	    !(s->icur.i_state & I_DIRTY) &&
++	    s->icur.i_state == s->icur.inode->i_state) {
++		inode = s->icur.inode;
++		s->ivec.cursor = s->icur.pos;
++		goto continue_from_saved;
++	}
++
++	spin_lock(&sb_lock);
++	list_for_each_entry(sb, &super_blocks, s_list) {
++		list_for_each_entry(inode, &sb->s_dirty, i_list) {
++			if (ivec_push(s, inode))
++				goto out_full_unlock;
++		}
++		list_for_each_entry(inode, &sb->s_io, i_list) {
++			if (ivec_push(s, inode))
++				goto out_full_unlock;
++		}
++	}
++	spin_unlock(&sb_lock);
++
++	list_for_each_entry(inode, &inode_in_use, i_list) {
++		if (ivec_push(s, inode))
++			goto out_full;
++	      continue_from_saved:
++		;
++	}
++
++	list_for_each_entry(inode, &inode_unused, i_list) {
++		if (ivec_push(s, inode))
++			goto out_full;
++	}
++
++	return 0;
++
++      out_full_unlock:
++	spin_unlock(&sb_lock);
++      out_full:
++	return 1;
++}
++
++static struct inode *ivec_inode(struct inode_walk_session *s, unsigned long pos)
++{
++	if ((ivec_full(s) && pos >= s->ivec.origin + s->ivec.size)
++	    || pos < s->ivec.origin)
++		ivec_fill(s, pos);
++
++	if (pos >= s->ivec.cursor)
++		return NULL;
++
++	s->icur.pos = pos;
++	s->icur.inode = s->ivec.inodes[pos - s->ivec.origin];
++	return s->icur.inode;
++}
++
++static void add_referenced_page_range(struct inode_walk_session *s,
++				      struct address_space *mapping,
++				      pgoff_t start, pgoff_t len)
++{
++	struct inode *inode;
++
++	s->pages_referenced += len;
++	s->page_blocks++;
++	if (!clearing_in_progress) {
++		inode = mapping->host;
++		if (inode && inode->i_sb && inode->i_sb->s_bdev)
++			prefetch_trace_add(inode->i_sb->s_bdev->bd_dev,
++					   inode->i_ino, start, len);
++	}
++}
++
++/**
++	Add page to trace if it was referenced.
++
++	NOTE: spinlock might be held while this function is called.
++*/
++void prefetch_add_page_to_trace(struct page *page)
++{
++	struct address_space *mapping;
++	struct inode *inode;
++
++	/*if not tracing, nothing to be done */
++	if (atomic_read(&prefetch_trace.tracers_count) <= 0)
++		return;
++
++	/*if page was not touched */
++	if (!PageReferenced(page))
++		return;
++
++	/*swap pages are not interesting */
++	if (PageSwapCache(page))
++		return;
++
++	/*no locking, just stats */
++	prefetch_trace.page_release_traced++;
++
++	mapping = page_mapping(page);
++
++	inode = mapping->host;
++	if (inode && inode->i_sb && inode->i_sb->s_bdev)
++		prefetch_trace_add(inode->i_sb->s_bdev->bd_dev, inode->i_ino,
++				   page_index(page), 1);
++}
++
++/**
++	Hook called when page is about to be freed, so we have to check
++	if it was referenced, as inode walk will not notice it.
++
++	NOTE: spinlock is held while this function is called.
++*/
++void prefetch_page_release_hook(struct page *page)
++{
++	prefetch_add_page_to_trace(page);
++}
++
++static void walk_file_cache(struct inode_walk_session *s,
++			    struct address_space *mapping)
++{
++	int i;
++	pgoff_t len = 0;
++	struct pagevec pvec;
++	struct page *page;
++	struct page *page0 = NULL;
++	int current_page_referenced = 0;
++	int previous_page_referenced = 0;
++	pgoff_t start = 0;
++
++	for (;;) {
++		pagevec_init(&pvec, 0);
++		pvec.nr = radix_tree_gang_lookup(&mapping->page_tree,
++						 (void **)pvec.pages,
++						 start + len, PAGEVEC_SIZE);
++
++		if (pvec.nr == 0) {
++			/*no more pages present
++			   add the last range, if present */
++			if (previous_page_referenced)
++				add_referenced_page_range(s, mapping, start,
++							  len);
++			goto out;
++		}
++
++		if (!page0) {
++			page0 = pvec.pages[0];
++			previous_page_referenced = PageReferenced(page0);
++		}
++
++		for (i = 0; i < pvec.nr; i++) {
++
++			page = pvec.pages[i];
++			current_page_referenced = TestClearPageReferenced(page);
++
++			s->pages_walked++;
++
++			if (page->index == start + len
++			    && previous_page_referenced ==
++			    current_page_referenced)
++				len++;
++			else {
++				if (previous_page_referenced)
++					add_referenced_page_range(s, mapping,
++								  start, len);
++
++				page0 = page;
++				start = page->index;
++				len = 1;
++			}
++			previous_page_referenced = current_page_referenced;
++		}
++	}
++
++      out:
++	return;
++}
++
++static void show_inode(struct inode_walk_session *s, struct inode *inode)
++{
++	++s->inodes_walked;	/*just for stats, so not using atomic_inc() */
++
++	if (inode->i_mapping)
++		walk_file_cache(s, inode->i_mapping);
++}
++
++/**
++	Allocates memory for trace buffer.
++	This memory should be freed using free_trace_buffer().
++*/
++void *alloc_trace_buffer(int len)
++{
++	return (void *)__get_free_pages(GFP_KERNEL, get_order(len));
++}
++
++EXPORT_SYMBOL(alloc_trace_buffer);
++
++/**
++	Frees memory allocated using alloc_trace_buffer().
++*/
++void free_trace_buffer(void *buffer, int len)
++{
++	free_pages((unsigned long)buffer, get_order(len));
++}
++
++EXPORT_SYMBOL(free_trace_buffer);
++
++/*NOTE: this function is called with inode_lock spinlock held*/
++static int inode_walk_show(struct inode_walk_session *s, loff_t pos)
++{
++	unsigned long index = pos;
++	struct inode *inode;
++
++	inode = ivec_inode(s, index);
++	BUG_ON(!inode);
++	show_inode(s, inode);
++
++	return 0;
++}
++
++static void *inode_walk_start(struct inode_walk_session *s, loff_t * pos)
++{
++	s->ivec.inodes = (struct inode **)__get_free_page(GFP_KERNEL);
++	if (!s->ivec.inodes)
++		return NULL;
++	s->ivec.size = 0;
++
++	spin_lock(&inode_lock);
++
++	BUG_ON(s->icur.pinned_inode);
++	s->icur.pinned_inode = s->icur.inode;
++	return ivec_inode(s, *pos) ? pos : NULL;
++}
++
++static void inode_walk_stop(struct inode_walk_session *s)
++{
++	if (s->icur.inode) {
++		__iget(s->icur.inode);
++		s->icur.i_state = s->icur.inode->i_state;
++	}
++
++	spin_unlock(&inode_lock);
++	free_page((unsigned long)s->ivec.inodes);
++
++	if (s->icur.pinned_inode) {
++		iput(s->icur.pinned_inode);
++		s->icur.pinned_inode = NULL;
++	}
++}
++
++/*NOTE: this function is called with inode_lock spinlock held*/
++static void *inode_walk_next(struct inode_walk_session *s, loff_t * pos)
++{
++	(*pos)++;
++
++	return ivec_inode(s, *pos) ? pos : NULL;
++}
++
++static struct inode_walk_session *inode_walk_session_create(void)
++{
++	struct inode_walk_session *s;
++	int err = 0;
++
++	s = kzalloc(sizeof(*s), GFP_KERNEL);
++	if (!s)
++		err = -ENOMEM;
++
++	return err ? ERR_PTR(err) : s;
++}
++
++static void inode_walk_session_release(struct inode_walk_session *s)
++{
++	if (s->icur.inode)
++		iput(s->icur.inode);
++	kfree(s);
++}
++
++/**
++ * Prints message followed by marker.
++*/
++void print_marker(char *msg, struct trace_marker marker)
++{
++	printk("%s %u.%u\n", msg, marker.generation, marker.position);
++}
++
++EXPORT_SYMBOL(print_marker);
++
++/**
++	Returns current trace marker.
++	Note: marker ranges are open on the right side, i.e.
++	[start_marker, end_marker)
++*/
++static struct trace_marker get_trace_marker(void)
++{
++	struct trace_marker marker;
++
++	spin_lock(&prefetch_trace.prefetch_trace_lock);
++	marker.position = prefetch_trace.buffer_used;
++	marker.generation = prefetch_trace.generation;
++	spin_unlock(&prefetch_trace.prefetch_trace_lock);
++
++	return marker;
++}
++
++/**
++	Returns size of prefetch trace between start and end marker.
++	Returns <0 if error occurs.
++*/
++int prefetch_trace_fragment_size(struct trace_marker start_marker,
++				 struct trace_marker end_marker)
++{
++	if (start_marker.generation != end_marker.generation)
++		return -EINVAL;	/*trace must have wrapped around and trace is no longer available */
++	if (end_marker.position < start_marker.position)
++		return -ERANGE;	/*invalid markers */
++
++	return end_marker.position - start_marker.position;
++}
++
++EXPORT_SYMBOL(prefetch_trace_fragment_size);
++
++/**
++	Returns position in trace buffer for given marker.
++	prefetch_trace_lock spinlock must be held when calling this function.
++	Returns < 0 in case of error.
++	Returns -ENOSPC if this marker is not in buffer.
++	Note: marker ranges are open on right side, so this position
++	might point to first byte after the buffer for end markers.
++*/
++static int trace_marker_position_in_buffer(struct trace_marker marker)
++{
++	if (marker.generation != prefetch_trace.generation)
++		return -EINVAL;	/*trace must have wrapped around and trace is no longer available */
++
++	if (prefetch_trace.buffer_used < marker.position)
++		return -ENOSPC;
++
++	/*for now simple, not circular buffer */
++	return marker.position;
++}
++
++/**
++	Fetches fragment of trace between start marker and end_marker.
++	Returns memory (allocated using alloc_trace_buffer()) which holds trace fragment
++	or error on @fragment_result in case of success and its size on @fragment_size_result.
++	This memory should be freed using free_trace_buffer().
++	If fragment_size == 0, fragment is NULL.
++*/
++int get_prefetch_trace_fragment(struct trace_marker start_marker,
++				struct trace_marker end_marker,
++				void **fragment_result,
++				int *fragment_size_result)
++{
++	int start_position;
++	int end_position;
++	int len;
++	int ret;
++	void *fragment;
++	int fragment_size;
++
++	fragment_size = prefetch_trace_fragment_size(start_marker, end_marker);
++	if (fragment_size < 0)
++		return fragment_size;
++	if (fragment_size == 0) {
++		*fragment_size_result = 0;
++		*fragment_result = NULL;
++		return 0;
++	}
++
++	fragment = alloc_trace_buffer(fragment_size);
++	if (fragment == NULL)
++		return -ENOMEM;
++
++	spin_lock(&prefetch_trace.prefetch_trace_lock);
++
++	start_position = trace_marker_position_in_buffer(start_marker);
++	end_position = trace_marker_position_in_buffer(end_marker);
++
++	if (start_position < 0) {
++		ret = -ESRCH;
++		goto out_free;
++	}
++	if (end_position < 0) {
++		ret = -ESRCH;
++		goto out_free;
++	}
++
++	len = end_position - start_position;
++	BUG_ON(len <= 0 || len != fragment_size);
++
++	memcpy(fragment, prefetch_trace.buffer + start_position, len);
++
++	spin_unlock(&prefetch_trace.prefetch_trace_lock);
++
++	*fragment_result = fragment;
++	*fragment_size_result = fragment_size;
++	return 0;
++
++      out_free:
++	spin_unlock(&prefetch_trace.prefetch_trace_lock);
++	free_trace_buffer(fragment, fragment_size);
++	return ret;
++}
++
++EXPORT_SYMBOL(get_prefetch_trace_fragment);
++
++struct file *kernel_open(char const *file_name, int flags, int mode)
++{
++	int orig_fsuid = current->fsuid;
++	int orig_fsgid = current->fsgid;
++	struct file *file = NULL;
++#if BITS_PER_LONG != 32
++	flags |= O_LARGEFILE;
++#endif
++	current->fsuid = 0;
++	current->fsgid = 0;
++
++	file = filp_open(file_name, flags, mode);
++	current->fsuid = orig_fsuid;
++	current->fsgid = orig_fsgid;
++	return file;
++}
++
++int kernel_close(struct file *file)
++{
++	if (file->f_op && file->f_op->flush) {
++		file->f_op->flush(file, current->files);
++	}
++	fput(file);
++
++	return 0;		/*no errors known for now */
++}
++
++int kernel_write(struct file *file, unsigned long offset, const char *addr,
++		 unsigned long count)
++{
++	mm_segment_t old_fs;
++	loff_t pos = offset;
++	int result = -ENOSYS;
++
++	if (!file->f_op->write)
++		goto fail;
++	old_fs = get_fs();
++	set_fs(get_ds());
++	result = file->f_op->write(file, addr, count, &pos);
++	set_fs(old_fs);
++      fail:
++	return result;
++}
++
++/**
++ * Compares 2 traces records and returns -1, 0 or 1, depending on result of comparison.
++ * Comparison is lexicographical on device, inode, range_start and range_length (range_length descending).
++ */
++static int trace_cmp(const void *p1, const void *p2)
++{
++	struct prefetch_trace_record *r1 = (struct prefetch_trace_record *)p1;
++	struct prefetch_trace_record *r2 = (struct prefetch_trace_record *)p2;
++
++	if (r1->device < r2->device)
++		return -1;
++	if (r1->device > r2->device)
++		return 1;
++
++	if (r1->inode_no < r2->inode_no)
++		return -1;
++	if (r1->inode_no > r2->inode_no)
++		return 1;
++
++	if (r1->range_start < r2->range_start)
++		return -1;
++	if (r1->range_start > r2->range_start)
++		return 1;
++
++	/*longer range_length is preferred as we want to fetch large fragments first */
++	if (r1->range_length < r2->range_length)
++		return 1;
++	if (r1->range_length > r2->range_length)
++		return -1;
++	return 0;
++}
++
++/**
++ * Sorts trace fragment by device, inode and start.
++*/
++void sort_trace_fragment(void *trace, int trace_size)
++{
++	sort(trace, trace_size / sizeof(struct prefetch_trace_record),
++	     sizeof(struct prefetch_trace_record), trace_cmp, NULL);
++}
++
++EXPORT_SYMBOL(sort_trace_fragment);
++
++/**
++ * Saves trace fragment from buffer @trace_buffer of size @trace_size into file @filename.
++ * Returns 0, if success <0 if error (with error code).
++*/
++int prefetch_save_trace_fragment(char *filename,
++				 void *fragment, int fragment_size)
++{
++	int ret = 0;
++	int written = 0;
++	struct file *file;
++	struct prefetch_trace_header header;
++	int data_start = 0;
++
++	file = kernel_open(filename, O_CREAT | O_TRUNC | O_RDWR, 0600);
++
++	if (IS_ERR(file)) {
++		ret = PTR_ERR(file);
++		printk(KERN_WARNING
++		       "Cannot open file %s for writing to save trace, error=%d\n",
++		       filename, ret);
++		goto out;
++	}
++
++	data_start = sizeof(header);
++	/*copy magic signature */
++	memcpy(&header.magic[0], trace_file_magic, sizeof(header.magic));
++	header.version_major = PREFETCH_FORMAT_VERSION_MAJOR;
++	header.version_minor = PREFETCH_FORMAT_VERSION_MINOR;
++	header.data_start = data_start;
++
++	ret = kernel_write(file, 0, (char *)&header, sizeof(header));
++	if (ret < 0 || ret != sizeof(header)) {
++		printk("Error while writing header to file %s, error=%d\n",
++		       filename, ret);
++		goto out_close;
++	}
++
++	while (written < fragment_size) {
++		ret =
++		    kernel_write(file, data_start + written, fragment + written,
++				 fragment_size - written);
++
++		if (ret < 0) {
++			printk("Error while writing to file %s, error=%d\n",
++			       filename, ret);
++			goto out_close;
++		}
++		written += ret;
++	}
++      out_close:
++	kernel_close(file);
++      out:
++	return ret;
++}
++
++EXPORT_SYMBOL(prefetch_save_trace_fragment);
++
++/**
++ * Saves trace fragment between @start_marker and @end_marker into file @filename.
++ * Returns 0, if success <0 if error (with error code).
++*/
++int prefetch_save_trace_between_markers(char *filename,
++					struct trace_marker start_marker,
++					struct trace_marker end_marker)
++{
++	void *fragment = NULL;
++	int fragment_size = 0;
++	int ret = 0;
++
++	ret = get_prefetch_trace_fragment(start_marker,
++					  end_marker,
++					  &fragment, &fragment_size);
++
++	if (ret < 0) {
++		printk(KERN_WARNING
++		       "Cannot save trace fragment - cannot get trace fragment, error=%d\n",
++		       ret);
++		goto out;
++	}
++
++	ret = prefetch_save_trace_fragment(filename, fragment, fragment_size);
++	if (ret < 0) {
++		printk(KERN_WARNING
++		       "Cannot save trace fragment - error saving file, error=%d\n",
++		       ret);
++		goto out_free;
++	}
++
++      out_free:
++	if (fragment_size > 0)
++		free_trace_buffer(fragment, fragment_size);
++      out:
++	return ret;
++}
++
++EXPORT_SYMBOL(prefetch_save_trace_between_markers);
++
++static int walk_pages(enum tracing_command command, struct trace_marker *marker)
++{
++	void *retptr;
++	loff_t pos = 0;
++	int ret;
++	loff_t next;
++	struct inode_walk_session *s;
++	int clearing = 0;
++	int invalid_trace_counter = 0;
++	int report_overflow = 0;
++#ifdef PREFETCH_DEBUG
++	struct prefetch_timer walk_pages_timer;
++#endif
++
++	spin_lock(&prefetch_trace.prefetch_trace_lock);
++	if (prefetch_trace.overflow && !prefetch_trace.overflow_reported) {
++		prefetch_trace.overflow_reported = 1;
++		report_overflow = 1;
++	}
++	spin_unlock(&prefetch_trace.prefetch_trace_lock);
++
++	if (report_overflow) {
++		if (command == STOP_TRACING) {
++			if (atomic_dec_return(&prefetch_trace.tracers_count) <
++			    0)
++				printk(KERN_WARNING
++				       "Trace counter is invalid\n");
++		}
++		printk(KERN_WARNING "Prefetch buffer overflow\n");
++		return -ENOSPC;
++	}
++
++	s = inode_walk_session_create();
++	if (IS_ERR(s)) {
++		retptr = s;
++		goto out;
++	}
++
++	retptr = inode_walk_start(s, &pos);
++
++	if (IS_ERR(retptr))
++		goto out_error_session_release;
++
++	/*inode_lock spinlock held from here */
++	if (command == START_TRACING) {
++		if (atomic_inc_return(&prefetch_trace.tracers_count) == 1) {
++			/*prefetch_trace.tracers_count was 0, this is first tracer, so just clear bits */
++			clearing = 1;
++			clearing_in_progress = 1;
++			*marker = get_trace_marker();
++		}
++	}
++#ifdef PREFETCH_DEBUG
++	if (!clearing) {
++		prefetch_start_timing(&walk_pages_timer, "walk pages");
++	} else
++		prefetch_start_timing(&walk_pages_timer, "clearing pages");
++#endif
++
++	while (retptr != NULL) {
++		/*FIXME: add lock breaking */
++		ret = inode_walk_show(s, pos);
++		if (ret < 0) {
++			retptr = ERR_PTR(ret);
++			goto out_error;
++		}
++
++		next = pos;
++		retptr = inode_walk_next(s, &next);
++		if (IS_ERR(retptr))
++			goto out_error;
++		pos = next;
++	}
++
++	if (command == STOP_TRACING) {
++		if (atomic_dec_return(&prefetch_trace.tracers_count) < 0) {
++			invalid_trace_counter = 1;
++		}
++		*marker = get_trace_marker();
++	} else if (command == CONTINUE_TRACING) {
++		*marker = get_trace_marker();
++	}
++
++      out_error:
++	if (clearing)
++		clearing_in_progress = 0;
++
++	inode_walk_stop(s);
++	/*inode_lock spinlock released */
++#ifdef PREFETCH_DEBUG
++	if (clearing)
++		printk(KERN_INFO "Clearing run finished\n");
++#endif
++	if (invalid_trace_counter)
++		printk(KERN_WARNING "Trace counter is invalid\n");
++
++#ifdef PREFETCH_DEBUG
++	if (!IS_ERR(retptr)) {
++		prefetch_end_timing(&walk_pages_timer);
++		prefetch_print_timing(&walk_pages_timer);
++		printk(KERN_INFO
++		       "Inodes walked: %d, pages walked: %d, referenced: %d"
++		       " blocks: %d\n", s->inodes_walked, s->pages_walked,
++		       s->pages_referenced, s->page_blocks);
++	}
++#endif
++
++      out_error_session_release:
++	inode_walk_session_release(s);
++      out:
++	return PTR_ERR(retptr);
++}
++
++/**
++	Starts tracing, if no error happens returns marker which points to start of trace on @marker.
++*/
++int prefetch_start_trace(struct trace_marker *marker)
++{
++	int ret;
++	if (!enabled)
++		return -ENODEV;	/*module disabled */
++
++	ret = walk_pages(START_TRACING, marker);
++
++	if (ret >= 0) {
++		mutex_lock(&prefetch_trace.prefetch_trace_mutex);
++		prefetch_trace.trace_users++;
++		mutex_unlock(&prefetch_trace.prefetch_trace_mutex);
++	}
++	return ret;
++}
++
++EXPORT_SYMBOL(prefetch_start_trace);
++
++/**
++	Performs interim tracing run, returns marker which points to current place in trace.
++*/
++int prefetch_continue_trace(struct trace_marker *marker)
++{
++	if (!enabled)
++		return -ENODEV;	/*module disabled */
++
++	return walk_pages(CONTINUE_TRACING, marker);
++}
++
++EXPORT_SYMBOL(prefetch_continue_trace);
++
++/**
++	Stops tracing, returns marker which points to end of trace.
++*/
++int prefetch_stop_trace(struct trace_marker *marker)
++{
++	if (!enabled) {
++		/*trace might have been started when module was enabled */
++		if (atomic_dec_return(&prefetch_trace.tracers_count) < 0)
++			printk(KERN_WARNING
++			       "Trace counter is invalid after decrementing it in disabled module\n");
++
++		return -ENODEV;	/*module disabled */
++	}
++#ifdef PREFETCH_DEBUG
++	printk(KERN_INFO "Released pages traced: %d\n",
++	       prefetch_trace.page_release_traced);
++#endif
++	return walk_pages(STOP_TRACING, marker);
++}
++
++EXPORT_SYMBOL(prefetch_stop_trace);
++
++/**
++	Releases trace up to @end marker.
++	Each successful call to prefetch_start_trace() should
++	be matched with exactly one call to prefetch_release_trace().
++	NOTE: end_marker is currently not used, but might
++	be used in the future to release only part of trace.
++*/
++int prefetch_release_trace(struct trace_marker end_marker)
++{
++	mutex_lock(&prefetch_trace.prefetch_trace_mutex);
++
++	prefetch_trace.trace_users--;
++	if (prefetch_trace.trace_users == 0)
++		clear_trace();
++	if (prefetch_trace.trace_users < 0)
++		printk(KERN_WARNING "Trace users count is invalid, count=%d\n",
++		       prefetch_trace.trace_users);
++
++	mutex_unlock(&prefetch_trace.prefetch_trace_mutex);
++
++	return 0;
++}
++
++EXPORT_SYMBOL(prefetch_release_trace);
++
++/**
++ * Loads trace fragment from @filename.
++ * Returns <0 in case of errors.
++ * If successful, returns pointer to trace data on @trace_buffer and its size on @trace_size,
++ * in such case caller is responsible for freeing the buffer using free_trace_buffer().
++*/
++int prefetch_load_trace_fragment(char *filename, void **trace_buffer,
++				 int *trace_size)
++{
++	struct file *file;
++	void *buffer;
++	int data_start;
++	int data_read = 0;
++	int raw_data_size;
++	int file_size;
++	int ret = 0;
++	struct prefetch_trace_header header;
++
++	file = kernel_open(filename, O_RDONLY, 0600);
++
++	if (IS_ERR(file)) {
++		ret = PTR_ERR(file);
++		printk("Cannot open file %s for reading, error=%d\n", filename,
++		       ret);
++		return ret;
++	}
++
++	file_size = file->f_mapping->host->i_size;
++
++	ret = kernel_read(file, 0, (char *)&header, sizeof(header));
++
++	if (ret < 0 || ret != sizeof(header)) {
++		printk(KERN_WARNING
++		       "Cannot read trace header for trace file %s, error=%d\n",
++		       filename, ret);
++		ret = -EINVAL;
++		goto out_close;
++	}
++
++	if (strncmp
++	    (&header.magic[0], &trace_file_magic[0],
++	     sizeof(header.magic)) != 0) {
++		printk(KERN_WARNING
++		       "Trace file %s does not have valid trace file signature\n",
++		       filename);
++		ret = -EINVAL;
++		goto out_close;
++	}
++
++	if (header.version_major != PREFETCH_FORMAT_VERSION_MAJOR) {
++		printk(KERN_WARNING
++		       "Trace file %s has unsupported major version %d\n",
++		       filename, header.version_major);
++		ret = -EINVAL;
++		goto out_close;
++	}
++	data_start = header.data_start;
++	if (data_start < sizeof(header)) {
++		/*NOTE: exceeding file size is checked implicitely below with raw_data_size check */
++		printk(KERN_WARNING
++		       "Trace file %s contains invalid data start: %d\n",
++		       filename, data_start);
++		ret = -EINVAL;
++		goto out_close;
++	}
++
++	raw_data_size = file_size - data_start;
++	if (raw_data_size < 0) {
++		ret = -EINVAL;
++		printk(KERN_WARNING "Invalid trace file %s, not loading\n",
++		       filename);
++		goto out_close;
++	}
++
++	if (raw_data_size == 0) {
++		ret = -EINVAL;
++		printk(KERN_INFO "Empty trace file %s, not loading\n",
++		       filename);
++		goto out_close;
++	}
++
++	buffer = alloc_trace_buffer(raw_data_size);
++	if (buffer == NULL) {
++		printk(KERN_INFO "Cannot allocate memory for trace %s\n",
++		       filename);
++		ret = -ENOMEM;
++		goto out_close;
++	}
++
++	while (data_read < raw_data_size) {
++		ret =
++		    kernel_read(file, data_start + data_read,
++				buffer + data_read, raw_data_size - data_read);
++
++		if (ret < 0) {
++			printk("Error while reading from file %s, error=%d\n",
++			       filename, ret);
++			goto out_close_free;
++		}
++		if (ret == 0) {
++			printk(KERN_WARNING
++			       "File too short, data read=%d, expected size=%d\n",
++			       data_read, raw_data_size);
++			break;
++		}
++
++		data_read += ret;
++	}
++
++	if (data_read == raw_data_size) {
++		*trace_size = raw_data_size;
++		*trace_buffer = buffer;
++	} else {
++		printk(KERN_WARNING
++		       "Trace file size changed beneath us, cancelling read\n");
++		ret = -ETXTBSY;
++		goto out_close_free;
++	}
++
++	/*everything OK, caller will free the buffer */
++	kernel_close(file);
++	return 0;
++
++      out_close_free:
++	free_trace_buffer(buffer, file_size);
++      out_close:
++	kernel_close(file);
++	return ret;
++}
++
++/**
++ * Prefetches files based on trace read from @filename.
++*/
++int do_prefetch_from_file(char *filename)
++{
++	int ret = 0;
++	void *buffer = NULL;
++	int buffer_size;
++
++	ret = prefetch_load_trace_fragment(filename, &buffer, &buffer_size);
++	if (ret < 0) {
++		printk(KERN_WARNING "Reading trace file %s failed, error=%d\n",
++		       filename, ret);
++		goto out;
++	}
++
++	ret = prefetch_start_prefetch(buffer, buffer_size, 0);
++	if (ret < 0) {
++		printk(KERN_WARNING
++		       "Prefetching for trace file %s failed, error=%d\n",
++		       filename, ret);
++		goto out_free;
++	}
++#ifdef CONFIG_PREFETCH_DEBUG
++	printk(KERN_INFO "Prefetch from file %s successful\n", filename);
++#endif
++
++      out_free:
++	free_trace_buffer(buffer, buffer_size);
++      out:
++	return ret;
++}
++
++EXPORT_SYMBOL(do_prefetch_from_file);
++
++static void clear_trace(void)
++{
++	void *new_buffer = NULL;
++
++#ifdef PREFETCH_DEBUG
++	printk(KERN_INFO "Clearing prefetch trace buffer\n");
++#endif
++
++	spin_lock(&prefetch_trace.prefetch_trace_lock);
++
++	if (prefetch_trace.buffer == NULL) {
++		spin_unlock(&prefetch_trace.prefetch_trace_lock);
++
++		new_buffer = alloc_trace_buffer(prefetch_trace_size());
++
++		if (new_buffer == NULL) {
++			printk(KERN_WARNING
++			       "Cannot allocate memory for trace buffer\n");
++			goto out;
++		}
++
++		spin_lock(&prefetch_trace.prefetch_trace_lock);
++
++		if (prefetch_trace.buffer != NULL) {
++			/*someone already allocated it */
++			free_trace_buffer(new_buffer, prefetch_trace_size());
++		} else {
++			prefetch_trace.buffer = new_buffer;
++			prefetch_trace.buffer_size = prefetch_trace_size();
++		}
++	}
++	/*reset used buffer counter */
++	prefetch_trace.buffer_used = 0;
++	prefetch_trace.overflow = 0;
++	prefetch_trace.overflow_reported = 0;
++	prefetch_trace.page_release_traced = 0;
++	prefetch_trace.generation++;	/*next generation, markers are not comparable */
++
++	spin_unlock(&prefetch_trace.prefetch_trace_lock);
++      out:
++	return;
++}
++
++/**
++ * Checks if @line is exactly the same as @param_name.
++ */
++int param_match(char *line, char *param_name)
++{
++	if (strcmp(line, param_name) == 0)
++		return 1;
++
++	return 0;
++}
++
++EXPORT_SYMBOL(param_match);
++
++/**
++ * Checks if @line starts with @param_name, not exceeding param_name length for safety.
++ */
++int param_match_prefix(char *line, char *param_name)
++{
++	unsigned param_len = strlen(param_name);
++	if (strncmp(line, param_name, param_len) == 0)
++		return 1;
++
++	return 0;
++}
++
++EXPORT_SYMBOL(param_match_prefix);
++
++ssize_t prefetch_proc_write(struct file * proc_file, const char __user * buffer,
++			    size_t count, loff_t * ppos)
++{
++	char *name;
++	int e = 0;
++
++	if (count >= PATH_MAX)
++		return -ENAMETOOLONG;
++
++	name = kmalloc(count + 1, GFP_KERNEL);
++	if (!name)
++		return -ENOMEM;
++
++	if (copy_from_user(name, buffer, count)) {
++		e = -EFAULT;
++		goto out;
++	}
++
++	/* strip the optional newline */
++	if (count && name[count - 1] == '\n')
++		name[count - 1] = '\0';
++	else
++		name[count] = '\0';
++
++	if (param_match(name, "enable")) {
++		printk(KERN_INFO "Prefetch module enabled\n");
++		enabled = 1;
++		goto out;
++	}
++
++	if (param_match(name, "disable")) {
++		printk(KERN_INFO "Prefetch module disabled\n");
++		enabled = 0;
++		goto out;
++	}
++      out:
++	kfree(name);
++
++	return e ? e : count;
++}
++
++static int prefetch_proc_open(struct inode *inode, struct file *proc_file)
++{
++	return 0;
++}
++
++static int prefetch_proc_release(struct inode *inode, struct file *proc_file)
++{
++	return 0;
++}
++
++static struct file_operations proc_prefetch_fops = {
++	.owner = THIS_MODULE,
++	.open = prefetch_proc_open,
++	.release = prefetch_proc_release,
++	.write = prefetch_proc_write
++};
++
++struct proc_dir_entry *prefetch_proc_dir = NULL;
++EXPORT_SYMBOL(prefetch_proc_dir);
++
++static __init int prefetch_core_init(void)
++{
++	struct proc_dir_entry *entry;
++
++	mutex_lock(&prefetch_trace.prefetch_trace_mutex);
++	clear_trace();
++	mutex_unlock(&prefetch_trace.prefetch_trace_mutex);
++
++	prefetch_proc_dir = proc_mkdir("prefetch", NULL);
++
++	if (prefetch_proc_dir == NULL) {
++		printk(KERN_WARNING
++		       "Creating prefetch proc directory failed, proc interface will not be available\n");
++	} else {
++		entry = create_proc_entry("control", 0600, prefetch_proc_dir);
++		if (entry)
++			entry->proc_fops = &proc_prefetch_fops;
++	}
++
++	printk(KERN_INFO "Prefetching core module started, enabled=%d\n",
++	       enabled);
++
++	return 0;
++}
++
++static void prefetch_core_exit(void)
++{
++	remove_proc_entry("control", prefetch_proc_dir);
++	remove_proc_entry("prefetch", NULL);	/*remove directory */
++}
++
++MODULE_AUTHOR("Krzysztof Lichota <lichota@mimuw.edu.pl>");
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION
++    ("Prefetching core - functions used for tracing and prefetching by prefetching modules");
++
++module_init(prefetch_core_init);
++module_exit(prefetch_core_exit);
+-- 
+1.1.3
