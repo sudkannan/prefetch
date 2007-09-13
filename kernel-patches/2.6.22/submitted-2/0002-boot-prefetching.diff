@@ -1,4 +1,4 @@
-Subject: [PATCH 2/3] Boot tracing and prefetching support.
+Boot tracing and prefetching support.
 
 Signed-off-by: Krzysztof Lichota <lichota@mimuw.edu.pl>
 
