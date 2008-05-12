@@ -5,3 +5,4 @@ Documentation:
   * [ComparisonToReadahead Comparison to readahead]
   * [ImplementationDocumentation Documentation about prefetching implementation]
   * [TestingBootPrefetching Instructions for users who want to install and test prefetching]
+  * [http://prefetch.googlecode.com/files/gsoc-prefetching-presentation.pdf Presentation about prefetching (PDF)]
