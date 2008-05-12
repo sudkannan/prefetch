@@ -1,0 +1,53 @@
+#summary This page contains documentation about implementation.
+#labels documentation,todo
+
+This page is work in progress.
+
+= Questions and answers =
+TODO
+>  For example, how does it determine which blocks need prefetching?
+
+It monitors page cache to see which pages are used by processes.
+
+>  Where/how are these lists of blocks stored?
+
+They are stored in /prefetch directory as prefetch lists for each traced app and for boot stages.
+Each file contains list of tuples (device, inode, start-in-pages, length-in-pages) which describe what to prefetch.
+
+>  What decides when to load blocks?
+
+Blocks are loaded when application starts (for application prefetching) or when appropriate boot script is started (for boot prefetching).
+
+>  What if the filesystem isn't mounted yet (/usr), how can the loading be
+>  staged?
+
+Boot prefetching is split into 3 phases: initial boot (with only root mounted), boot with all partitions mounted and GUI boot. Each stage has separate prefetching list.
+
+>  Are the lists transferable between systems?
+
+No, they contain inode numbers and these differ on systems.
+If it is a matter of supplying predefined list, it is easy to write the tool which will convert paths to inodes upon first boot.
+
+>  Could we use the lists to sort the LiveCD filesystem generation?
+
+It depends what you want to do with it. If you want to feed the list to mksquashfs, it can be done. If you want to add prefetching list to live CD, this would be harder, as inode numbers are generated during generation of SquashFS image. 
+
+>  Could we use the lists to sort the order in which we copy files during
+>  the install?
+
+You mean to copy in such order that after boot from disk the system boots faster?
+This is interesting issue. The list contains page ranges and I am not aware of any tool which allows to specify which ranges of files to copy and when. The ext3 allocator would reorganize it anyway. IMO running my reordering tool after copying would be simpler.
+
+>  Is prefetching done in block order to minimise disk head movement?
+
+Prefetch file is sorted using (device,inode,start) lexicographical order which should in general correspond to disk order. It could be extended to take into account block number, but I am not sure it is necessary. Disk scheduler will sort disk requests anyway. And it reordering tool is run, they will be in proper order on disk and in large chunks, so requests will be merged.
+
+>  How necessary is ext3 defrag to this working?
+
+It is completely optional, but it speeds up boot more, because necessary files can be read in large chunks without head movements. 
+
+>  Do we still need readahead or preload with prefetch?
+
+Readahead should not be used together with prefetch as it uses its own prefetch lists. It could read unnecessary data and spoil performance.
+
+Preload has some heuristics to predict which programs will be run, so this could be useful. But I don't know how it will behave (in terms of performance) together with prefetch - prefetch for apps might think preload is loading the files for itself and this could make prefetch perform poorly.
