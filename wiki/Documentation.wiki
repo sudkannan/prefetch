@@ -1,0 +1,6 @@
+#summary Documentation for the project.
+#labels documentation
+
+Documentation:
+  * [ImplementationDocumentation Documentation about prefetching implementation]
+  * [TestingBootPrefetching Instructions for users who want to install and test prefetching]
