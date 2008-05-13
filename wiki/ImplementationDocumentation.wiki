@@ -5,9 +5,11 @@ This page is work in progress.
 
 = Questions and answers =
 TODO
+
+
 >  For example, how does it determine which blocks need prefetching?
 
-It monitors page cache to see which pages are used by processes.
+Tracing module monitors page cache to see which pages are used by processes.
 
 >  Where/how are these lists of blocks stored?
 
@@ -30,7 +32,9 @@ If it is a matter of supplying predefined list, it is easy to write the tool whi
 
 >  Could we use the lists to sort the LiveCD filesystem generation?
 
-It depends what you want to do with it. If you want to feed the list to mksquashfs, it can be done. If you want to add prefetching list to live CD, this would be harder, as inode numbers are generated during generation of SquashFS image. 
+It depends what you want to do with it. If you want to feed the list to mksquashfs, you can use the trace file, but you have to convert inodes to paths. This is doable with a simple script.
+
+If you want to add prefetching list to live CD, this would be harder, as inode numbers are generated during generation of SquashFS image. 
 
 >  Could we use the lists to sort the order in which we copy files during
 >  the install?
@@ -51,3 +55,45 @@ It is completely optional, but it speeds up boot more, because necessary files c
 Readahead should not be used together with prefetch as it uses its own prefetch lists. It could read unnecessary data and spoil performance.
 
 Preload has some heuristics to predict which programs will be run, so this could be useful. But I don't know how it will behave (in terms of performance) together with prefetch - prefetch for apps might think preload is loading the files for itself and this could make prefetch perform poorly.
+
+>  > They are stored in /prefetch directory as prefetch lists for each
+>  > traced app and for boot stages.
+>  > Each file contains list of tuples (device, inode, start-in-pages,
+>  > length-in-pages) which describe what to prefetch.
+>  >
+>  What creates these files?  A userspace daemon or the kernel module
+>  itself?  
+
+The kernel module writes it. For boot prefetching, userspace script processes the lists as they are merged and sorted for last 3 runs.
+
+> Is /prefetch a real filesystem or a virtual one?
+
+It is not a filesystem, it is plain directory on root filesystem. And files inside are plain files. You can delete them or process them, like the boot utility does.
+
+>  Shouldn't this be /etc/prefetch? :)
+
+Maybe. Or /boot/prefetch :) It is easy to change.
+
+>  What determines whether there is a prefetch file for that application?
+
+If the file exists for application, then it is loaded. Prefetch file names contain part of filename (for humans) and hash of path to distringuish apps paths.
+
+>  What keeps that up to date?
+
+App prefetching module works like this: 
+- When application is started, it checks if there is a prefetch file. If so, it loads it and prefetches files.
+- It then starts recording read pages setstimer (by default to 10 seconds).
+- When timer runs, it finishes tracing. Next it checks if application did significant amount of I/O (we don't want to prefetch for little apps) and if it did, it writes prefetching file for that app.
+
+So prefetch file for application is updated during each application start. This might change in the future to involve more sophisticated approach (like averaging over a few runs) to get better results.
+
+>  > Boot prefetching is split into 3 phases: initial boot (with only root
+>  > mounted), boot with all partitions mounted and GUI boot. Each stage
+>  > has separate prefetching list.
+>  >
+>  How are these phases delineated?  Does the kernel need to be told what
+>  stage it is in, or does userspace determine which set of prefetch files
+>  may be used?
+
+Init scripts (similar to readahead scripts) are run and they tell kernel module which files to load and when.
+So boot prefetching can be easily changed by modifying these scripts, without touching the kernel part.
