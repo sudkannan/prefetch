@@ -97,3 +97,68 @@ So prefetch file for application is updated during each application start. This 
 
 Init scripts (similar to readahead scripts) are run and they tell kernel module which files to load and when.
 So boot prefetching can be easily changed by modifying these scripts, without touching the kernel part.
+
+> I noticed that you get lists (in /) for the phases, but files
+> in /prefetch for applications named PATH-stamp?
+
+Yes, boot prefetch files are in /.prefetch-boot-trace.PHASE (I should change that), while application files and historical boot files are kept in /prefetch.
+
+> Could you give a little more detail on what files to expect, and what
+> the content/format of those files are?
+
+You should expect:
+/.prefetch-boot-trace.PHASE
+/prefetch/.prefetch-boot-trace.PHASE.TIMESTAMP (3 files for each phase)
+/prefetch/APPNAME-HASH for each application using prefetching
+
+Prefetch file format is simple, the header and then series of trace records.
+You can see the structures in file prefetch_types.h in prefetch userspace tools source.
+
+Header structure:
+typedef struct {
+        ///Trace file signature - should contain trace_file_magic
+        char magic[4];
+        ///Major version of trace file format
+        u16 version_major;
+        ///Minor version of trace file format
+        u16 version_minor;
+        ///Trace raw data start
+        u16 data_start;
+} prefetch_trace_header_t;
+
+Trace record:
+typedef struct {
+        kdev_t device;
+        unsigned long inode_no;
+        pgoff_t range_start;
+        pgoff_t range_length;
+} prefetch_trace_record_t;
+
+You can print the contents of the trace using "prefetch-print-trace" utility included in prefetch userspace tools.
+
+>> Init scripts (similar to readahead scripts) are run and they tell
+>> kernel module which files to load and when.
+>> So boot prefetching can be easily changed by modifying these scripts,
+>> without touching the kernel part.
+>>
+> I noticed the phases stuff.
+>
+> Have you considered instead using cgroups to collate them?  Phases are
+> divided by time, which becomes problematic with a boot sequence running
+> in parallel.
+>
+> A cgroups subsystem for prefetch would solve this, since cgroups are
+> inherited from parent to child.
+>
+> E.g.
+>
+>  * rcS is placed into the "boot" cgroup
+>   (thus all apps run by it are)
+>  * rc2 is placed into the "system" cgroup
+>  * gdm is placed into the "gui" cgroup
+>
+> You can then still generate app prefetch lists for individual apps
+> (since apache can be started by hand, _and_ by rc2).  But also we can
+> generate combined lists for each cgroup.
+
+When first patches were written, cgroups were not available. But it seems like a good idea. 
