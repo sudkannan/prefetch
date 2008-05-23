@@ -3,6 +3,19 @@
 
 This page is work in progress.
 
+= Todo for next version of implementation =
+  * Move boot prefetch files from / to /prefetch
+  * Investigate usage of cgroups for running boot prefetch in each cgroup separately
+  * Use PAM to detect logging in into gdm/kdm.
+  * Use some other bits than 
+  * Fix file prefetching routine in kernel to not use dirty hacks
+
+
+= Known bugs =
+  * Historical boot files are not aggregated, probably "-e" option in script causes script termination before aggregated boot trace is generated.
+  * File prefetching routine causes oops when used on XFS.
+
+
 = Questions and answers =
 TODO
 
