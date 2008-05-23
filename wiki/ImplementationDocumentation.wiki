@@ -12,7 +12,7 @@ This page is work in progress.
 
 
 = Known bugs =
-  * Historical boot files are not aggregated, probably "-e" option in script causes script termination before aggregated boot trace is generated.
+  * 3-aggregation does not work currently for gui and system traces (it works for boot), apparently some bug was introduced in script which processes trace. Probably "-e" option in script causes script termination before aggregated boot trace is generated.
   * File prefetching routine causes oops when used on XFS.
 
 
