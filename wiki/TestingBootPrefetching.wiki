@@ -4,11 +4,23 @@
 = Introduction =
 First testing version of kernel with automatic boot prefetching and tracing is available.
 
-This version is precompiled for Debian-based systems (tested on Ubuntu Gutsy, other distributions might not work). The kernel is standard Ubuntu kernel with these [http://prefetch.googlecode.com/svn/trunk/kernel-patches/2.6.22/submitted/ prefetch patches].
+This version is precompiled for Debian-based systems (tested on Ubuntu Gutsy, other distributions might not work). The kernel is standard Ubuntu kernel with these [http://prefetch.googlecode.com/svn/trunk/kernel-patches/2.6.22/submitted-2/ prefetch patches].
 
 Standard disclaimer applies: this is *experimental* version, it might damage your system use at your own risk and only on systems where you have backups.
 
-= Installation =
+= Installation using PPA =
+
+Currently the kernel available in PPA is Gutsy kernel. But it should work on other releases (e.g. Hardy).
+
+*Note:* this instructions have not been tested by me as I do not have Gutsy/Hardy installation by hand, so please report any problems with them at https://answers.launchpad.net/prefetch/
+
+To install it:
+  * Add `deb http://ppa.launchpad.net/prefetch/ubuntu gutsy main` to /etc/apt/sources.list
+  * Run `sudo apt-get update`
+  * Run `sudo apt-get install prefetch linux-image-2.6.22-8-generic`
+
+
+= Installation (manual) =
 
 In order to use kernel with prefetching:
   * Download [http://prefetch.googlecode.com/files/linux-image-2.6.22.1-9pf.3_2.6.22-9pf.3_i386.deb kernel linux-image deb]
